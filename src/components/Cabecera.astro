@@ -78,7 +78,7 @@ const menu = [
       // frena suave: así parece la misma animación, sin pausa al retomarla.
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          caja.style.transition = 'padding 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), background-color 0.25s ease';
+          caja.style.transition = 'padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease';
           caja.style.paddingLeft = caja.style.paddingRight = '';
           setTimeout(function () {
             caja.style.transition = '';
@@ -120,7 +120,8 @@ const menu = [
   };
   boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
   // Al pulsar una sección (ordenador): un pequeño latido. La cajita crece de
-  // golpe un poco más (hasta 22 px por lado) y vuelve rápido a su tamaño. Para
+  // golpe un poco más (hasta 28 px por lado, arrancando rápido como el paso
+  // del ratón) y vuelve con suavidad a su tamaño. Para
   // que se vea, el cambio de página espera 180 ms, justo pasado el pico; el
   // regreso termina ya en la página nueva gracias a la continuidad (ver el
   // script de justo debajo del menú), que apunta cuánto medía la cajita al
@@ -145,11 +146,11 @@ const menu = [
       const ahora = getComputedStyle(caja).paddingLeft;
       caja.animate(
         [
-          { paddingLeft: ahora, paddingRight: ahora },
-          { paddingLeft: '22px', paddingRight: '22px', offset: 0.45 },
+          { paddingLeft: ahora, paddingRight: ahora, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+          { paddingLeft: '28px', paddingRight: '28px', offset: 0.3, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' },
           { paddingLeft: '16px', paddingRight: '16px' },
         ],
-        { duration: 380, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)' },
+        { duration: 450 },
       );
       // Si la página tiene animación de salida (las tarjetas de Pintura y
       // Escultura), se lanza a la vez y se espera a que termine.
@@ -247,8 +248,9 @@ const menu = [
     gap: 4px;
   }
 
-  /* Al pasar el ratón, la cajita se ensancha 4 px por cada lado con la misma
-     curva suave que tenía el despliegue (0,6 s, arranca y frena despacio). */
+  /* Al pasar el ratón, la cajita se ensancha 4 px por cada lado: rápida al
+     principio y frenando despacio al final, para que responda al instante
+     aunque el cursor pase deprisa por las cuatro (pedido de Guzmán). */
   .menu .caja {
     font-family: var(--serif);
     font-weight: 300;
@@ -256,7 +258,7 @@ const menu = [
     padding-inline: 12px;
     white-space: nowrap;
     transition:
-      padding 0.6s cubic-bezier(0.76, 0, 0.24, 1),
+      padding 0.5s cubic-bezier(0.16, 1, 0.3, 1),
       background-color 0.25s ease;
   }
 
