@@ -76,7 +76,6 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   e inglés en la misma ficha. Pablo lo usará desde el ordenador. Piezas:
   `public/admin/` (panel, versión fijada a propósito), `src/content.config.ts`
   (forma de la ficha), `src/content/<sección>/<obra>/index.yml` + fotos.
-  Página provisional `src/pages/prueba-panel.astro`, para borrar.
   Falta decidir el **inicio de sesión** para Pablo: un pequeño servicio gratis
   en Cloudflare (recomendado para alguien no técnico) o un token de GitHub.
   Con esto, la carpeta de GÜZDAY y el sistema de `obra.txt` de abajo dejan de
