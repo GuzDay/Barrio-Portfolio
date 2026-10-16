@@ -27,6 +27,10 @@ consulta que hay**: ver más abajo.
   se le quitan los datos internos de Adobe y se ajusta el recuadro al borde
   de la tinta. **No vectorizar la firma por nuestra cuenta**: Guzmán notó la
   diferencia.
+- **Cabecera fija estilo gionatannese.com** (16-10-2026): firma en blanco con
+  `mix-blend-mode: exclusion` (cambia de color sobre las fotos; va suelta,
+  fuera de cualquier capa, o no funciona), menú centrado en cajitas de cristal
+  con la sección actual desplegada, idioma en otra cajita.
 - **Tipografías** (16-10-2026): Newsreader para títulos, cabecera y pie, e
   Inter Tight para el resto. Son las gratuitas más parecidas a las que le
   gustan a Guzmán, Teodor y Forma DJR, que son de pago. Están en
@@ -160,6 +164,12 @@ porque costó semanas de tropiezos:
   parándolo (`npx astro dev stop`), borrando `node_modules/.astro` y
   `.astro/data-store.json` y volviéndolo a arrancar. La web publicada no
   tiene este problema.
+- **El build quitaba el `-webkit-backdrop-filter`** (el desenfoque tal como
+  lo entiende Safari anterior al 18). Se arregla fijando `vite.build.cssTarget`
+  en `astro.config.mjs`. Ojo: el motor de Safari de Playwright no pinta los
+  desenfoques en las capturas (comprobado con una caja mínima); el cristal en
+  iPhone solo se puede ver en un móvil real. La web de Blanca tiene el mismo
+  problema (su cabecera de cristal sale sin prefijo).
 - **`mix-blend-mode: difference`** depende de lo que haya detrás y se comporta
   distinto en Safari. Se abandonó.
 - Probado y descartado por Guzmán: efecto de gota de agua, vídeos reproducidos
