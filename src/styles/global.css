@@ -72,7 +72,9 @@ body {
      los demás tamaños van en "em", proporcionales a este: cambiando solo
      esta línea, toda la letra crece o encoge a la vez. */
   font-size: 0.9375rem;
-  font-weight: 400;
+  /* Inter Tight en Light (300): Guzmán la quería un peso más fina que la
+     Regular. Lo que debe destacar (botón, estado en la ficha) va en 400. */
+  font-weight: 300;
   line-height: 1.5;
 }
 
