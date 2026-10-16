@@ -1,0 +1,17 @@
+lang:
+  - es
+  - en
+order: 1
+titulo: Cuadro de pruba
+tecnica: Mixta
+texto: bla bla bla blaaaa
+medidas: 120x30
+anio: 2016
+precio: 2328
+estado: disponible
+fotos:
+  - imp.webp
+en:
+  order: 1
+  tecnica: ''
+  texto: ''

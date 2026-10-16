@@ -34,7 +34,8 @@ apuntado en `astro.config.mjs`. Avisar de no cancelar Squarespace antes.
 
 - **Dos secciones separadas, Cuadros y Esculturas.** Descartó expresamente la
   idea de una sola sección "Artworks" con filtros: le parecía "más cutre".
-- Secciones previstas: Cuadros · Esculturas · Encargos · Acerca de mí · Contacto.
+- Secciones previstas: Cuadros · Esculturas · Encargos · Acerca de mí y
+  Contacto (estas dos juntas en una sola página; lo decidió Guzmán, 16-10-2026).
 - **Cada obra lleva ficha**: título, técnica, medidas, año, precio y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
   ningún texto. No copiar aquel criterio.
@@ -44,9 +45,28 @@ apuntado en `astro.config.mjs`. Avisar de no cancelar Squarespace antes.
   contacto. No es una galería más.
 - **Contacto**: prefiere **WhatsApp** antes que correo ("me da más confianza").
   Sus datos: pablobarrioke@gmail.com · @pablobarrioarauz · 609 301 845.
-- Solo **castellano**. Su web actual no tiene selector de idioma.
-- Pendiente de decidir con él: si el **precio** se enseña en público o se pone
-  "consultar precio".
+- **Castellano e inglés** (cambio pedido por Guzmán el 16-10-2026; antes era
+  solo castellano). La web elige el idioma del dispositivo al entrar y hay un
+  botón para cambiarlo. Las fichas de obra necesitan también su versión en
+  inglés (técnica y texto). **El título no se traduce**: es el que pone Pablo,
+  igual en los dos idiomas.
+- **Pablo quiere poder añadir obras y cambiar su orden él solo**, sin depender
+  de Guzmán, que queda solo para cambios gordos. Esto pide un panel de
+  edición (CMS) y cambia cómo se organiza el contenido: ver "Pendiente".
+
+## Pendiente de decidir
+
+- Si el **precio** se enseña en público o se pone "consultar precio" (con Pablo).
+- **CMS: en prueba Sveltia CMS** (16-10-2026), elegido frente a Pages CMS
+  porque es el único que permite ordenar obras arrastrando y tiene castellano
+  e inglés en la misma ficha. Pablo lo usará desde el ordenador. Piezas:
+  `public/admin/` (panel, versión fijada a propósito), `src/content.config.ts`
+  (forma de la ficha), `src/content/<sección>/<obra>/index.yml` + fotos.
+  Página provisional `src/pages/prueba-panel.astro`, para borrar.
+  Falta decidir el **inicio de sesión** para Pablo: un pequeño servicio gratis
+  en Cloudflare (recomendado para alguien no técnico) o un token de GitHub.
+  Con esto, la carpeta de GÜZDAY y el sistema de `obra.txt` de abajo dejan de
+  ser la fuente del contenido.
 
 ## Cómo se organiza el contenido
 

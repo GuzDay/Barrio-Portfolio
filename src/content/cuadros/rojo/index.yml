@@ -1,0 +1,17 @@
+lang:
+  - es
+  - en
+order: 2
+titulo: Rojo
+tecnica: Óleo sobre lienzo
+texto: Una o dos frases sobre la obra. Puede quedarse vacío.
+medidas: 130 x 130 cm
+anio: 2024
+precio: 2400
+estado: disponible
+fotos:
+  - rojo-1.jpg
+en:
+  order: 2
+  tecnica: Oil on canvas
+  texto: One or two sentences about the work. Can be left empty.

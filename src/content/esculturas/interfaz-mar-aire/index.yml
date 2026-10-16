@@ -1,0 +1,10 @@
+titulo: Interfaz mar-aire
+tecnica: Chapa plegada
+medidas: 20 x 40 x 20 cm
+anio: 2023
+estado: vendido
+fotos:
+  - interfaz-1.jpg
+order: 1
+en:
+  tecnica: Folded sheet metal

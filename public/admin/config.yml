@@ -1,0 +1,99 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.224.0/schema/sveltia-cms.json
+#
+# Configuración del panel de edición. Cada obra se guarda en
+# src/content/<sección>/<nombre>/index.yml con sus fotos al lado.
+# Los campos tienen que coincidir con src/content.config.ts.
+
+backend:
+  name: github
+  repo: GuzDay/Barrio-Portfolio
+  branch: main
+  # base_url: (la dirección del servicio de inicio de sesión, cuando exista)
+  commit_messages:
+    create: 'Panel: nueva obra en {{collection}}, «{{slug}}»'
+    update: 'Panel: cambios en «{{slug}}» ({{collection}})'
+    delete: 'Panel: borrada «{{slug}}» ({{collection}})'
+    uploadMedia: 'Panel: foto nueva {{path}}'
+    deleteMedia: 'Panel: foto borrada {{path}}'
+
+site_url: https://guzday.github.io/Barrio-Portfolio/
+
+# Las fotos de cada obra van dentro de su carpeta (ver cada sección), pero el
+# panel exige una carpeta general por si se sube algo suelto.
+media_folder: public/subidas
+public_folder: /subidas
+
+media_libraries:
+  default:
+    config:
+      # Una foto de cámara puede pesar 30 MB. El panel la reduce antes de
+      # subirla, para que el repositorio no engorde; la web la vuelve a
+      # optimizar después para cada tamaño de pantalla.
+      max_file_size: 52428800
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 90
+          width: 3000
+          height: 3000
+
+i18n:
+  # Castellano en la raíz del archivo y el inglés dentro de «en:».
+  structure: single_file_default_root
+  locales: [es, en]
+  default_locale: es
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: cuadros
+    label: Cuadros
+    label_singular: Cuadro
+    folder: src/content/cuadros
+    path: '{{slug}}/index'
+    slug: '{{titulo}}'
+    extension: yml
+    format: yaml
+    media_folder: ''
+    public_folder: ''
+    identifier_field: titulo
+    summary: '{{titulo}} · {{anio}} · {{estado}}'
+    create: true
+    reorder: true
+    i18n: true
+    # Los mismos campos sirven para las esculturas (ver «*ficha» abajo).
+    fields: &ficha
+      - { name: titulo, label: Título, widget: string, hint: 'Es el mismo en castellano y en inglés: el título no se traduce.' }
+      - { name: tecnica, label: Técnica, widget: string, required: false, i18n: true, hint: 'Por ejemplo: Óleo sobre lienzo' }
+      - { name: texto, label: Texto breve, widget: text, required: false, i18n: true, hint: 'Una o dos frases. Puede quedarse vacío.' }
+      - { name: medidas, label: Medidas, widget: string, required: false, hint: 'Por ejemplo: 130 x 130 cm' }
+      - { name: anio, label: Año, widget: number, value_type: int, required: false }
+      - { name: precio, label: Precio (€), widget: number, value_type: int, required: false, hint: 'Solo el número. Vacío si no se quiere enseñar.' }
+      - name: estado
+        label: Estado
+        widget: select
+        default: disponible
+        options:
+          - { label: Disponible, value: disponible }
+          - { label: Vendido, value: vendido }
+      - { name: fotos, label: Fotos, widget: image, multiple: true, hint: 'La primera es la que sale en la galería.' }
+
+  - name: esculturas
+    label: Esculturas
+    label_singular: Escultura
+    folder: src/content/esculturas
+    path: '{{slug}}/index'
+    slug: '{{titulo}}'
+    extension: yml
+    format: yaml
+    media_folder: ''
+    public_folder: ''
+    identifier_field: titulo
+    summary: '{{titulo}} · {{anio}} · {{estado}}'
+    create: true
+    reorder: true
+    i18n: true
+    fields: *ficha
