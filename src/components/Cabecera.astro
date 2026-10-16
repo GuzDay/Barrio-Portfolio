@@ -499,31 +499,42 @@ const menu = [
       font-weight: 200;
       line-height: 1;
     }
-    .menu.abierto li,
-    .menu.abierto .cerrar {
-      /* "backwards" y no "both": al acabar, la animación se suelta. Si se
-         quedara enganchada (con su opacidad), cortaría el desenfoque de la
-         cajita igual que lo hacía el menú. */
+    /* La entrada se anima sobre la propia cajita, no sobre su <li>: un
+       contenedor con opacidad animándose impide que la cajita desenfoque lo
+       de detrás, y se veían claras hasta que acababa cada una y entonces "se
+       oscurecían" de una en una. "backwards": al acabar se suelta. */
+    .menu.abierto .caja {
       animation: entrar-caja 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     }
-    .menu.abierto li:nth-child(2) {
+    .menu.abierto li:nth-child(2) .caja {
       animation-delay: 0.04s;
     }
-    .menu.abierto li:nth-child(3) {
+    .menu.abierto li:nth-child(3) .caja {
       animation-delay: 0.08s;
     }
-    .menu.abierto li:nth-child(4) {
+    .menu.abierto li:nth-child(4) .caja {
       animation-delay: 0.12s;
     }
     .menu.abierto .cerrar {
       animation-delay: 0.18s;
     }
+    /* Relieve muy sutil, como con una luz desde arriba a la izquierda: filo
+       claro arriba e izquierda, filo de sombra abajo y derecha, y una sombra
+       exterior suave. Las separa más del fondo (pedido de Guzmán). */
+    .menu .caja {
+      box-shadow:
+        inset 1px 1px 0 rgb(255 255 255 / 0.45),
+        inset -1px -1px 0 rgb(0 0 0 / 0.08),
+        1px 2px 6px rgb(0 0 0 / 0.1);
+    }
   }
 
+  /* Solo movimiento, sin fundido: con opacidad, mientras la cajita es
+     semitransparente se ve el fondo sin su desenfoque y "se oscurece" al
+     terminar. Así está igual desde el primer instante. */
   @keyframes entrar-caja {
     from {
-      opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(14px) scale(0.94);
     }
   }
 
@@ -537,8 +548,7 @@ const menu = [
     .menu .caja {
       transition: none;
     }
-    .menu.abierto li,
-    .menu.abierto .cerrar {
+    .menu.abierto .caja {
       animation: none;
     }
   }
