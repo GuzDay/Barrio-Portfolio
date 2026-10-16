@@ -1,0 +1,166 @@
+---
+// Fondo de la portada: una foto a pantalla completa en blanco y negro que se
+// va "pintando" con su color real al pasar el ratón por encima, como si el
+// ratón fuera un pincel. Lo pintado se queda.
+//
+// Cómo funciona: debajo, la foto en gris (CSS). Encima, un <canvas> donde se
+// dibuja la foto en color, pero solo donde ha pasado el pincel. Lo pintado se
+// guarda en una máscara medida sobre la foto (no sobre la pantalla), así que
+// al cambiar el tamaño de la ventana no se descoloca.
+import { Image } from 'astro:assets';
+
+interface Props {
+  foto: ImageMetadata;
+}
+
+const { foto } = Astro.props;
+---
+
+<div class="lienzo" aria-hidden="true">
+  <Image
+    src={foto}
+    alt=""
+    widths={[800, 1200, 1600, 2400].filter((w) => w <= foto.width)}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <canvas></canvas>
+</div>
+
+<script>
+  const capa = document.querySelector<HTMLElement>('.lienzo')!;
+  const gris = capa.querySelector('img')!;
+  const lienzo = capa.querySelector('canvas')!;
+  const ctx = lienzo.getContext('2d')!;
+
+  // Solo con ratón (o lápiz): en pantallas táctiles no hay "pasar por encima".
+  const conRaton = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  let color: HTMLImageElement | null = null; // la foto en color, ya cargada
+  const mascara = document.createElement('canvas'); // dónde se ha pintado, medido sobre la foto
+  const mctx = mascara.getContext('2d')!;
+  let escala = 1; // píxeles de pantalla por píxel de la máscara
+  let dx = 0;
+  let dy = 0; // dónde empieza la foto en pantalla (recorte tipo "cover")
+  let pendiente = false;
+  let ultimo: { x: number; y: number } | null = null;
+
+  // La misma cuenta que hace object-fit: cover con la foto en gris, para que
+  // el color caiga exactamente encima.
+  function medir() {
+    const ppp = Math.min(devicePixelRatio || 1, 2);
+    const w = innerWidth;
+    const h = innerHeight;
+    lienzo.width = Math.round(w * ppp);
+    lienzo.height = Math.round(h * ppp);
+    ctx.setTransform(ppp, 0, 0, ppp, 0, 0);
+    escala = Math.max(w / mascara.width, h / mascara.height);
+    dx = (w - mascara.width * escala) / 2;
+    dy = (h - mascara.height * escala) / 2;
+    redibujar();
+  }
+
+  function redibujar() {
+    if (pendiente || !color) return;
+    pendiente = true;
+    requestAnimationFrame(() => {
+      pendiente = false;
+      const w = mascara.width * escala;
+      const h = mascara.height * escala;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      ctx.drawImage(color!, dx, dy, w, h);
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(mascara, dx, dy, w, h);
+    });
+  }
+
+  // Una pincelada: varias manchas suaves alrededor del punto, con algo de
+  // azar, para que el borde no sea un círculo perfecto sino de brocha.
+  function pincelada(x: number, y: number) {
+    const radio = Math.min(Math.max(innerWidth * 0.045, 36), 80) / escala;
+    const mx = (x - dx) / escala;
+    const my = (y - dy) / escala;
+    for (let i = 0; i < 5; i++) {
+      const r = radio * (0.45 + Math.random() * 0.55);
+      const cx = mx + (Math.random() - 0.5) * radio * 0.9;
+      const cy = my + (Math.random() - 0.5) * radio * 0.9;
+      const g = mctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, 'rgba(0,0,0,0.22)');
+      g.addColorStop(0.6, 'rgba(0,0,0,0.14)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      mctx.fillStyle = g;
+      mctx.beginPath();
+      mctx.arc(cx, cy, r, 0, Math.PI * 2);
+      mctx.fill();
+    }
+  }
+
+  function pintar(e: PointerEvent) {
+    if (!color) return;
+    const p = { x: e.clientX, y: e.clientY };
+    // Rellenar el hueco entre dos movimientos para que el trazo sea continuo.
+    const paso = Math.max(innerWidth * 0.012, 8);
+    if (ultimo) {
+      const d = Math.hypot(p.x - ultimo.x, p.y - ultimo.y);
+      const n = Math.min(Math.ceil(d / paso), 60);
+      for (let i = 1; i <= n; i++) {
+        pincelada(ultimo.x + ((p.x - ultimo.x) * i) / n, ultimo.y + ((p.y - ultimo.y) * i) / n);
+      }
+    } else {
+      pincelada(p.x, p.y);
+    }
+    ultimo = p;
+    redibujar();
+  }
+
+  function preparar() {
+    // La foto en color es la misma que ya ha descargado el navegador para la
+    // capa gris (currentSrc), así que no se descarga dos veces.
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => {
+      color = img;
+      // La máscara no necesita tanto detalle como la foto: con 1000 px basta.
+      const red = Math.min(1, 1000 / Math.max(img.naturalWidth, img.naturalHeight));
+      mascara.width = Math.round(img.naturalWidth * red);
+      mascara.height = Math.round(img.naturalHeight * red);
+      medir();
+    };
+    img.src = gris.currentSrc || gris.src;
+  }
+
+  if (conRaton) {
+    if (gris.complete && gris.naturalWidth) preparar();
+    else gris.addEventListener('load', preparar, { once: true });
+    addEventListener('resize', medir);
+    addEventListener('pointermove', pintar, { passive: true });
+    // Al salir de la ventana se levanta el pincel: al volver no se une el trazo.
+    document.addEventListener('pointerleave', () => (ultimo = null));
+    addEventListener('blur', () => (ultimo = null));
+  }
+</script>
+
+<style>
+  .lienzo {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: var(--fondo);
+  }
+
+  img,
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    object-fit: cover;
+    filter: grayscale(1);
+  }
+</style>

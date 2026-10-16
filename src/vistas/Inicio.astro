@@ -1,8 +1,11 @@
 ---
-// Portada. Provisional: de momento solo nombre y acceso a las dos secciones.
-// Guzmán decidirá más adelante qué lleva.
+// Portada: una foto a pantalla completa, en blanco y negro, que se pinta con
+// su color al pasar el ratón. Cabecera arriba y pie abajo, encima de la foto.
+// La foto es provisional (de prueba): Guzmán elegirá la definitiva.
 import Base from '../layouts/Base.astro';
-import { ambas, secciones, urlInicio, urlSeccion, type Idioma } from '../lib/rutas';
+import LienzoPintable from '../components/LienzoPintable.astro';
+import foto from '../assets/inicio/prueba.jpg';
+import { ambas, urlInicio, type Idioma } from '../lib/rutas';
 import { sitio } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
@@ -15,43 +18,18 @@ const t = textos[idioma];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`}>
-  <section class="portada">
-    <h1>{sitio.nombre}</h1>
-    <p>{t.inicioIntro}</p>
-    <ul>
-      <li><a href={urlSeccion('cuadros', idioma)}>{secciones.cuadros.nombre[idioma]} →</a></li>
-      <li><a href={urlSeccion('esculturas', idioma)}>{secciones.esculturas.nombre[idioma]} →</a></li>
-    </ul>
-  </section>
+  <LienzoPintable foto={foto} />
+  <h1 class="oculto">{sitio.nombre} — {t.profesion}</h1>
 </Base>
 
 <style>
-  .portada {
-    min-height: 60svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  h1 {
-    margin: 0 0 0.5rem;
-  }
-
-  p {
-    margin: 0 0 2rem;
-    color: var(--suave);
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 2rem;
-  }
-
-  a {
-    text-decoration: none;
-    font-weight: 400;
+  /* El título existe para buscadores y lectores de pantalla, pero no se ve. */
+  .oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 </style>
