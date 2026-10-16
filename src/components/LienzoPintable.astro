@@ -235,4 +235,17 @@ const { foto } = Astro.props;
     object-fit: cover;
     filter: grayscale(1);
   }
+
+  /* Degradado sutil abajo, para que el copyright (en blanco) se lea sobre
+     cualquier foto. Va encima del color pintado y no estorba al ratón. */
+  .lienzo::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: min(30vh, 220px);
+    background: linear-gradient(to top, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0));
+    pointer-events: none;
+  }
 </style>
