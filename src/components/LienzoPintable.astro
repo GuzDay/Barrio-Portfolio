@@ -101,8 +101,13 @@ const { foto } = Astro.props;
     }
   }
 
+  // Con el dedo, la pintura sale un poco por encima de donde toca, para que
+  // el propio dedo no tape lo que se está pintando.
+  const ENCIMA_DEL_DEDO = 64; // px
+
   function pintar(e: PointerEvent) {
-    trazoHasta({ x: e.clientX, y: e.clientY });
+    const subir = e.pointerType === 'touch' ? ENCIMA_DEL_DEDO : 0;
+    trazoHasta({ x: e.clientX, y: e.clientY - subir });
   }
 
   function trazoHasta(p: { x: number; y: number }) {
