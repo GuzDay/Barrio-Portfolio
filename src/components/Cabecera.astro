@@ -215,15 +215,24 @@ const menu = [
     mix-blend-mode: normal;
   }
 
+  /* En la portada, el texto de las cajitas también en blanco (secciones,
+     idioma, botón del menú y panel del móvil). Solo ahí. */
+  .blanca .caja,
+  .blanca .menu {
+    color: #fff;
+  }
+
   /* ---------- Cajitas de cristal ---------- */
 
-  /* El texto va bajado 2,4 px (8,4 arriba y 3,6 abajo en vez de 6 y 6):
+  /* El texto va bajado 1,4 px (7,4 arriba y 4,6 abajo en vez de 6 y 6):
      Newsreader reserva mucho hueco para las colas de letras como la "g" y,
-     con el relleno igual, las letras quedaban altas. Medido sobre la tinta. */
+     con el relleno igual, las letras quedaban altas. Centrado del todo sobre
+     la tinta (2,4 px) se veía bajo, porque el ojo centra por las minúsculas:
+     se deja 1 px por encima de ese centro (ajuste a ojo de Guzmán). */
   .caja {
     display: flex;
     align-items: center;
-    padding: 8.4px 8px 3.6px;
+    padding: 7.4px 8px 4.6px;
     border-radius: 4px;
     background: rgb(237 237 237 / 0.5);
     -webkit-backdrop-filter: blur(40px);
@@ -386,8 +395,8 @@ const menu = [
       right: calc(var(--lateral) + 2.25rem + 6px);
       height: 2rem;
       align-items: center;
-      /* Bajado 2,8 px para centrar las letras (ver .caja). */
-      padding: 5.6px 10px 0;
+      /* Bajado 1,8 px para centrar las letras a la vista (ver .caja). */
+      padding: 3.6px 10px 0;
     }
     .menu {
       top: 60px;
