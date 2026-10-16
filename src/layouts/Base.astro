@@ -17,10 +17,10 @@ interface Props {
   titulo?: string;
   descripcion?: string;
   activa?: string; // qué entrada del menú se marca
-  cabeceraBlanca?: boolean; // firma y menú en blanco, para ir sobre una foto
+  portada?: boolean; // la portada: cabecera sobre la foto y pie en blanco
 }
 
-const { idioma, alternativas, titulo, descripcion, activa, cabeceraBlanca } = Astro.props;
+const { idioma, alternativas, titulo, descripcion, activa, portada } = Astro.props;
 const t = textos[idioma];
 const tituloCompleto = titulo ? `${titulo} — ${sitio.nombre}` : `${sitio.nombre} — ${t.profesion}`;
 const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
@@ -73,10 +73,10 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
   </head>
   <body>
     <a class="saltar" href="#contenido">{t.saltar}</a>
-    <Cabecera idioma={idioma} alternativas={alternativas} activa={activa} blanca={cabeceraBlanca} />
+    <Cabecera idioma={idioma} alternativas={alternativas} activa={activa} portada={portada} />
     <main id="contenido">
       <slot />
     </main>
-    <Pie blanco={cabeceraBlanca} />
+    <Pie blanco={portada} />
   </body>
 </html>

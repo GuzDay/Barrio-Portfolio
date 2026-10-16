@@ -73,7 +73,7 @@ html:has(.lienzo) {
   /* El gris del cielo de la foto (que empieza en blanco y negro): Safari en
      el móvil tiñe sus barras con el color de fondo de la página, así se
      funden con la foto. El body, transparente, para que no la tape. */
-  background: #dedede;
+  background: #a6a6a6;
 }
 
 html:has(.lienzo) body {

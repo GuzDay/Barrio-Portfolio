@@ -28,10 +28,10 @@ interface Props {
   idioma: Idioma;
   alternativas: Record<Idioma, string>;
   activa?: string;
-  blanca?: boolean; // portada: la firma va blanca del todo, sobre la foto
+  portada?: boolean; // portada: firma negra del todo (sin fusión), sobre la foto
 }
 
-const { idioma, alternativas, activa, blanca } = Astro.props;
+const { idioma, alternativas, activa, portada } = Astro.props;
 const firmaEnLinea = firma.replace('<svg ', '<svg fill="currentColor" ');
 const t = textos[idioma];
 const menu = [
@@ -42,7 +42,7 @@ const menu = [
 ];
 ---
 
-<header class:list={['cabecera', { blanca }]}>
+<header class:list={['cabecera', { portada }]}>
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
 
   <nav id="menu" class="menu" aria-label={t.menu}>
@@ -240,16 +240,12 @@ const menu = [
     width: auto;
   }
 
-  /* En la portada, blanca del todo sobre la foto (sin fusión). */
-  .blanca .marca {
+  /* En la portada, negra del todo sobre la foto (sin fusión): con el cielo
+     gris medio de la foto, la fusión la dejaba gris y se leía mal. El texto
+     de las cajitas ya es negro, como en el resto de páginas. */
+  .portada .marca {
+    color: var(--texto);
     mix-blend-mode: normal;
-  }
-
-  /* En la portada, el texto de las cajitas también en blanco (secciones,
-     idioma, botón del menú y panel del móvil). Solo ahí. */
-  .blanca .caja,
-  .blanca .menu {
-    color: #fff;
   }
 
   /* ---------- Cajitas de cristal ---------- */
@@ -461,9 +457,6 @@ const menu = [
       background: rgb(255 255 255 / 0.2);
       -webkit-backdrop-filter: blur(6px);
       backdrop-filter: blur(6px);
-    }
-    .blanca .menu::before {
-      background: rgb(0 0 0 / 0.15);
     }
     .menu.abierto {
       display: flex;
