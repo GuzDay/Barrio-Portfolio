@@ -75,7 +75,10 @@ const menu = [
 </script>
 
 <style>
+  /* La letra de la cabecera va 2 px por debajo de la del resto de la web
+     (13 px con la base de 15): pedido de Guzmán. Lo de dentro va en em. */
   .cabecera {
+    font-size: calc(1em - 2px);
     padding: 1.1rem var(--lateral);
     display: flex;
     flex-wrap: wrap;
@@ -133,7 +136,7 @@ const menu = [
   .idiomas {
     display: flex;
     gap: 0.6rem;
-    font-size: 0.85em;
+    font-size: 0.827em; /* 10,75 px */
   }
 
   /* Cabecera blanca (portada, sobre la foto). */
@@ -193,7 +196,7 @@ const menu = [
     .menu a {
       display: block;
       padding: 0.6rem 0;
-      font-size: 1.1em;
+      font-size: 1.115em; /* 14,5 px */
     }
   }
 </style>
