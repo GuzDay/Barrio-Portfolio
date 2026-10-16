@@ -48,6 +48,9 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
 
 - **Dos secciones separadas, Cuadros y Esculturas.** Descartó expresamente la
   idea de una sola sección "Artworks" con filtros: le parecía "más cutre".
+  En la web se llaman **Pintura y Escultura** (Painting / Sculpture), por
+  decisión de Guzmán (16-10-2026); las direcciones siguen siendo /cuadros/ y
+  /esculturas/. Las dos usan la misma galería: un cambio vale para las dos.
 - Secciones previstas: Cuadros · Esculturas · Encargos · Acerca de mí y
   Contacto (estas dos juntas en una sola página; lo decidió Guzmán, 16-10-2026).
 - **Cada obra lleva ficha**: título, técnica, medidas, año, precio y un texto

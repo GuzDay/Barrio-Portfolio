@@ -50,8 +50,8 @@ slug:
 
 collections:
   - name: cuadros
-    label: Cuadros
-    label_singular: Cuadro
+    label: Pintura
+    label_singular: Pintura
     folder: src/content/cuadros
     path: '{{slug}}/index'
     slug: '{{titulo}}'
@@ -82,7 +82,7 @@ collections:
       - { name: fotos, label: Fotos, widget: image, multiple: true, hint: 'La primera es la que sale en la galería.' }
 
   - name: esculturas
-    label: Esculturas
+    label: Escultura
     label_singular: Escultura
     folder: src/content/esculturas
     path: '{{slug}}/index'

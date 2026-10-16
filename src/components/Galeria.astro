@@ -1,7 +1,13 @@
 ---
-// Rejilla de obras de una sección. Todas las tarjetas miden lo mismo: la foto
-// se recorta a 4:5 vertical (la obra entera se ve en su propia página).
-// El filtro "Disponibles" esconde las vendidas sin recargar la página.
+// Rejilla de obras de una sección (Pintura y Escultura usan esta misma). Todas
+// las tarjetas miden lo mismo: la foto se recorta a 4:5 vertical (la obra
+// entera se ve en su propia página). El filtro "Disponibles" esconde las
+// vendidas sin recargar la página.
+//
+// Las fotos salen en blanco y negro y se colorean:
+//  - con ratón, al pasar por encima de la tarjeta, que además gana relieve;
+//  - en pantallas táctiles (sin "pasar por encima"), al entrar en pantalla
+//    con el scroll, y vuelven al gris al salir.
 import { Image } from 'astro:assets';
 import { ficha, type Obra } from '../lib/obras';
 import { urlObra, type Idioma, type Seccion } from '../lib/rutas';
@@ -30,7 +36,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     const f = ficha(obra, idioma);
     return (
       <li data-vendida={f.vendida ? '' : undefined}>
-        <a href={urlObra(seccion, obra.id, idioma)}>
+        <a class="tarjeta" href={urlObra(seccion, obra.id, idioma)}>
           <div class="foto">
             <Image
               src={f.fotos[0]}
@@ -40,9 +46,11 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
               loading={i < 4 ? 'eager' : 'lazy'}
             />
           </div>
-          <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
-          <p class="datos">{[f.tecnica, f.medidas].filter(Boolean).join(' · ')}</p>
-          <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+          <div class="pie-tarjeta">
+            <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
+            <p class="datos">{[f.tecnica, f.medidas].filter(Boolean).join(' · ')}</p>
+            <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+          </div>
         </a>
       </li>
     );
@@ -62,6 +70,20 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       const quedan = galeria!.querySelectorAll('li:not([data-vendida])').length;
       vacia!.hidden = !(filtro === 'disponibles' && quedan === 0);
     });
+  }
+
+  // Pantallas táctiles: cada tarjeta se colorea cuando está casi entera en
+  // pantalla y vuelve al gris al salir. Con ratón no hace falta: lo hace el CSS.
+  if (galeria && !matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const vigia = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) e.target.classList.toggle('en-color', e.isIntersecting);
+      },
+      // Solo cuenta la franja central de la pantalla, para que se coloreen
+      // las que se están mirando y no las que apenas asoman por los bordes.
+      { rootMargin: '-20% 0px -20% 0px', threshold: 0.5 },
+    );
+    for (const tarjeta of galeria.querySelectorAll('.tarjeta')) vigia.observe(tarjeta);
   }
 </script>
 
@@ -95,13 +117,13 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     padding: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2rem var(--hueco);
+    gap: 1.5rem var(--hueco);
   }
 
   @media (min-width: 1000px) {
     .galeria {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 2.5rem var(--hueco);
+      gap: 2rem var(--hueco);
     }
   }
 
@@ -109,27 +131,62 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     display: none;
   }
 
-  a {
-    display: block;
+  /* La tarjeta: un bloque algo más claro que el fondo, con relieve (sombra).
+     Ocupa todo el alto de la fila para que las de una fila midan lo mismo. */
+  .tarjeta {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     text-decoration: none;
+    background: #fbfaf8;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.06),
+      0 4px 12px rgb(0 0 0 / 0.06);
+    transition:
+      box-shadow 0.35s ease,
+      transform 0.35s ease;
   }
 
   .foto {
     aspect-ratio: 4 / 5;
     overflow: hidden;
     background: var(--vacio);
-    margin-bottom: 0.6rem;
   }
 
   .foto img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    filter: grayscale(1);
+    transition: filter 0.6s ease;
   }
 
-  a:hover .foto img {
-    transform: scale(1.02);
+  /* Con ratón: al pasar por encima, la foto toma color y la tarjeta se
+     levanta un poco (más sombra y unos píxeles hacia arriba). */
+  @media (hover: hover) and (pointer: fine) {
+    .tarjeta:hover,
+    .tarjeta:focus-visible {
+      transform: translateY(-4px);
+      box-shadow:
+        0 4px 8px rgb(0 0 0 / 0.08),
+        0 18px 36px rgb(0 0 0 / 0.14);
+    }
+    .tarjeta:hover img,
+    .tarjeta:focus-visible img {
+      filter: grayscale(0);
+    }
+  }
+
+  /* Pantallas táctiles: el color llega con el scroll (ver el script). */
+  .tarjeta.en-color img {
+    filter: grayscale(0);
+    transition-duration: 0.9s;
+  }
+
+  .pie-tarjeta {
+    padding: 0.75rem 0.9rem 0.9rem;
   }
 
   p {
@@ -150,8 +207,11 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     font-size: 0.9rem;
   }
 
-  /* En dos columnas de móvil la tarjeta es estrecha: letra algo menor. */
+  /* En dos columnas de móvil la tarjeta es estrecha: letra y relleno menores. */
   @media (max-width: 699px) {
+    .pie-tarjeta {
+      padding: 0.55rem 0.6rem 0.65rem;
+    }
     .titulo {
       font-size: 0.9rem;
     }
@@ -163,5 +223,16 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
 
   li[data-vendida] .precio {
     color: var(--suave);
+  }
+
+  /* Quien pide en su sistema menos movimiento: sin levantar la tarjeta. */
+  @media (prefers-reduced-motion: reduce) {
+    .tarjeta,
+    .foto img {
+      transition: none;
+    }
+    .tarjeta:hover {
+      transform: none;
+    }
   }
 </style>

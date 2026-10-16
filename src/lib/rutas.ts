@@ -8,9 +8,12 @@ export const idiomas: Idioma[] = ['es', 'en'];
 
 export type Seccion = 'cuadros' | 'esculturas';
 
+// El nombre que se lee es "Pintura" y "Escultura" (decisión de Guzmán,
+// 16-10-2026), pero las direcciones siguen siendo /cuadros/ y /esculturas/,
+// las de la web actual de Pablo.
 export const secciones: Record<Seccion, { slug: Record<Idioma, string>; nombre: Record<Idioma, string> }> = {
-  cuadros: { slug: { es: 'cuadros', en: 'paintings' }, nombre: { es: 'Cuadros', en: 'Paintings' } },
-  esculturas: { slug: { es: 'esculturas', en: 'sculptures' }, nombre: { es: 'Esculturas', en: 'Sculptures' } },
+  cuadros: { slug: { es: 'cuadros', en: 'paintings' }, nombre: { es: 'Pintura', en: 'Painting' } },
+  esculturas: { slug: { es: 'esculturas', en: 'sculptures' }, nombre: { es: 'Escultura', en: 'Sculpture' } },
 };
 
 // Inicio de todas las direcciones: "" en pablobarrioarauz.com,
