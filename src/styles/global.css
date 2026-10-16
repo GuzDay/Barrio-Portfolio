@@ -23,6 +23,10 @@
        pago), una grotesca tipo Helvetica, compacta. Comparadas una a una. */
   --serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
   --sans: 'Inter Tight Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Todo lo que va en Newsreader es un "tamaño" más grande que lo demás:
+     el salto de 15 a 16 px, aplicado en proporción (pedido de Guzmán). Para
+     agrandarla o achicarla en toda la web, se toca solo este número. */
+  --serif-escala: 1.0667;
   color-scheme: light;
 }
 
@@ -101,6 +105,14 @@ h3 {
   line-height: 1.2;
 }
 
+h2 {
+  font-size: calc(1.5em * var(--serif-escala));
+}
+
+h3 {
+  font-size: calc(1.17em * var(--serif-escala));
+}
+
 /* La cabecera y el pie van en la serif, fina. */
 .cabecera,
 .pie,
@@ -110,7 +122,7 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(1.6em, 3.75vw, 2.4em);
+  font-size: clamp(calc(1.6em * var(--serif-escala)), calc(3.75vw * var(--serif-escala)), calc(2.4em * var(--serif-escala)));
   margin: 0.5rem 0 1.5rem;
 }
 

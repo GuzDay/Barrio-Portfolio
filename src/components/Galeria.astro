@@ -198,6 +198,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   /* El título de la obra va en la serif, como el resto de títulos. */
   .titulo {
     font-family: var(--serif);
+    font-size: calc(1em * var(--serif-escala));
     font-weight: 400;
   }
 
@@ -217,7 +218,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       padding: 0.55rem 0.6rem 0.65rem;
     }
     .titulo {
-      font-size: 0.9em;
+      font-size: calc(0.9em * var(--serif-escala));
     }
     .datos,
     .pie-tarjeta :global(.estado-tarjeta) {
