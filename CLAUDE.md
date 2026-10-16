@@ -60,8 +60,8 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
 - **Estado de venta**: quiere marcar las obras como vendidas / no disponibles,
   y le interesaba poder filtrar por disponibles.
 - **El precio no se enseña en la web** (decisión de Guzmán, 16-10-2026): en
-  su lugar sale "Disponible" con un punto verde o "Vendida" con un punto
-  negro. El campo de precio sigue en el panel, guardado, por si se quiere.
+  su lugar sale "Disponible" o "Vendida" (sin puntos de color: se probaron y
+  Guzmán los quitó). El campo de precio sigue en el panel, por si se quiere.
 - **Encargos** es un embudo de ventas: 3 o 4 pasos del proceso y un botón de
   contacto. No es una galería más.
 - **Contacto**: prefiere **WhatsApp** antes que correo ("me da más confianza").
