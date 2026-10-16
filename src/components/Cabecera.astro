@@ -33,7 +33,7 @@ const menu = [
 
 <header class="cabecera">
   <a class="marca" href={urlInicio(idioma)}>
-    <img src={conBase('/firma.svg')} alt={sitio.nombre} width="2187" height="825" />
+    <img src={conBase('/firma.svg')} alt={sitio.nombre} width="1841" height="687" />
   </a>
   <button class="abrir" type="button" aria-expanded="false" aria-controls="menu">{t.menu}</button>
   <nav id="menu" class="menu">
@@ -86,7 +86,9 @@ const menu = [
     margin-right: auto;
   }
 
-  /* La firma de Pablo: public/firma.svg, vectorizada de scripts/firma/firma-original.png. */
+  /* La firma de Pablo: public/firma.svg, sacada tal cual de scripts/firma/Firma Barrio.svg
+     (el archivo que pasó Guzmán) sin los datos internos de Adobe y con el recuadro
+     ajustado al borde de la tinta. */
   .marca img {
     height: 56px;
     width: auto;

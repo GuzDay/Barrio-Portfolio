@@ -21,9 +21,11 @@ consulta que hay**: ver más abajo.
   `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
   `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
 - Las obras de color liso son de prueba y se borran antes de publicar.
-- **Firma de Pablo** en la cabecera (`public/firma.svg`), vectorizada con
-  potrace de `scripts/firma/firma-original.png` (coincide en el 98,6 % de la
-  tinta; lo demás son píxeles de borde).
+- **Firma de Pablo** en la cabecera (`public/firma.svg`). Sale del SVG que
+  pasó Guzmán (`scripts/firma/Firma Barrio.svg`) con los trazos intactos: solo
+  se le quitan los datos internos de Adobe y se ajusta el recuadro al borde
+  de la tinta. **No vectorizar la firma por nuestra cuenta**: Guzmán notó la
+  diferencia.
 - Probado y descartado por Guzmán (16-10-2026): una entrada en la portada en la
   que la firma se escribía sola. No le gustó. Está en el historial (commit
   "La firma de Pablo en la cabecera, y en la portada se escribe sola").
