@@ -131,15 +131,51 @@ const menu = [
     color: var(--texto);
   }
 
-  .menu a[aria-current] {
-    text-decoration: underline;
-    text-underline-offset: 0.3em;
-  }
-
   .idiomas {
     display: flex;
     gap: 0.6rem;
-    font-size: 0.827em; /* 10,75 px */
+  }
+
+  /* Ordenador, como en offforum.com: al pasar el ratón, una raya fina crece
+     bajo la palabra de izquierda a derecha (0,5 s, arranca y frena suave) y
+     al quitarlo se recoge hacia la izquierda. La sección en la que se está
+     la tiene siempre puesta. El selector de idioma enseña solo el OTRO
+     idioma ("EN" en la web en castellano), del tamaño del menú. */
+  @media (min-width: 900px) {
+    .menu a,
+    .idiomas a {
+      position: relative;
+    }
+    .menu a::after,
+    .idiomas a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -3px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .menu a:hover::after,
+    .menu a:focus-visible::after,
+    .menu a[aria-current]::after,
+    .idiomas a:hover::after,
+    .idiomas a:focus-visible::after {
+      transform: scaleX(1);
+    }
+    .idiomas a[aria-current] {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu a::after,
+    .idiomas a::after {
+      transition: none;
+    }
   }
 
   /* Cabecera blanca (portada, sobre la foto). */
@@ -266,6 +302,10 @@ const menu = [
       display: block;
       padding: 0.6rem 0;
       font-size: 1.115em; /* 14,5 px */
+    }
+    .menu a[aria-current] {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
     }
   }
 </style>
