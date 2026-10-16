@@ -15,6 +15,14 @@
   /* En pantallas enormes el contenido no pasa de --ancho-max y se centra;
      cabecera, contenido y pie usan este mismo relleno para ir alineados. */
   --lateral: max(var(--margen), calc((100% - var(--ancho-max)) / 2));
+  /* Dos tipografías (16-10-2026):
+     - Newsreader, para títulos, cabecera y pie: la gratuita más parecida a
+       Teodor, la que le gustó a Guzmán de gionatannese.com. Teodor es de pago
+       (Displaay); si un día se compra, se cambia aquí.
+     - Inter Tight, para el resto: la gratuita más parecida a Forma DJR (de
+       pago), una grotesca tipo Helvetica, compacta. Comparadas una a una. */
+  --serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter Tight Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -58,16 +66,13 @@ body {
   flex-direction: column;
   background: var(--fondo);
   color: var(--texto);
-  /* Newsreader: la gratuita más parecida a Teodor, la que le gustó a Guzmán
-     de gionatannese.com (comparadas una a una, 16-10-2026). Teodor es de
-     pago (Displaay); si un día se compra, se cambia solo esta línea. */
-  font-family: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  font-family: var(--sans);
   font-optical-sizing: auto;
   /* Tamaño de letra base de toda la web (15 px, como en la de Blanca). Todos
      los demás tamaños van en "em", proporcionales a este: cambiando solo
      esta línea, toda la letra crece o encoge a la vez. */
   font-size: 0.9375rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.5;
 }
 
@@ -89,8 +94,17 @@ a {
 h1,
 h2,
 h3 {
+  font-family: var(--serif);
   font-weight: 400;
   line-height: 1.2;
+}
+
+/* La cabecera y el pie van en la serif, fina. */
+.cabecera,
+.pie,
+.serif {
+  font-family: var(--serif);
+  font-weight: 300;
 }
 
 h1 {
