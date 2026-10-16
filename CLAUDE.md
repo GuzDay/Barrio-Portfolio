@@ -21,7 +21,8 @@ consulta que hay**: ver más abajo.
   `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
   `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
 - Las obras de color liso son de prueba y se borran antes de publicar.
-- **Firma de Pablo** en la cabecera (`public/firma.svg`). Sale del SVG que
+- **Firma de Pablo** en la cabecera (`src/assets/firma.svg`, metida en la
+  página para que tome el color del texto). Sale del SVG que
   pasó Guzmán (`scripts/firma/Firma Barrio.svg`) con los trazos intactos: solo
   se le quitan los datos internos de Adobe y se ajusta el recuadro al borde
   de la tinta. **No vectorizar la firma por nuestra cuenta**: Guzmán notó la

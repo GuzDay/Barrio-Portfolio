@@ -2,7 +2,6 @@
 // Cabecera: nombre, menú e idioma. En el móvil el menú se pliega tras un botón;
 // el cambio de idioma se queda siempre a la vista.
 import {
-  conBase,
   secciones,
   urlAcercaDe,
   urlContacto,
@@ -12,6 +11,7 @@ import {
   type Idioma,
 } from '../lib/rutas';
 import { sitio } from '../lib/sitio';
+import firma from '../assets/firma.svg?raw';
 import { textos } from '../lib/textos';
 
 interface Props {
@@ -22,6 +22,10 @@ interface Props {
 }
 
 const { idioma, alternativas, activa, blanca } = Astro.props;
+// La firma va metida en la página (no como <img>) para que tome el color del
+// texto: negra normalmente y blanca en la portada. Safari no aplica filtros de
+// color a una imagen SVG, así que no vale con pintarla de blanco por CSS.
+const firmaEnLinea = firma.replace('<svg ', '<svg fill="currentColor" ');
 const t = textos[idioma];
 const menu = [
   { clave: 'cuadros', texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
@@ -33,9 +37,7 @@ const menu = [
 ---
 
 <header class:list={['cabecera', { blanca }]}>
-  <a class="marca" href={urlInicio(idioma)}>
-    <img src={conBase('/firma.svg')} alt={sitio.nombre} width="1841" height="687" />
-  </a>
+  <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
   <button class="abrir" type="button" aria-expanded="false" aria-controls="menu">{t.menu}</button>
   <nav id="menu" class="menu">
     <ul>
@@ -83,20 +85,23 @@ const menu = [
     gap: 0.5rem 1.5rem;
   }
 
+  /* La firma de Pablo: src/assets/firma.svg, sacada tal cual de scripts/firma/Firma Barrio.svg
+     (el archivo que pasó Guzmán) sin los datos internos de Adobe y con el recuadro
+     ajustado al borde de la tinta. Toma el color del texto. */
   .marca {
     margin-right: auto;
+    color: var(--texto);
   }
 
-  /* La firma de Pablo: public/firma.svg, sacada tal cual de scripts/firma/Firma Barrio.svg
-     (el archivo que pasó Guzmán) sin los datos internos de Adobe y con el recuadro
-     ajustado al borde de la tinta. */
-  .marca img {
+  .marca :global(svg) {
+    display: block;
+    aspect-ratio: 1840.62 / 687.38;
     height: 56px;
     width: auto;
   }
 
   @media (max-width: 899px) {
-    .marca img {
+    .marca :global(svg) {
       height: 44px;
     }
   }
@@ -133,10 +138,9 @@ const menu = [
     font-size: 0.85rem;
   }
 
-  /* Cabecera blanca (portada, sobre la foto). La firma es negra en el SVG:
-     el filtro la vuelve blanca sin necesitar otro archivo. */
-  .blanca .marca img {
-    filter: brightness(0) invert(1);
+  /* Cabecera blanca (portada, sobre la foto). */
+  .blanca .marca {
+    color: #fff;
   }
 
   .blanca .menu a,

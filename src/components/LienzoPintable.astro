@@ -3,6 +3,10 @@
 // va "pintando" con su color real al pasar el ratón por encima, como si el
 // ratón fuera un pincel. Lo pintado se queda.
 //
+// En el móvil se pinta arrastrando el dedo (la portada ocupa una sola
+// pantalla, así que no hay scroll al que estorbar). Como ahí nadie sabría que
+// se puede, al entrar la foto se pinta sola una pincelada a modo de invitación.
+//
 // Cómo funciona: debajo, la foto en gris (CSS). Encima, un <canvas> donde se
 // dibuja la foto en color, pero solo donde ha pasado el pincel. Lo pintado se
 // guarda en una máscara medida sobre la foto (no sobre la pantalla), así que
@@ -34,7 +38,7 @@ const { foto } = Astro.props;
   const lienzo = capa.querySelector('canvas')!;
   const ctx = lienzo.getContext('2d')!;
 
-  // Solo con ratón (o lápiz): en pantallas táctiles no hay "pasar por encima".
+  // Con ratón se pinta al pasar por encima; en pantallas táctiles, con el dedo.
   const conRaton = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   let color: HTMLImageElement | null = null; // la foto en color, ya cargada
@@ -98,8 +102,11 @@ const { foto } = Astro.props;
   }
 
   function pintar(e: PointerEvent) {
+    trazoHasta({ x: e.clientX, y: e.clientY });
+  }
+
+  function trazoHasta(p: { x: number; y: number }) {
     if (!color) return;
-    const p = { x: e.clientX, y: e.clientY };
     // Rellenar el hueco entre dos movimientos para que el trazo sea continuo.
     const paso = Math.max(innerWidth * 0.012, 8);
     if (ultimo) {
@@ -127,20 +134,65 @@ const { foto } = Astro.props;
       mascara.width = Math.round(img.naturalWidth * red);
       mascara.height = Math.round(img.naturalHeight * red);
       medir();
+      if (!conRaton) setTimeout(invitacion, 500);
     };
     img.src = gris.currentSrc || gris.src;
   }
 
+  // Móvil: una pincelada que cruza la figura sola, de izquierda a derecha y
+  // ondulando, para enseñar que la foto se puede pintar. Si el dedo toca la
+  // pantalla mientras tanto, se para y manda el dedo.
+  let invitando = false;
+  function invitacion() {
+    invitando = true;
+    ultimo = null;
+    const dur = 1500;
+    const t0 = performance.now();
+    const paso = (ahora: number) => {
+      if (!invitando) return;
+      const t = Math.min((ahora - t0) / dur, 1);
+      const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2; // suave al empezar y al acabar
+      trazoHasta({
+        x: innerWidth * (0.12 + 0.76 * e),
+        y: innerHeight * (0.5 + 0.12 * Math.sin(e * Math.PI * 2.2)),
+      });
+      if (t < 1) requestAnimationFrame(paso);
+      else (invitando = false), (ultimo = null);
+    };
+    requestAnimationFrame(paso);
+  }
+
+  if (gris.complete && gris.naturalWidth) preparar();
+  else gris.addEventListener('load', preparar, { once: true });
+  addEventListener('resize', medir);
+
   if (conRaton) {
-    if (gris.complete && gris.naturalWidth) preparar();
-    else gris.addEventListener('load', preparar, { once: true });
-    addEventListener('resize', medir);
     addEventListener('pointermove', pintar, { passive: true });
     // Al salir de la ventana se levanta el pincel: al volver no se une el trazo.
     document.addEventListener('pointerleave', () => (ultimo = null));
     addEventListener('blur', () => (ultimo = null));
+  } else {
+    // Que arrastrar el dedo pinte en vez de mover o seleccionar (se deja
+    // pellizcar para ampliar). Solo en esta página.
+    document.documentElement.classList.add('pintando-con-dedo');
+    addEventListener('pointerdown', (e) => {
+      invitando = false;
+      ultimo = null;
+      pintar(e);
+    });
+    addEventListener('pointermove', (e) => e.buttons && pintar(e), { passive: true });
+    for (const fin of ['pointerup', 'pointercancel']) addEventListener(fin, () => (ultimo = null));
   }
 </script>
+
+<style is:global>
+  html.pintando-con-dedo {
+    touch-action: pinch-zoom;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+</style>
 
 <style>
   .lienzo {
