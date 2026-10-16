@@ -36,7 +36,9 @@ const menu = [
 
 <header class:list={['cabecera', { blanca }]}>
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
-  <button class="abrir" type="button" aria-expanded="false" aria-controls="menu">{t.menu}</button>
+  <button class="abrir" type="button" aria-expanded="false" aria-controls="menu" aria-label={t.menu} data-abrir={t.menu} data-cerrar={t.cerrar}>
+    <span class="icono" aria-hidden="true"></span>
+  </button>
   <nav id="menu" class="menu">
     <ul>
       {menu.map(({ clave, texto, url }) => (
@@ -64,13 +66,14 @@ const menu = [
 
   // Botón del menú en el móvil.
   const boton = document.querySelector<HTMLButtonElement>('.cabecera .abrir')!;
-  boton.addEventListener('click', () => {
-    const abierto = boton.getAttribute('aria-expanded') === 'true';
-    boton.setAttribute('aria-expanded', String(!abierto));
-  });
+  const abrir = (si: boolean) => {
+    boton.setAttribute('aria-expanded', String(si));
+    boton.setAttribute('aria-label', (si ? boton.dataset.cerrar : boton.dataset.abrir)!);
+  };
+  boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
   // Al pulsar una entrada del menú en el móvil, el menú se cierra.
   for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
-    enlace.addEventListener('click', () => boton.setAttribute('aria-expanded', 'false'));
+    enlace.addEventListener('click', () => abrir(false));
   }
 </script>
 
@@ -157,28 +160,94 @@ const menu = [
     color: #fff;
   }
 
+  /* Botón del menú en el móvil: tres rayas finas que, abierto, se vuelven
+     una equis. Medidas copiadas de la web de Blanca (20 px de ancho, rayas
+     de 1 px separadas 6 px). El botón es más grande que el dibujo para que
+     sea fácil de tocar; el margen negativo lo deja alineado con el borde. */
   .abrir {
     display: none;
-    font: inherit;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -0.9rem calc(var(--margen) * -0.4) -0.9rem 0;
+    padding: 0;
     background: none;
     border: 0;
-    padding: 0.25rem 0;
     color: var(--texto);
     cursor: pointer;
   }
 
-  /* Móvil: nombre, idioma y botón de menú en una línea; el menú se despliega
+  .icono,
+  .icono::before,
+  .icono::after {
+    width: 20px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .icono {
+    position: relative;
+    transition: background-color 0.2s ease;
+  }
+
+  .icono::before,
+  .icono::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    transition: transform 0.25s ease;
+  }
+
+  .icono::before {
+    top: -6px;
+  }
+
+  .icono::after {
+    top: 6px;
+  }
+
+  .abrir[aria-expanded='true'] .icono {
+    background-color: transparent;
+  }
+
+  .abrir[aria-expanded='true'] .icono::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .abrir[aria-expanded='true'] .icono::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Móvil: firma, idioma y botón de menú en una línea; el menú se despliega
      debajo, a todo el ancho. */
   @media (max-width: 899px) {
     .cabecera {
       padding-block: 0.9rem;
+      gap: 0.5rem 0.6rem;
     }
     .abrir {
-      display: block;
+      display: flex;
       order: 3;
     }
+    /* Idiomas como en la web de Blanca: pequeños, algo espaciados, y el que
+       no está activo atenuado. */
     .idiomas {
       order: 2;
+      gap: 0.3rem;
+      margin-right: 0.35rem;
+      font-size: 0.846em; /* 11 px */
+    }
+    .idiomas a {
+      padding: 0.4rem 0.15rem; /* zona de toque, sin agrandar el texto */
+      letter-spacing: 0.04em;
+      color: var(--texto);
+    }
+    .idiomas a:not([aria-current]) {
+      opacity: 0.45;
+    }
+    .blanca .idiomas a {
+      color: #fff;
     }
     .menu {
       order: 4;
