@@ -1,3 +1,7 @@
+lang:
+  - es
+  - en
+order: 4
 titulo: Oblea
 tecnica: Técnica mixta sobre tabla
 texto: Ficha de prueba con foto de color liso. Se borrará.
@@ -7,7 +11,7 @@ precio: 800
 estado: disponible
 fotos:
   - oblea-1.jpg
-order: 5
 en:
+  order: 4
   tecnica: Mixed media on board
   texto: Test entry with a plain colour photo. Will be deleted.

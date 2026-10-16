@@ -1,3 +1,7 @@
+lang:
+  - es
+  - en
+order: 2
 titulo: Mar y Tierra
 tecnica: Óleo sobre lienzo
 texto: Ficha de prueba con foto de color liso. Se borrará.
@@ -7,7 +11,7 @@ precio: 1500
 estado: disponible
 fotos:
   - mar-y-tierra-1.jpg
-order: 3
 en:
+  order: 2
   tecnica: Oil on canvas
   texto: Test entry with a plain colour photo. Will be deleted.

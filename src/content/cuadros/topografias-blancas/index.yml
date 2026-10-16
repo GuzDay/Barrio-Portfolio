@@ -1,3 +1,7 @@
+lang:
+  - es
+  - en
+order: 5
 titulo: Topografías blancas
 tecnica: Técnica mixta sobre lienzo
 texto: Ficha de prueba con foto de color liso. Se borrará.
@@ -7,7 +11,7 @@ precio: 950
 estado: disponible
 fotos:
   - topografias-blancas-1.jpg
-order: 6
 en:
+  order: 5
   tecnica: Mixed media on canvas
   texto: Test entry with a plain colour photo. Will be deleted.
