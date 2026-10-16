@@ -20,7 +20,7 @@ const { foto } = Astro.props;
   <Image
     src={foto}
     alt=""
-    widths={[800, 1200, 1600, 2400].filter((w) => w <= foto.width)}
+    widths={[800, 1200, 1600, 2400, 3200].filter((w) => w <= foto.width)}
     sizes="100vw"
     loading="eager"
     fetchpriority="high"
