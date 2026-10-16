@@ -1,0 +1,127 @@
+# Portfolio de Pablo Barrio Araúz
+
+Web de un artista que hace **pintura y escultura**. La monta Guzmán, que no es
+programador pero se maneja: explícale las cosas en castellano, sin jerga, y
+dile siempre qué comprobaste y cómo. Si algo no se verificó, dilo.
+
+Es la segunda web de este tipo. La primera es la de Blanca G. Tarrío, una
+fotógrafa, y está terminada y publicada. **Esa web es la mejor fuente de
+consulta que hay**: ver más abajo.
+
+## Qué está hecho
+
+- Repositorio `GuzDay/Barrio-Portfolio`, público, con GitHub Pages activado
+  (Source: GitHub Actions).
+- Proyecto Astro creado de cero, `.github/workflows/publicar.yml` publicando
+  con cada push a `main`. Primer despliegue verificado: 80 s.
+- Página de inicio **provisional** (`src/pages/index.astro`), con `noindex`.
+  Hay que sustituirla entera.
+
+## Dónde está cada cosa
+
+| | |
+|---|---|
+| Código | `~/Documents/GitHub/Barrio Portfolio` (esta carpeta) |
+| Contenido: fotos y fichas | `~/Documents/GÜZDAY/00 Barrio/Portfolio Barrio` |
+| Web provisional | https://guzday.github.io/Barrio-Portfolio/ |
+| Dominio | `pablobarrioarauz.com`, **apuntando todavía a Squarespace** |
+
+**El dominio no se toca hasta que la web esté lista**, para que la web actual
+de Pablo siga funcionando sin un minuto de corte. Qué cambiar ese día está
+apuntado en `astro.config.mjs`. Avisar de no cancelar Squarespace antes.
+
+## Decisiones ya tomadas (son de Pablo, no se cambian sin preguntarle)
+
+- **Dos secciones separadas, Cuadros y Esculturas.** Descartó expresamente la
+  idea de una sola sección "Artworks" con filtros: le parecía "más cutre".
+- Secciones previstas: Cuadros · Esculturas · Encargos · Acerca de mí · Contacto.
+- **Cada obra lleva ficha**: título, técnica, medidas, año, precio y un texto
+  breve. Esto es lo contrario que en la web de Blanca, donde no se quería
+  ningún texto. No copiar aquel criterio.
+- **Estado de venta**: quiere marcar las obras como vendidas / no disponibles,
+  y le interesaba poder filtrar por disponibles.
+- **Encargos** es un embudo de ventas: 3 o 4 pasos del proceso y un botón de
+  contacto. No es una galería más.
+- **Contacto**: prefiere **WhatsApp** antes que correo ("me da más confianza").
+  Sus datos: pablobarrioke@gmail.com · @pablobarrioarauz · 609 301 845.
+- Solo **castellano**. Su web actual no tiene selector de idioma.
+- Pendiente de decidir con él: si el **precio** se enseña en público o se pone
+  "consultar precio".
+
+## Cómo se organiza el contenido
+
+Una carpeta por obra. El número del nombre manda el orden.
+
+```
+Portfolio Barrio/
+├─ Cuadros/
+│   └─ 01 Rojo/
+│       ├─ obra.txt
+│       └─ (fotos)
+└─ Esculturas/
+    └─ 01 Interfaz mar-aire/
+```
+
+`obra.txt`, un campo por línea; los vacíos no salen en la web:
+
+```
+titulo: Rojo
+tecnica: Óleo sobre lienzo
+medidas: 130 x 130 cm
+anio: 2024
+precio: 1200
+estado: disponible        (o: vendido)
+texto: Una o dos frases. Puede quedarse vacío.
+```
+
+Guzmán fotografía y edita las obras en `00 Barrio/Cuadros PRO/…`, con
+subcarpetas `Brutos` y `Done`. Eso es su flujo de edición y **no** es la
+carpeta de la web.
+
+## La web de Blanca: qué mirar y qué no
+
+Está en `~/Documents/GitHub/Portfolio Blanquit/Blanca Portfolio`.
+Guzmán decidió **empezar el diseño de cero** para Barrio, así que no se copian
+ni la estética ni la estructura. Pero lo que no se ve sí conviene reutilizarlo,
+porque costó semanas de tropiezos:
+
+- `scripts/actualizar.mjs` — un doble clic que copia la carpeta de fotos a la
+  web, optimiza, detecta qué cambió y publica. Lo más valioso del proyecto.
+- `src/lib/galeria.ts` — maquetación automática de la galería.
+- `src/components/Visor.astro` — el visor a pantalla completa.
+- `astro.config.mjs` — borra al construir las copias de los originales que
+  Astro deja sin que las pida nadie (eran 300 MB).
+- Su `README.md` — las convenciones del día a día.
+- **Sus 108 commits explican el porqué de cada decisión.** `git log` ahí es
+  documentación de verdad, no un registro de cambios.
+
+### Trampas que ya costaron caro (no volver a pisarlas)
+
+- **Renombrar un archivo no cambia su fecha.** Si se decide qué rehacer
+  comparando fechas, una reordenación de carpeta pasa desapercibida y la web se
+  queda con el orden viejo sin avisar. Hay que apuntar de qué archivo salió
+  cada cosa, con tamaño y fecha.
+- **La caché de imágenes de Astro miente** si se cambian parámetros de calidad:
+  da builds rápidos con archivos viejos. Al medir tamaños o calidad, borrar
+  `node_modules/.astro` antes.
+- **`naturalWidth` no es el tamaño del archivo** cuando la imagen viene de un
+  `srcset` con descriptores `w`: el navegador lo corrige por la densidad de
+  pantalla. Para saber qué se descargó hay que mirar `currentSrc`.
+- **Una misma calidad para todas las fotos es un mal reparto.** Lo que funciona
+  es buscar foto a foto la calidad mínima que aún se ve bien.
+- **Las capturas de un elemento con Playwright esperan a que se estabilice**, y
+  eso tapa justo los fallos de carga que se quieren medir. Capturar la ventana
+  entera y recortar por coordenadas.
+- **`mix-blend-mode: difference`** depende de lo que haya detrás y se comporta
+  distinto en Safari. Se abandonó.
+- Probado y descartado por Guzmán: efecto de gota de agua, vídeos reproducidos
+  al revés al terminar, galería de dos columnas en móvil, AVIF (comprime mejor
+  pero multiplica por siete el tiempo de publicación).
+
+## Cómo se trabaja aquí
+
+- Cada cambio se publica y **se verifica contra la web publicada**, no contra
+  la copia local. El despliegue tarda entre 90 s y 2 min.
+- Los mensajes de commit se escriben en castellano y explican **por qué**, no
+  solo qué. Incluyen los números medidos cuando los hay.
+- Antes de cambiar algo visual, medirlo. Después, volver a medirlo.
