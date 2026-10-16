@@ -68,8 +68,11 @@ const { foto } = Astro.props;
   // el color caiga exactamente encima.
   function medir() {
     const ppp = Math.min(devicePixelRatio || 1, 2);
-    const w = innerWidth;
-    const h = innerHeight;
+    // El tamaño de la capa (no el de la ventana): en el móvil la capa es más
+    // alta que el hueco visible, para llegar debajo de las barras de Safari.
+    const caja = capa.getBoundingClientRect();
+    const w = caja.width;
+    const h = caja.height;
     lienzo.width = Math.round(w * ppp);
     lienzo.height = Math.round(h * ppp);
     ctx.setTransform(ppp, 0, 0, ppp, 0, 0);
@@ -87,7 +90,7 @@ const { foto } = Astro.props;
       const w = mascara.width * escala;
       const h = mascara.height * escala;
       ctx.globalCompositeOperation = 'source-over';
-      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      ctx.clearRect(0, 0, lienzo.width, lienzo.height);
       ctx.drawImage(color!, dx, dy, w, h);
       ctx.globalCompositeOperation = 'destination-in';
       ctx.drawImage(mascara, dx, dy, w, h);
@@ -215,9 +218,16 @@ const { foto } = Astro.props;
 </style>
 
 <style>
+  /* Alto "grande" de pantalla (100lvh): el que hay con las barras de Safari
+     escondidas, para que en el móvil la foto llegue hasta los bordes del
+     teléfono y no se quede en el hueco entre las barras. */
   .lienzo {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    height: 100lvh;
     z-index: -1;
     overflow: hidden;
     background: var(--fondo);

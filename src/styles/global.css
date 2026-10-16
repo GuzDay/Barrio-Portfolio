@@ -70,6 +70,14 @@ html {
 /* Excepto en la portada (la de la foto que se pinta): ver LienzoPintable. */
 html:has(.lienzo) {
   scrollbar-gutter: auto;
+  /* El gris del cielo de la foto (que empieza en blanco y negro): Safari en
+     el móvil tiñe sus barras con el color de fondo de la página, así se
+     funden con la foto. El body, transparente, para que no la tape. */
+  background: #dedede;
+}
+
+html:has(.lienzo) body {
+  background: transparent;
 }
 
 html:has(.lienzo) .pie {

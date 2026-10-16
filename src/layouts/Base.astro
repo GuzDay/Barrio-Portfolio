@@ -30,7 +30,7 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
 <html lang={idioma}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     {/* Si el navegador de quien entra no está en español, se le lleva a la
         versión inglesa de ESTA misma página. Va lo primero para que no llegue
         a verse un parpadeo en español. Solo ocurre la primera vez: en cuanto
