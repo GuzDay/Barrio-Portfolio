@@ -447,11 +447,22 @@ const menu = [
       align-items: center;
       justify-content: center;
       gap: 10px;
+    }
+    /* El desenfoque del fondo va en una capa aparte, detrás de las cajitas, y
+       no en el propio menú: si lo llevara el menú, las cajitas de dentro solo
+       "verían" el fondo transparente del menú y su propio desenfoque no se
+       notaría. Así cada cajita vuelve a desenfocar lo ya desenfocado: doble
+       desenfoque, y el texto se lee mejor (pedido de Guzmán). */
+    .menu::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
       background: rgb(255 255 255 / 0.2);
       -webkit-backdrop-filter: blur(6px);
       backdrop-filter: blur(6px);
     }
-    .blanca .menu {
+    .blanca .menu::before {
       background: rgb(0 0 0 / 0.15);
     }
     .menu.abierto {
@@ -490,7 +501,10 @@ const menu = [
     }
     .menu.abierto li,
     .menu.abierto .cerrar {
-      animation: entrar-caja 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+      /* "backwards" y no "both": al acabar, la animación se suelta. Si se
+         quedara enganchada (con su opacidad), cortaría el desenfoque de la
+         cajita igual que lo hacía el menú. */
+      animation: entrar-caja 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
     }
     .menu.abierto li:nth-child(2) {
       animation-delay: 0.04s;
