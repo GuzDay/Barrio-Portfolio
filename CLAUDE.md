@@ -41,6 +41,8 @@ consulta que hay**: ver más abajo.
   Inter Tight para el resto. Son las gratuitas más parecidas a las que le
   gustan a Guzmán, Teodor y Forma DJR, que son de pago. Están en
   `--serif` / `--sans` de `global.css`.
+- Probado y descartado por Guzmán (16-10-2026): relieve (luz arriba a la
+  izquierda) en las cajitas del menú del móvil.
 - Probado y descartado por Guzmán (16-10-2026): una entrada en la portada en la
   que la firma se escribía sola. No le gustó. Está en el historial (commit
   "La firma de Pablo en la cabecera, y en la portada se escribe sola").
