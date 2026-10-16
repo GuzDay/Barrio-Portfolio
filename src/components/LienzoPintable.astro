@@ -109,26 +109,15 @@ const vertical = fotoVertical
     });
   }
 
-  // Una pincelada: varias manchas suaves alrededor del punto, con algo de
-  // azar, para que el borde no sea un círculo perfecto sino de brocha.
+  // Una pincelada: un círculo duro, de borde nítido y color pleno
+  // (pedido de Guzmán; antes eran manchas difuminadas).
   function pincelada(x: number, y: number) {
     // En el móvil, el pincel algo más fino (30 px de radio en vez de 36).
     const radio = Math.min(Math.max(innerWidth * 0.045, conRaton ? 36 : 30), 80) / escala;
-    const mx = (x - dx) / escala;
-    const my = (y - dy) / escala;
-    for (let i = 0; i < 5; i++) {
-      const r = radio * (0.45 + Math.random() * 0.55);
-      const cx = mx + (Math.random() - 0.5) * radio * 0.9;
-      const cy = my + (Math.random() - 0.5) * radio * 0.9;
-      const g = mctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      g.addColorStop(0, 'rgba(0,0,0,0.22)');
-      g.addColorStop(0.6, 'rgba(0,0,0,0.14)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      mctx.fillStyle = g;
-      mctx.beginPath();
-      mctx.arc(cx, cy, r, 0, Math.PI * 2);
-      mctx.fill();
-    }
+    mctx.fillStyle = '#000';
+    mctx.beginPath();
+    mctx.arc((x - dx) / escala, (y - dy) / escala, radio, 0, Math.PI * 2);
+    mctx.fill();
   }
 
   // Con el dedo, la pintura sale un poco por encima de donde toca, para que
@@ -164,8 +153,9 @@ const vertical = fotoVertical
     img.decoding = 'async';
     img.onload = () => {
       color = img;
-      // La máscara no necesita tanto detalle como la foto: con 1000 px basta.
-      const red = Math.min(1, 1000 / Math.max(img.naturalWidth, img.naturalHeight));
+      // La máscara a 2000 px como mucho: con el pincel duro, una máscara más
+      // pequeña se estiraría y el borde del círculo saldría borroso.
+      const red = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight));
       mascara.width = Math.round(img.naturalWidth * red);
       mascara.height = Math.round(img.naturalHeight * red);
       medir();
