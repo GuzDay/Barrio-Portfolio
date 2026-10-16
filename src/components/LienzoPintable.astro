@@ -112,8 +112,9 @@ const vertical = fotoVertical
   // Una pincelada: un círculo duro, de borde nítido y color pleno
   // (pedido de Guzmán; antes eran manchas difuminadas).
   function pincelada(x: number, y: number) {
-    // En el móvil, el pincel algo más fino (30 px de radio en vez de 36).
-    const radio = Math.min(Math.max(innerWidth * 0.045, conRaton ? 36 : 30), 80) / escala;
+    // Radio: en ordenador crece con la pantalla (50 px a 1440 de ancho; un
+    // poco más pequeño desde el 16-10-2026, antes 65); en el móvil, 30 px.
+    const radio = (conRaton ? Math.min(Math.max(innerWidth * 0.035, 30), 64) : 30) / escala;
     mctx.fillStyle = '#000';
     mctx.beginPath();
     mctx.arc((x - dx) / escala, (y - dy) / escala, radio, 0, Math.PI * 2);
