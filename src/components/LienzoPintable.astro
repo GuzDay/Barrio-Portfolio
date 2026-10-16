@@ -11,24 +11,36 @@
 // dibuja la foto en color, pero solo donde ha pasado el pincel. Lo pintado se
 // guarda en una máscara medida sobre la foto (no sobre la pantalla), así que
 // al cambiar el tamaño de la ventana no se descoloca.
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 
 interface Props {
   foto: ImageMetadata;
+  // Otra foto para pantallas en vertical (el móvil), donde la horizontal se
+  // recortaba mucho por los lados. El navegador baja solo la que le toca.
+  fotoVertical?: ImageMetadata;
 }
 
-const { foto } = Astro.props;
+const { foto, fotoVertical } = Astro.props;
+const anchos = (f: ImageMetadata) => [600, 900, 1200, 1600, 2400, 3200].filter((w) => w <= f.width);
+const vertical = fotoVertical
+  ? (await Promise.all(anchos(fotoVertical).map((w) => getImage({ src: fotoVertical, width: w, format: 'webp' }))))
+      .map((r, i) => `${r.src} ${anchos(fotoVertical)[i]}w`)
+      .join(', ')
+  : undefined;
 ---
 
 <div class="lienzo" aria-hidden="true">
-  <Image
-    src={foto}
-    alt=""
-    widths={[800, 1200, 1600, 2400, 3200].filter((w) => w <= foto.width)}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-  />
+  <picture>
+    {vertical && <source media="(orientation: portrait)" srcset={vertical} sizes="100vw" type="image/webp" />}
+    <Image
+      src={foto}
+      alt=""
+      widths={[800, 1200, 1600, 2400, 3200].filter((w) => w <= foto.width)}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </picture>
   <canvas></canvas>
 </div>
 <script is:inline>
@@ -186,7 +198,9 @@ const { foto } = Astro.props;
   }
 
   if (gris.complete && gris.naturalWidth) preparar();
-  else gris.addEventListener('load', preparar, { once: true });
+  // También cada vez que cambia la foto (al girar el móvil se pasa de la
+  // vertical a la horizontal): la versión en color tiene que ser la misma.
+  gris.addEventListener('load', preparar);
   addEventListener('resize', medir);
 
   if (conRaton) {
