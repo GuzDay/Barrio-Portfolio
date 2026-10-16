@@ -137,6 +137,11 @@ porque costó semanas de tropiezos:
 - **Las capturas de un elemento con Playwright esperan a que se estabilice**, y
   eso tapa justo los fallos de carga que se quieren medir. Capturar la ventana
   entera y recortar por coordenadas.
+- **El servidor local (`astro dev`) no se entera de las obras borradas** desde
+  el panel: siguen saliendo aunque los archivos ya no existan. Se arregla
+  parándolo (`npx astro dev stop`), borrando `node_modules/.astro` y
+  `.astro/data-store.json` y volviéndolo a arrancar. La web publicada no
+  tiene este problema.
 - **`mix-blend-mode: difference`** depende de lo que haya detrás y se comporta
   distinto en Safari. Se abandonó.
 - Probado y descartado por Guzmán: efecto de gota de agua, vídeos reproducidos
