@@ -6,8 +6,8 @@
 //
 // Las fotos salen en blanco y negro y se colorean:
 //  - con ratón, al pasar por encima de la tarjeta, que además gana relieve;
-//  - en pantallas táctiles (sin "pasar por encima"), al entrar en pantalla
-//    con el scroll, y vuelven al gris al salir.
+//  - en pantallas táctiles (sin "pasar por encima"), con el scroll: solo las
+//    dos más centradas en pantalla en cada momento; el resto, en gris.
 import { Image } from 'astro:assets';
 import EstadoObra from './EstadoObra.astro';
 import { ficha, type Obra } from '../lib/obras';
@@ -73,18 +73,35 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     });
   }
 
-  // Pantallas táctiles: cada tarjeta se colorea cuando está casi entera en
-  // pantalla y vuelve al gris al salir. Con ratón no hace falta: lo hace el CSS.
+  // Pantallas táctiles: como mucho DOS tarjetas en color a la vez, las dos
+  // más centradas en pantalla (con dos columnas, suelen ser las de la fila
+  // del medio). Se recalcula al hacer scroll. Con ratón no hace falta: lo
+  // hace el CSS al pasar por encima.
+  const COMO_MUCHO = 2;
   if (galeria && !matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const vigia = new IntersectionObserver(
-      (entradas) => {
-        for (const e of entradas) e.target.classList.toggle('en-color', e.isIntersecting);
-      },
-      // Solo cuenta la franja central de la pantalla, para que se coloreen
-      // las que se están mirando y no las que apenas asoman por los bordes.
-      { rootMargin: '-20% 0px -20% 0px', threshold: 0.5 },
-    );
-    for (const tarjeta of galeria.querySelectorAll('.tarjeta')) vigia.observe(tarjeta);
+    let pendiente = false;
+    const colorear = () => {
+      pendiente = false;
+      const centro = innerHeight / 2;
+      const candidatas = [];
+      for (const t of galeria.querySelectorAll<HTMLElement>('li:not([hidden]) .tarjeta')) {
+        const r = t.getBoundingClientRect();
+        if (!r.height) continue; // escondida por el filtro "Disponibles"
+        // Cuánto de la tarjeta se ve: las que apenas asoman no cuentan.
+        const visible = (Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)) / r.height;
+        if (visible < 0.4) continue;
+        candidatas.push({ t, distancia: Math.abs((r.top + r.bottom) / 2 - centro) + r.left / 1000 });
+      }
+      const elegidas = new Set(candidatas.sort((a, b) => a.distancia - b.distancia).slice(0, COMO_MUCHO).map((c) => c.t));
+      for (const t of galeria.querySelectorAll('.tarjeta')) t.classList.toggle('en-color', elegidas.has(t));
+    };
+    const pedir = () => {
+      if (!pendiente) (pendiente = true), requestAnimationFrame(colorear);
+    };
+    addEventListener('scroll', pedir, { passive: true });
+    addEventListener('resize', pedir);
+    for (const b of botones) b.addEventListener('click', pedir);
+    pedir();
   }
 </script>
 
