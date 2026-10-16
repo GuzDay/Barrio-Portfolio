@@ -17,7 +17,7 @@ const { idioma } = Astro.props;
 const t = textos[idioma];
 ---
 
-<Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`}>
+<Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`} cabeceraBlanca>
   <LienzoPintable foto={foto} />
   <h1 class="oculto">{sitio.nombre} — {t.profesion}</h1>
 </Base>

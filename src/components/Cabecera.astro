@@ -18,9 +18,10 @@ interface Props {
   idioma: Idioma;
   alternativas: Record<Idioma, string>;
   activa?: string;
+  blanca?: boolean; // en la portada va sobre la foto: firma y menú en blanco
 }
 
-const { idioma, alternativas, activa } = Astro.props;
+const { idioma, alternativas, activa, blanca } = Astro.props;
 const t = textos[idioma];
 const menu = [
   { clave: 'cuadros', texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
@@ -31,7 +32,7 @@ const menu = [
 ];
 ---
 
-<header class="cabecera">
+<header class:list={['cabecera', { blanca }]}>
   <a class="marca" href={urlInicio(idioma)}>
     <img src={conBase('/firma.svg')} alt={sitio.nombre} width="1841" height="687" />
   </a>
@@ -130,6 +131,25 @@ const menu = [
     display: flex;
     gap: 0.6rem;
     font-size: 0.85rem;
+  }
+
+  /* Cabecera blanca (portada, sobre la foto). La firma es negra en el SVG:
+     el filtro la vuelve blanca sin necesitar otro archivo. */
+  .blanca .marca img {
+    filter: brightness(0) invert(1);
+  }
+
+  .blanca .menu a,
+  .blanca .idiomas a {
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .blanca .menu a:hover,
+  .blanca .idiomas a:hover,
+  .blanca .menu a[aria-current],
+  .blanca .idiomas a[aria-current],
+  .blanca .abrir {
+    color: #fff;
   }
 
   .abrir {
