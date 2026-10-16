@@ -89,6 +89,24 @@ const menu = [
     })();
   </script>
 
+  {portada && (
+    <script is:inline>
+      // Apertura de la portada: los puntos de las cuatro secciones salen
+      // todos del centro del menú. Aquí, antes de pintar, se mide cuánto
+      // tiene que viajar cada uno hasta su sitio (ver "apertura-mover").
+      (function () {
+        var ul = document.querySelector('.cabecera .menu ul');
+        if (!ul) return;
+        var g = ul.getBoundingClientRect();
+        var centro = g.left + g.width / 2;
+        ul.querySelectorAll('.caja').forEach(function (c) {
+          var r = c.getBoundingClientRect();
+          c.style.setProperty('--desde', centro - (r.left + r.width / 2) + 'px');
+        });
+      })();
+    </script>
+  )}
+
   <div class="idiomas caja" aria-label={t.idioma}>
     <a href={alternativas.es} lang="es" hreflang="es" data-idioma="es" aria-current={idioma === 'es' ? 'true' : undefined}>ES</a>
     <a href={alternativas.en} lang="en" hreflang="en" data-idioma="en" aria-current={idioma === 'en' ? 'true' : undefined}>EN</a>
@@ -520,29 +538,80 @@ const menu = [
      Al llegar a la portada (pedido de Guzmán, 16-10-2026):
      - Las cajitas (secciones, idioma y, en el móvil, el botón del menú)
        aparecen como puntos, todas a la vez, que se abren en la cajita en un
-       solo movimiento continuo; luego aparece el texto.
-     - La firma se descubre de izquierda a derecha, de borrosa a nítida.
-     Tres animaciones solapadas: "punto" (escala), "abrir" (recorte) y
-     "texto" (color). */
+       solo movimiento continuo; luego aparece el texto. Los cuatro puntos
+       de las secciones salen juntos del centro del menú y viajan a su sitio
+       mientras se abren (mismo tiempo que el idioma, que se abre en el suyo).
+     - La firma, igual: aparece como un punto en su centro y se abre en
+       círculo hasta verse entera.
+     Animaciones solapadas: "punto" (scale), "mover" (translate), "abrir"
+     (recorte) y "texto" (color). */
   .portada .menu:not(.abierto) .caja,
   .portada .idiomas,
   .portada .abrir {
     /* Un solo movimiento continuo: el punto crece (sin rebote) y, antes de
-       terminar, empieza a abrirse en cajita con una curva que arranca y frena
-       despacio; el texto aparece al final. Sin pausas entre medias. */
+       terminar, empieza a abrirse en cajita (y a viajar, las del menú) con
+       una curva que arranca y frena despacio; el texto aparece al final. */
     animation:
       apertura-texto 0.4s ease 0.7s backwards,
+      apertura-mover 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards,
       apertura-abrir 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards,
       apertura-punto 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
   }
 
   .portada .marca {
-    animation: apertura-firma 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.1s backwards;
+    animation: apertura-abrir-firma 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards;
+  }
+
+  /* El punto de la firma es un círculo de verdad (la firma son trazos finos
+     y en su centro puede no haber tinta): aparece como los otros y se funde
+     mientras la firma se abre. */
+  .portada .marca::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    animation:
+      apertura-punto-firma 0.75s linear 0.1s backwards,
+      apertura-punto 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+  }
+
+  @keyframes apertura-punto-firma {
+    0%,
+    40% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
 
   @keyframes apertura-punto {
     from {
-      transform: scale(0);
+      scale: 0;
+    }
+  }
+
+  /* Del centro del menú a su sitio (--desde lo mide el script de arriba; el
+     idioma y el botón del móvil no lo tienen y no se mueven). */
+  @keyframes apertura-mover {
+    from {
+      translate: var(--desde, 0px) 0;
+    }
+  }
+
+  /* La firma: de un punto de 8 px en su centro a un círculo que la cubre. */
+  @keyframes apertura-abrir-firma {
+    from {
+      clip-path: circle(4px at 50% 50%);
+    }
+    to {
+      clip-path: circle(75% at 50% 50%);
     }
   }
 
@@ -563,26 +632,12 @@ const menu = [
     }
   }
 
-  @keyframes apertura-firma {
-    from {
-      clip-path: inset(-10% 100% -10% 0);
-      filter: blur(6px);
-      opacity: 0;
-    }
-    40% {
-      opacity: 1;
-    }
-    to {
-      clip-path: inset(-10% -5% -10% 0);
-      filter: blur(0);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .portada .menu:not(.abierto) .caja,
     .portada .idiomas,
     .portada .abrir,
-    .portada .marca {
+    .portada .marca,
+    .portada .marca::before {
       animation: none;
     }
   }
