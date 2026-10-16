@@ -119,17 +119,42 @@ const menu = [
     boton.setAttribute('aria-label', (si ? boton.dataset.cerrar : boton.dataset.abrir)!);
   };
   boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
-  // Continuidad al cambiar de sección (ver el script de justo debajo del
-  // menú): al pulsar, se apunta qué cajita y cuánto se había ensanchado.
-  const cajas = [...document.querySelectorAll<HTMLElement>('.cabecera .menu .caja')];
+  // Al pulsar una sección (ordenador): un pequeño latido. La cajita crece de
+  // golpe un poco más (hasta 22 px por lado) y vuelve rápido a su tamaño. Para
+  // que se vea, el cambio de página espera 180 ms, justo pasado el pico; el
+  // regreso termina ya en la página nueva gracias a la continuidad (ver el
+  // script de justo debajo del menú), que apunta cuánto medía la cajita al
+  // irse. Con Cmd/Ctrl/Mayús o botón central (abrir en otra pestaña) no se
+  // toca nada.
+  const cajas = [...document.querySelectorAll<HTMLAnchorElement>('.cabecera .menu .caja')];
+  const apuntar = (caja: HTMLAnchorElement, i: number) => {
+    try {
+      const px = parseFloat(getComputedStyle(caja).paddingLeft);
+      sessionStorage.setItem('caja-sigue', JSON.stringify({ i, px, t: Date.now() }));
+    } catch {
+      /* sin almacenamiento, simplemente no hay continuidad */
+    }
+  };
+  const conRaton = matchMedia('(min-width: 900px) and (hover: hover)');
+  const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)');
   cajas.forEach((caja, i) =>
-    caja.addEventListener('click', () => {
-      try {
-        const px = parseFloat(getComputedStyle(caja).paddingLeft);
-        sessionStorage.setItem('caja-sigue', JSON.stringify({ i, px, t: Date.now() }));
-      } catch {
-        /* sin almacenamiento, simplemente no hay continuidad */
-      }
+    caja.addEventListener('click', (e) => {
+      const normal = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+      if (!normal || !conRaton.matches || sinMovimiento.matches) return apuntar(caja, i);
+      e.preventDefault();
+      const ahora = getComputedStyle(caja).paddingLeft;
+      caja.animate(
+        [
+          { paddingLeft: ahora, paddingRight: ahora },
+          { paddingLeft: '22px', paddingRight: '22px', offset: 0.45 },
+          { paddingLeft: '16px', paddingRight: '16px' },
+        ],
+        { duration: 380, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)' },
+      );
+      setTimeout(() => {
+        apuntar(caja, i);
+        location.href = caja.href;
+      }, 180);
     }),
   );
   // La cajita que viene "ensanchada" de la página anterior se encoge (con su
