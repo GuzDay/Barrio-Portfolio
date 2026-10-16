@@ -519,20 +519,21 @@ const menu = [
   /* ---------- Apertura de la portada ----------
      Al llegar a la portada (pedido de Guzmán, 16-10-2026):
      - Las cajitas (secciones, idioma y, en el móvil, el botón del menú)
-       aparecen como puntos, todas a la vez, y a los 0,6 s hacen "bloop": el punto se abre en la cajita con un pequeño rebote. Luego
-       aparece el texto.
+       aparecen como puntos, todas a la vez, que se abren en la cajita en un
+       solo movimiento continuo; luego aparece el texto.
      - La firma se descubre de izquierda a derecha, de borrosa a nítida.
-     Las animaciones se encadenan así: "punto" (escala, todas a la vez), "abrir"
-     (recorte, a la vez), "rebote" (escala) y "texto" (color). Del orden de la
-     lista depende cuál manda en la escala: "punto" va después de "rebote". */
+     Tres animaciones solapadas: "punto" (escala), "abrir" (recorte) y
+     "texto" (color). */
   .portada .menu:not(.abierto) .caja,
   .portada .idiomas,
   .portada .abrir {
+    /* Un solo movimiento continuo: el punto crece (sin rebote) y, antes de
+       terminar, empieza a abrirse en cajita con una curva que arranca y frena
+       despacio; el texto aparece al final. Sin pausas entre medias. */
     animation:
-      apertura-rebote 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s backwards,
-      apertura-texto 0.3s ease 0.78s backwards,
-      apertura-abrir 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards,
-      apertura-punto 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
+      apertura-texto 0.4s ease 0.7s backwards,
+      apertura-abrir 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards,
+      apertura-punto 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
   }
 
   .portada .marca {
@@ -545,18 +546,14 @@ const menu = [
     }
   }
 
+  /* El punto: 8 px con esquinas de 4 px (un círculo); se abre hasta la
+     cajita entera. */
   @keyframes apertura-abrir {
     from {
-      clip-path: inset(calc(50% - 4px) calc(50% - 4px) round 50%);
+      clip-path: inset(calc(50% - 4px) calc(50% - 4px) round 4px);
     }
     to {
-      clip-path: inset(0 round 4px);
-    }
-  }
-
-  @keyframes apertura-rebote {
-    from {
-      transform: scale(0.9);
+      clip-path: inset(calc(0% - 0px) calc(0% - 0px) round 4px);
     }
   }
 
