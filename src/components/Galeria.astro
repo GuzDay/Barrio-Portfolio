@@ -150,14 +150,14 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     display: none;
   }
 
-  /* La tarjeta: un bloque algo más claro que el fondo, con relieve (sombra).
+  /* La tarjeta: un bloque blanco con relieve (sombra).
      Ocupa todo el alto de la fila para que las de una fila midan lo mismo. */
   .tarjeta {
     display: flex;
     flex-direction: column;
     height: 100%;
     text-decoration: none;
-    background: #fbfaf8;
+    background: var(--fondo);
     border-radius: 3px;
     overflow: hidden;
     box-shadow:

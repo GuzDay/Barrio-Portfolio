@@ -1,11 +1,11 @@
 /* Estilos comunes. Es el esqueleto: neutro a propósito, el diseño viene después. */
 
 :root {
-  --fondo: #f6f4f0;
+  --fondo: #ffffff; /* blanco puro (pedido de Guzmán, 16-10-2026) */
   --texto: #1a1a1a;
   --suave: #6b6760;
   --linea: #dcd7cf;
-  --vacio: #e9e5de; /* fondo de las fotos mientras cargan */
+  --vacio: #ededed; /* fondo de las fotos mientras cargan */
   --acento: #1a1a1a;
   /* Márgenes copiados de la web de Blanca (blancagtarrio.com), que se
      ajustaron allí a ojo durante días. El lateral crece con la pantalla. */
