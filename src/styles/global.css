@@ -58,7 +58,11 @@ body {
   flex-direction: column;
   background: var(--fondo);
   color: var(--texto);
-  font-family: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  /* Newsreader: la gratuita más parecida a Teodor, la que le gustó a Guzmán
+     de gionatannese.com (comparadas una a una, 16-10-2026). Teodor es de
+     pago (Displaay); si un día se compra, se cambia solo esta línea. */
+  font-family: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  font-optical-sizing: auto;
   /* Tamaño de letra base de toda la web (15 px, como en la de Blanca). Todos
      los demás tamaños van en "em", proporcionales a este: cambiando solo
      esta línea, toda la letra crece o encoge a la vez. */
