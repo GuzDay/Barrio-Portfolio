@@ -51,6 +51,7 @@ const menu = [
         <li><a class="caja" href={url} aria-current={activa === clave ? 'page' : undefined}>{texto}</a></li>
       ))}
     </ul>
+    <button class="cerrar caja" type="button" aria-label={t.cerrar}><span aria-hidden="true">×</span></button>
   </nav>
   <script is:inline>
     // Continuidad al cambiar de sección (ordenador). Al pulsar una cajita del
@@ -69,7 +70,7 @@ const menu = [
       }
       if (!dato || Date.now() - dato.t > 4000) return;
       if (!matchMedia('(min-width: 900px) and (hover: hover)').matches) return;
-      var caja = document.querySelectorAll('.cabecera .menu .caja')[dato.i];
+      var caja = document.querySelectorAll('.cabecera .menu a.caja')[dato.i];
       if (!caja) return;
       caja.style.transition = 'none';
       caja.style.paddingLeft = caja.style.paddingRight = dato.px + 'px';
@@ -115,10 +116,15 @@ const menu = [
   const panel = document.querySelector('.cabecera .menu')!;
   const abrir = (si: boolean) => {
     panel.classList.toggle('abierto', si);
+    document.documentElement.classList.toggle('menu-abierto', si);
     boton.setAttribute('aria-expanded', String(si));
     boton.setAttribute('aria-label', (si ? boton.dataset.cerrar : boton.dataset.abrir)!);
   };
   boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
+  // Se cierra con la "×" de abajo, tocando fuera de las cajitas o con Esc.
+  panel.querySelector('.cerrar')!.addEventListener('click', () => abrir(false));
+  panel.addEventListener('click', (e) => e.target === panel && abrir(false));
+  addEventListener('keydown', (e) => e.key === 'Escape' && abrir(false));
   // Al pulsar una sección (ordenador): un pequeño latido. La cajita crece de
   // golpe un poco más (hasta 28 px por lado, arrancando rápido como el paso
   // del ratón) y vuelve con suavidad a su tamaño. Para
@@ -127,7 +133,7 @@ const menu = [
   // script de justo debajo del menú), que apunta cuánto medía la cajita al
   // irse. Con Cmd/Ctrl/Mayús o botón central (abrir en otra pestaña) no se
   // toca nada.
-  const cajas = [...document.querySelectorAll<HTMLAnchorElement>('.cabecera .menu .caja')];
+  const cajas = [...document.querySelectorAll<HTMLAnchorElement>('.cabecera .menu a.caja')];
   const apuntar = (caja: HTMLAnchorElement, i: number) => {
     try {
       const px = parseFloat(getComputedStyle(caja).paddingLeft);
@@ -289,6 +295,10 @@ const menu = [
     background: rgb(216 216 216 / 0.5);
   }
 
+  .cerrar {
+    display: none;
+  }
+
   /* ---------- Idioma ---------- */
 
   .idiomas {
@@ -398,48 +408,96 @@ const menu = [
       /* Bajado 1,8 px para centrar las letras a la vista (ver .caja). */
       padding: 3.6px 10px 0;
     }
+    /* Menú abierto: toda la pantalla desenfocada y, en el centro, las
+       secciones apiladas, cada una en su cajita de cristal (como en
+       ordenador, algo más grandes para el dedo), y debajo una cajita con
+       la "×" para cerrar. Entran una tras otra. Va por debajo de la firma y
+       de los botones de arriba, que siguen a mano. */
     .menu {
-      top: 60px;
-      left: var(--lateral);
-      right: var(--lateral);
+      inset: 0;
+      left: 0;
       transform: none;
+      z-index: 45;
       display: none;
-      padding: 0.5rem 0;
-      border-radius: 4px;
-      background: rgb(237 237 237 / 0.5);
-      -webkit-backdrop-filter: blur(40px);
-      backdrop-filter: blur(40px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgb(255 255 255 / 0.2);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+    .blanca .menu {
+      background: rgb(0 0 0 / 0.15);
     }
     .menu.abierto {
-      display: block;
+      display: flex;
     }
     .menu ul {
       flex-direction: column;
-      gap: 0;
+      align-items: center;
+      gap: 10px;
     }
-    /* Dentro del panel, cada sección es una línea normal, con su nombre. */
     .menu .caja {
-      background: none;
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
-      padding: 0.7rem 1rem;
-      font-size: 1.115em; /* 14,5 px */
+      font-size: 1.35em;
+      padding: 10.4px 20px 7.6px;
     }
     .menu .caja:hover,
     .menu .caja:focus-visible {
-      padding-inline: 1rem;
+      padding-inline: 20px;
     }
-    .menu .caja[aria-current] {
-      background: none;
-      text-decoration: underline;
-      text-underline-offset: 0.3em;
+    .menu .cerrar {
+      display: flex;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.6rem;
+      margin-top: 10px;
+      padding: 0 0 3px;
+      border: 0;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 1.9em;
+      font-weight: 200;
+      line-height: 1;
     }
+    .menu.abierto li,
+    .menu.abierto .cerrar {
+      animation: entrar-caja 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .menu.abierto li:nth-child(2) {
+      animation-delay: 0.04s;
+    }
+    .menu.abierto li:nth-child(3) {
+      animation-delay: 0.08s;
+    }
+    .menu.abierto li:nth-child(4) {
+      animation-delay: 0.12s;
+    }
+    .menu.abierto .cerrar {
+      animation-delay: 0.18s;
+    }
+  }
+
+  @keyframes entrar-caja {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  /* Con el menú abierto, la página de detrás no se desplaza. */
+  :global(html.menu-abierto) {
+    overflow: hidden;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .caja,
     .menu .caja {
       transition: none;
+    }
+    .menu.abierto li,
+    .menu.abierto .cerrar {
+      animation: none;
     }
   }
 </style>
