@@ -21,6 +21,13 @@ consulta que hay**: ver más abajo.
   `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
   `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
 - Las obras de color liso son de prueba y se borran antes de publicar.
+- **Firma de Pablo** en la cabecera (`public/firma.svg`) y **entrada animada**
+  en la portada, en la que la firma se escribe sola (~2,9 s, una vez por
+  visita, se salta con un toque, no sale con "reducir movimiento"). Ambas se
+  generan con `scripts/firma/generar.py` a partir de `firma-original.png`; el
+  orden de los trazos está elegido a mano en esa lista `TRAZOS` (no sabemos
+  cómo firma Pablo de verdad: si él lo corrige, se cambia ahí). Probada en
+  Chrome y en el motor de Safari.
 
 ## Dónde está cada cosa
 

@@ -2,6 +2,7 @@
 // Portada. Provisional: de momento solo nombre y acceso a las dos secciones.
 // Guzmán decidirá más adelante qué lleva.
 import Base from '../layouts/Base.astro';
+import EntradaFirma from '../components/EntradaFirma.astro';
 import { ambas, secciones, urlInicio, urlSeccion, type Idioma } from '../lib/rutas';
 import { sitio } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -15,6 +16,7 @@ const t = textos[idioma];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`}>
+  <EntradaFirma slot="antes" />
   <section class="portada">
     <h1>{sitio.nombre}</h1>
     <p>{t.inicioIntro}</p>

@@ -2,6 +2,7 @@
 // Cabecera: nombre, menú e idioma. En el móvil el menú se pliega tras un botón;
 // el cambio de idioma se queda siempre a la vista.
 import {
+  conBase,
   secciones,
   urlAcercaDe,
   urlContacto,
@@ -31,7 +32,9 @@ const menu = [
 ---
 
 <header class="cabecera">
-  <a class="marca" href={urlInicio(idioma)}>{sitio.nombre}</a>
+  <a class="marca" href={urlInicio(idioma)}>
+    <img src={conBase('/firma.svg')} alt={sitio.nombre} width="2187" height="825" />
+  </a>
   <button class="abrir" type="button" aria-expanded="false" aria-controls="menu">{t.menu}</button>
   <nav id="menu" class="menu">
     <ul>
@@ -81,10 +84,18 @@ const menu = [
 
   .marca {
     margin-right: auto;
-    text-decoration: none;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  }
+
+  /* La firma de Pablo (public/firma.svg, generada con scripts/firma). */
+  .marca img {
+    height: 56px;
+    width: auto;
+  }
+
+  @media (max-width: 899px) {
+    .marca img {
+      height: 44px;
+    }
   }
 
   .menu ul {

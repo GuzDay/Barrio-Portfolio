@@ -67,6 +67,7 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
     <link rel="icon" href={conBase('/favicon.svg')} type="image/svg+xml" />
   </head>
   <body>
+    <slot name="antes" />
     <a class="saltar" href="#contenido">{t.saltar}</a>
     <Cabecera idioma={idioma} alternativas={alternativas} activa={activa} />
     <main id="contenido">
