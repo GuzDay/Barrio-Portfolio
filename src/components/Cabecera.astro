@@ -52,6 +52,41 @@ const menu = [
       ))}
     </ul>
   </nav>
+  <script is:inline>
+    // Continuidad al cambiar de sección (ordenador). Al pulsar una cajita del
+    // menú, la página anterior apunta cuál era y cuánto se había ensanchado.
+    // Aquí, antes de pintar la página nueva, esa cajita aparece con ese mismo
+    // ancho y sigue su animación desde ahí, en vez de empezar encogida y
+    // volver a crecer (el navegador no sabe que el ratón sigue encima hasta
+    // que se mueve). Ver también el script de abajo.
+    (function () {
+      var dato;
+      try {
+        dato = JSON.parse(sessionStorage.getItem('caja-sigue') || 'null');
+        sessionStorage.removeItem('caja-sigue');
+      } catch (e) {
+        return;
+      }
+      if (!dato || Date.now() - dato.t > 4000) return;
+      if (!matchMedia('(min-width: 900px) and (hover: hover)').matches) return;
+      var caja = document.querySelectorAll('.cabecera .menu .caja')[dato.i];
+      if (!caja) return;
+      caja.style.transition = 'none';
+      caja.style.paddingLeft = caja.style.paddingRight = dato.px + 'px';
+      caja.classList.add('sigue');
+      // El tramo que falta se hace con una curva que sale ya con velocidad y
+      // frena suave: así parece la misma animación, sin pausa al retomarla.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          caja.style.transition = 'padding 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), background-color 0.25s ease';
+          caja.style.paddingLeft = caja.style.paddingRight = '';
+          setTimeout(function () {
+            caja.style.transition = '';
+          }, 400);
+        });
+      });
+    })();
+  </script>
 
   <div class="idiomas caja" aria-label={t.idioma}>
     <a href={alternativas.es} lang="es" hreflang="es" data-idioma="es" aria-current={idioma === 'es' ? 'true' : undefined}>ES</a>
@@ -84,6 +119,31 @@ const menu = [
     boton.setAttribute('aria-label', (si ? boton.dataset.cerrar : boton.dataset.abrir)!);
   };
   boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
+  // Continuidad al cambiar de sección (ver el script de justo debajo del
+  // menú): al pulsar, se apunta qué cajita y cuánto se había ensanchado.
+  const cajas = [...document.querySelectorAll<HTMLElement>('.cabecera .menu .caja')];
+  cajas.forEach((caja, i) =>
+    caja.addEventListener('click', () => {
+      try {
+        const px = parseFloat(getComputedStyle(caja).paddingLeft);
+        sessionStorage.setItem('caja-sigue', JSON.stringify({ i, px, t: Date.now() }));
+      } catch {
+        /* sin almacenamiento, simplemente no hay continuidad */
+      }
+    }),
+  );
+  // La cajita que viene "ensanchada" de la página anterior se encoge (con su
+  // animación de siempre) en cuanto el ratón se mueve fuera de ella.
+  const quitarSigue = (e: PointerEvent) => {
+    const sigue = document.querySelector('.cabecera .caja.sigue');
+    if (!sigue) return removeEventListener('pointermove', quitarSigue);
+    if (!sigue.contains(e.target as Node)) {
+      sigue.classList.remove('sigue');
+      removeEventListener('pointermove', quitarSigue);
+    }
+  };
+  addEventListener('pointermove', quitarSigue, { passive: true });
+
   for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
     enlace.addEventListener('click', () => abrir(false));
   }
@@ -173,7 +233,8 @@ const menu = [
   }
 
   .menu .caja:hover,
-  .menu .caja:focus-visible {
+  .menu .caja:focus-visible,
+  .menu .caja.sigue {
     padding-inline: 16px;
   }
 
