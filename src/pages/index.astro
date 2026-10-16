@@ -1,0 +1,49 @@
+---
+// Página provisional. El diseño de verdad viene después; esto solo confirma
+// que la cadena funciona: subir un cambio → GitHub lo construye → se publica.
+const nombre = 'Pablo Barrio Araúz';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{nombre}</title>
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-content: center;
+        gap: 0.75rem;
+        text-align: center;
+        background: #f3efe9;
+        color: #1a1a1a;
+        font-family: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(1.4rem, 5vw, 2.4rem);
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      p {
+        margin: 0;
+        color: #6b6b6b;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{nombre}</h1>
+    <p>Web en construcción</p>
+  </body>
+</html>
