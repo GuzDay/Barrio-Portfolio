@@ -51,6 +51,20 @@ html {
      largas (con barra) tenían la cabecera 15 px más estrecha que las cortas y
      el menú "saltaba" al cambiar de sección. */
   scrollbar-gutter: stable;
+  /* Sin el recuadro gris que los móviles pintan sobre lo que se toca (se veía
+     al pulsar la firma). */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Sin el borde de foco al pulsar con el ratón o el dedo; con el teclado
+   (tabulador) sí se ve, para quien navega así. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
 }
 
 /* Excepto en la portada (la de la foto que se pinta): ver LienzoPintable. */

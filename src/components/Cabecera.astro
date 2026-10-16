@@ -147,7 +147,8 @@ const menu = [
   cajas.forEach((caja, i) =>
     caja.addEventListener('click', (e) => {
       const normal = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
-      if (!normal || !conRaton.matches || sinMovimiento.matches) return apuntar(caja, i);
+      if (!normal || sinMovimiento.matches) return apuntar(caja, i);
+      if (!conRaton.matches) return latidoMovil(e, caja);
       e.preventDefault();
       const ahora = getComputedStyle(caja).paddingLeft;
       caja.animate(
@@ -167,6 +168,23 @@ const menu = [
       }, Math.max(180, salida));
     }),
   );
+  // En el menú del móvil las cajitas miden todas lo mismo, así que el latido
+  // es un agrandarse un 8 % y volver, con la misma curva; luego se cambia de
+  // página (esperando también a la salida de las tarjetas, si la hay).
+  function latidoMovil(e: MouseEvent, caja: HTMLAnchorElement) {
+    e.preventDefault();
+    caja.animate(
+      [
+        { transform: 'scale(1)', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+        { transform: 'scale(1.08)', offset: 0.3, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' },
+        { transform: 'scale(1)' },
+      ],
+      { duration: 450 },
+    );
+    const salida = (window as unknown as { __salida?: () => number }).__salida?.() ?? 0;
+    setTimeout(() => (location.href = caja.href), Math.max(180, salida));
+  }
+
   // La cajita que viene "ensanchada" de la página anterior se encoge (con su
   // animación de siempre) en cuanto el ratón se mueve fuera de ella.
   const quitarSigue = (e: PointerEvent) => {
@@ -179,9 +197,15 @@ const menu = [
   };
   addEventListener('pointermove', quitarSigue, { passive: true });
 
+  // Al pulsar una sección, el menú del móvil se cierra… salvo si está dando
+  // su latido (entonces se queda abierto hasta que cambia la página, para
+  // que el latido se vea).
   for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
-    enlace.addEventListener('click', () => abrir(false));
+    enlace.addEventListener('click', (e) => !e.defaultPrevented && abrir(false));
   }
+  // Al volver con "atrás", el navegador puede enseñar la página tal como
+  // quedó, con el menú abierto: se cierra.
+  addEventListener('pageshow', (e) => e.persisted && abrir(false));
 </script>
 
 <style>
@@ -424,8 +448,8 @@ const menu = [
       justify-content: center;
       gap: 10px;
       background: rgb(255 255 255 / 0.2);
-      -webkit-backdrop-filter: blur(14px);
-      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
     }
     .blanca .menu {
       background: rgb(0 0 0 / 0.15);
@@ -433,12 +457,16 @@ const menu = [
     .menu.abierto {
       display: flex;
     }
+    /* Las cuatro cajitas con el mismo ancho (el de la más larga) y el texto
+       centrado: una columna limpia. */
     .menu ul {
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
+      width: max-content;
       gap: 10px;
     }
     .menu .caja {
+      justify-content: center;
       font-size: 1.35em;
       padding: 10.4px 20px 7.6px;
     }
