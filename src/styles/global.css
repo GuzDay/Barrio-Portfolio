@@ -1,0 +1,103 @@
+/* Estilos comunes. Es el esqueleto: neutro a propósito, el diseño viene después. */
+
+:root {
+  --fondo: #f6f4f0;
+  --texto: #1a1a1a;
+  --suave: #6b6760;
+  --linea: #dcd7cf;
+  --hueco: #e9e5de; /* fondo de las fotos mientras cargan */
+  --acento: #1a1a1a;
+  --margen: 16px;
+  --ancho: 1200px;
+  color-scheme: light;
+}
+
+@media (min-width: 720px) {
+  :root {
+    --margen: 32px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 0 var(--margen) 4rem;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin: 2rem 0 1.5rem;
+}
+
+.saltar {
+  position: absolute;
+  left: -9999px;
+}
+
+.saltar:focus {
+  left: var(--margen);
+  top: 0.5rem;
+  z-index: 10;
+  background: var(--fondo);
+  padding: 0.5rem 1rem;
+}
+
+/* Botón principal: el de WhatsApp en fichas, encargos y contacto. */
+.boton {
+  display: inline-block;
+  padding: 0.8rem 1.4rem;
+  background: var(--acento);
+  color: var(--fondo);
+  text-decoration: none;
+  font-weight: 400;
+  border-radius: 2px;
+}
+
+.boton:hover {
+  opacity: 0.85;
+}
+
+.texto-largo {
+  max-width: 38rem;
+}

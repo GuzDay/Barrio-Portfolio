@@ -1,0 +1,80 @@
+---
+// Encargos: no es una galería, es para vender. Introducción, los pasos del
+// proceso y un botón de WhatsApp con el mensaje ya escrito.
+import Base from '../layouts/Base.astro';
+import { ambas, urlEncargos, type Idioma } from '../lib/rutas';
+import { urlWhatsApp } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma];
+---
+
+<Base idioma={idioma} alternativas={ambas(urlEncargos)} titulo={t.encargos} descripcion={t.encargosIntro[0]} activa="encargos">
+  <h1>{t.encargos}</h1>
+  <div class="texto-largo">
+    {t.encargosIntro.map((parrafo) => <p>{parrafo}</p>)}
+  </div>
+
+  <h2>{t.encargosComo}</h2>
+  <ol class="pasos">
+    {t.encargosPasos.map(({ titulo, texto }, i) => (
+      <li>
+        <span class="numero">{i + 1}</span>
+        <h3>{titulo}</h3>
+        <p>{texto}</p>
+      </li>
+    ))}
+  </ol>
+
+  <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeEncargo)}>{t.escribirWhatsApp}</a></p>
+</Base>
+
+<style>
+  h2 {
+    margin: 3rem 0 1.5rem;
+  }
+
+  .pasos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 720px) {
+    .pasos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .pasos {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .numero {
+    display: block;
+    font-size: 2rem;
+    color: var(--suave);
+  }
+
+  h3 {
+    margin: 0.25rem 0 0.5rem;
+  }
+
+  .pasos p {
+    margin: 0;
+    color: var(--suave);
+  }
+
+  .llamada {
+    margin-top: 3rem;
+  }
+</style>

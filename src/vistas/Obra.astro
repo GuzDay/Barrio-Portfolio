@@ -1,0 +1,135 @@
+---
+// Página de una obra: todas sus fotos enteras (sin recortar) y su ficha, con
+// el botón para preguntar por WhatsApp. Abajo, anterior y siguiente.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { ficha, obrasDe } from '../lib/obras';
+import { ambas, secciones, urlObra, urlSeccion, type Idioma, type Seccion } from '../lib/rutas';
+import { urlWhatsApp } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+  seccion: Seccion;
+  id: string;
+}
+
+const { idioma, seccion, id } = Astro.props;
+const t = textos[idioma];
+const obras = await obrasDe(seccion);
+const pos = obras.findIndex((o) => o.id === id);
+const obra = obras[pos]!;
+const anterior = obras[pos - 1];
+const siguiente = obras[pos + 1];
+const f = ficha(obra, idioma);
+const nombreSeccion = secciones[seccion].nombre[idioma];
+const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
+---
+
+<Base
+  idioma={idioma}
+  alternativas={ambas((i) => urlObra(seccion, id, i))}
+  titulo={f.titulo}
+  descripcion={f.texto}
+  activa={seccion}
+>
+  <p class="volver"><a href={urlSeccion(seccion, idioma)}>← {t.volver(nombreSeccion)}</a></p>
+  <article class="obra">
+    <div class="fotos">
+      {f.fotos.map((foto, i) => (
+        <Image
+          src={foto}
+          alt={i === 0 ? f.titulo : ''}
+          widths={[600, 900, 1200, 1800]}
+          sizes="(min-width: 900px) 60vw, 92vw"
+          loading={i === 0 ? 'eager' : 'lazy'}
+        />
+      ))}
+    </div>
+    <div class="ficha">
+      <h1>{f.titulo}</h1>
+      <ul class="datos">
+        {[f.tecnica, f.medidas, f.anio].filter(Boolean).map((dato) => <li>{dato}</li>)}
+      </ul>
+      {f.texto && <p class="texto">{f.texto}</p>}
+      <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+      {!f.vendida && (
+        <a class="boton" href={urlWhatsApp(t.mensajeObra(f.titulo, direccion))}>{t.preguntarObra}</a>
+      )}
+    </div>
+  </article>
+  <nav class="vecinas">
+    {anterior ? <a href={urlObra(seccion, anterior.id, idioma)}>← {t.anterior}</a> : <span />}
+    {siguiente && <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a>}
+  </nav>
+</Base>
+
+<style>
+  .volver {
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .volver a,
+  .vecinas a {
+    color: var(--suave);
+    text-decoration: none;
+  }
+
+  .volver a:hover,
+  .vecinas a:hover {
+    color: var(--texto);
+  }
+
+  .obra {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .fotos {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ficha h1 {
+    margin: 0 0 0.75rem;
+  }
+
+  .datos {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    color: var(--suave);
+  }
+
+  .texto {
+    margin: 0 0 1.25rem;
+  }
+
+  .precio {
+    margin: 0 0 1.25rem;
+    font-weight: 400;
+  }
+
+  /* En ordenador, fotos a la izquierda y la ficha fija a la derecha mientras
+     se bajan las fotos. */
+  @media (min-width: 900px) {
+    .obra {
+      grid-template-columns: 3fr 2fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .ficha {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .vecinas {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--linea);
+  }
+</style>

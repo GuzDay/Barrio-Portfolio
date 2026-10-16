@@ -1,0 +1,21 @@
+---
+// Página de una sección (Cuadros o Esculturas): título y galería.
+import Base from '../layouts/Base.astro';
+import Galeria from '../components/Galeria.astro';
+import { obrasDe } from '../lib/obras';
+import { ambas, secciones, urlSeccion, type Idioma, type Seccion } from '../lib/rutas';
+
+interface Props {
+  idioma: Idioma;
+  seccion: Seccion;
+}
+
+const { idioma, seccion } = Astro.props;
+const nombre = secciones[seccion].nombre[idioma];
+const obras = await obrasDe(seccion);
+---
+
+<Base idioma={idioma} alternativas={ambas((i) => urlSeccion(seccion, i))} titulo={nombre} activa={seccion}>
+  <h1>{nombre}</h1>
+  <Galeria idioma={idioma} seccion={seccion} obras={obras} />
+</Base>

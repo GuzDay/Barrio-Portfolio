@@ -1,0 +1,164 @@
+---
+// Cabecera: nombre, menú e idioma. En el móvil el menú se pliega tras un botón;
+// el cambio de idioma se queda siempre a la vista.
+import {
+  secciones,
+  urlAcercaDe,
+  urlContacto,
+  urlEncargos,
+  urlInicio,
+  urlSeccion,
+  type Idioma,
+} from '../lib/rutas';
+import { sitio } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+  alternativas: Record<Idioma, string>;
+  activa?: string;
+}
+
+const { idioma, alternativas, activa } = Astro.props;
+const t = textos[idioma];
+const menu = [
+  { clave: 'cuadros', texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
+  { clave: 'esculturas', texto: secciones.esculturas.nombre[idioma], url: urlSeccion('esculturas', idioma) },
+  { clave: 'encargos', texto: t.encargos, url: urlEncargos(idioma) },
+  { clave: 'acerca', texto: t.acercaDe, url: urlAcercaDe(idioma) },
+  { clave: 'contacto', texto: t.contacto, url: urlContacto(idioma) },
+];
+---
+
+<header class="cabecera">
+  <a class="marca" href={urlInicio(idioma)}>{sitio.nombre}</a>
+  <button class="abrir" type="button" aria-expanded="false" aria-controls="menu">{t.menu}</button>
+  <nav id="menu" class="menu">
+    <ul>
+      {menu.map(({ clave, texto, url }) => (
+        <li><a href={url} aria-current={activa === clave ? 'page' : undefined}>{texto}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <div class="idiomas" aria-label={t.idioma}>
+    <a href={alternativas.es} lang="es" hreflang="es" data-idioma="es" aria-current={idioma === 'es' ? 'true' : undefined}>ES</a>
+    <a href={alternativas.en} lang="en" hreflang="en" data-idioma="en" aria-current={idioma === 'en' ? 'true' : undefined}>EN</a>
+  </div>
+</header>
+
+<script>
+  // Elegir idioma a mano manda sobre el del navegador, y se recuerda.
+  for (const enlace of document.querySelectorAll<HTMLAnchorElement>('.idiomas a[data-idioma]')) {
+    enlace.addEventListener('click', () => {
+      try {
+        localStorage.setItem('idioma', enlace.dataset.idioma!);
+      } catch {
+        /* ventana privada: se cambia igual, solo que no se recuerda */
+      }
+    });
+  }
+
+  // Botón del menú en el móvil.
+  const boton = document.querySelector<HTMLButtonElement>('.cabecera .abrir')!;
+  boton.addEventListener('click', () => {
+    const abierto = boton.getAttribute('aria-expanded') === 'true';
+    boton.setAttribute('aria-expanded', String(!abierto));
+  });
+  // Al pulsar "Contacto" el menú lleva a otra parte de la misma página: se cierra.
+  for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
+    enlace.addEventListener('click', () => boton.setAttribute('aria-expanded', 'false'));
+  }
+</script>
+
+<style>
+  .cabecera {
+    width: 100%;
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 1.25rem var(--margen);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .marca {
+    margin-right: auto;
+    text-decoration: none;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .menu a,
+  .idiomas a {
+    text-decoration: none;
+    color: var(--suave);
+  }
+
+  .menu a:hover,
+  .idiomas a:hover,
+  .menu a[aria-current],
+  .idiomas a[aria-current] {
+    color: var(--texto);
+  }
+
+  .menu a[aria-current] {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .idiomas {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .abrir {
+    display: none;
+    font: inherit;
+    background: none;
+    border: 0;
+    padding: 0.25rem 0;
+    color: var(--texto);
+    cursor: pointer;
+  }
+
+  /* Móvil: nombre, idioma y botón de menú en una línea; el menú se despliega
+     debajo, a todo el ancho. */
+  @media (max-width: 899px) {
+    .abrir {
+      display: block;
+      order: 3;
+    }
+    .idiomas {
+      order: 2;
+    }
+    .menu {
+      order: 4;
+      flex-basis: 100%;
+      display: none;
+    }
+    .abrir[aria-expanded='true'] ~ .menu {
+      display: block;
+    }
+    .menu ul {
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0 0.75rem;
+    }
+    .menu a {
+      display: block;
+      padding: 0.6rem 0;
+      font-size: 1.1rem;
+    }
+  }
+</style>

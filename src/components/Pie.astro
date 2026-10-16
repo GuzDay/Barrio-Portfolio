@@ -1,0 +1,58 @@
+---
+// Pie de página: contacto directo, en todas las páginas.
+import type { Idioma } from '../lib/rutas';
+import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const t = textos[Astro.props.idioma];
+---
+
+<footer class="pie">
+  <p>© {new Date().getFullYear()} {sitio.nombre}</p>
+  <ul>
+    <li><a href={urlWhatsApp(t.mensajeContacto)}>WhatsApp</a></li>
+    <li><a href={urlInstagram}>{t.instagram}</a></li>
+    <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>
+  </ul>
+</footer>
+
+<style>
+  .pie {
+    width: 100%;
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 2rem var(--margen);
+    border-top: 1px solid var(--linea);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    color: var(--suave);
+  }
+
+  p,
+  ul {
+    margin: 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--texto);
+  }
+</style>

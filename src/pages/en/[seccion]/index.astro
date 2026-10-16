@@ -1,0 +1,14 @@
+---
+// Cuadros y Esculturas comparten página; cambia el nombre en la dirección.
+import Seccion from '../../../vistas/Seccion.astro';
+import { secciones, type Seccion as S } from '../../../lib/rutas';
+
+export function getStaticPaths() {
+  return (Object.keys(secciones) as S[]).map((seccion) => ({
+    params: { seccion: secciones[seccion].slug.en },
+    props: { seccion },
+  }));
+}
+---
+
+<Seccion idioma="en" seccion={Astro.props.seccion} />

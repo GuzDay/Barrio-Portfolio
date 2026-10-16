@@ -1,0 +1,18 @@
+---
+// Una página por obra, con el nombre de su carpeta en la dirección.
+import Obra from '../../../vistas/Obra.astro';
+import { obrasDe } from '../../../lib/obras';
+import { secciones, type Seccion } from '../../../lib/rutas';
+
+export async function getStaticPaths() {
+  const paginas = [];
+  for (const seccion of Object.keys(secciones) as Seccion[]) {
+    for (const obra of await obrasDe(seccion)) {
+      paginas.push({ params: { seccion: secciones[seccion].slug.en, obra: obra.id }, props: { seccion } });
+    }
+  }
+  return paginas;
+}
+---
+
+<Obra idioma="en" seccion={Astro.props.seccion} id={Astro.params.obra} />

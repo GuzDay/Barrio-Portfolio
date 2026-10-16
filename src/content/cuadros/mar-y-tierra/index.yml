@@ -1,0 +1,13 @@
+titulo: Mar y Tierra
+tecnica: Óleo sobre lienzo
+texto: Ficha de prueba con foto de color liso. Se borrará.
+medidas: 130 x 130 cm
+anio: 2023
+precio: 1500
+estado: disponible
+fotos:
+  - mar-y-tierra-1.jpg
+order: 3
+en:
+  tecnica: Oil on canvas
+  texto: Test entry with a plain colour photo. Will be deleted.

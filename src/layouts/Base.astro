@@ -1,0 +1,77 @@
+---
+// Marco común de todas las páginas: <head>, cabecera, contenido y pie.
+import '../styles/global.css';
+import Cabecera from '../components/Cabecera.astro';
+import Pie from '../components/Pie.astro';
+import { conBase, type Idioma } from '../lib/rutas';
+import { sitio, SIN_INDEXAR } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+  alternativas: Record<Idioma, string>; // la misma página en cada idioma
+  titulo?: string;
+  descripcion?: string;
+  activa?: string; // qué entrada del menú se marca
+}
+
+const { idioma, alternativas, titulo, descripcion, activa } = Astro.props;
+const t = textos[idioma];
+const tituloCompleto = titulo ? `${titulo} — ${sitio.nombre}` : `${sitio.nombre} — ${t.profesion}`;
+const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
+---
+
+<!doctype html>
+<html lang={idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Si el navegador de quien entra no está en español, se le lleva a la
+        versión inglesa de ESTA misma página. Va lo primero para que no llegue
+        a verse un parpadeo en español. Solo ocurre la primera vez: en cuanto
+        alguien toca ES o EN en la cabecera, manda su elección. Nunca lleva de
+        inglés a español, así que no puede entrar en bucle. (Copiado de la web
+        de Blanca, donde se probó con es-ES, es-MX, en-US, en-GB, fr-FR y pt-BR.) */}
+    {idioma === 'es' && (
+      <script is:inline define:vars={{ enIngles: alternativas.en }}>
+        (function () {
+          try {
+            if (localStorage.getItem('idioma')) return; // ya eligió
+          } catch (e) {
+            /* sin almacenamiento se sigue, pero solo una vez por pestaña */
+          }
+          try {
+            if (sessionStorage.getItem('idioma-mirado')) return;
+            sessionStorage.setItem('idioma-mirado', '1');
+          } catch (e) {
+            /* sin sessionStorage se mira igual: la redirección va siempre en
+               el mismo sentido y no puede repetirse en bucle */
+          }
+          var lenguas = navigator.languages && navigator.languages.length
+            ? navigator.languages
+            : [navigator.language || ''];
+          var entiendeEspanol = lenguas.some(function (l) {
+            return String(l).toLowerCase().indexOf('es') === 0;
+          });
+          if (!entiendeEspanol) location.replace(enIngles);
+        })();
+      </script>
+    )}
+    <title>{tituloCompleto}</title>
+    {descripcion && <meta name="description" content={descripcion} />}
+    <link rel="canonical" href={absoluta(alternativas[idioma])} />
+    <link rel="alternate" hreflang="es" href={absoluta(alternativas.es)} />
+    <link rel="alternate" hreflang="en" href={absoluta(alternativas.en)} />
+    <link rel="alternate" hreflang="x-default" href={absoluta(alternativas.es)} />
+    {SIN_INDEXAR && <meta name="robots" content="noindex" />}
+    <link rel="icon" href={conBase('/favicon.svg')} type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">{t.saltar}</a>
+    <Cabecera idioma={idioma} alternativas={alternativas} activa={activa} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie idioma={idioma} />
+  </body>
+</html>

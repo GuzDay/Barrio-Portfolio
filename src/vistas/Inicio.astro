@@ -1,0 +1,57 @@
+---
+// Portada. Provisional: de momento solo nombre y acceso a las dos secciones.
+// Guzmán decidirá más adelante qué lleva.
+import Base from '../layouts/Base.astro';
+import { ambas, secciones, urlInicio, urlSeccion, type Idioma } from '../lib/rutas';
+import { sitio } from '../lib/sitio';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma];
+---
+
+<Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`}>
+  <section class="portada">
+    <h1>{sitio.nombre}</h1>
+    <p>{t.inicioIntro}</p>
+    <ul>
+      <li><a href={urlSeccion('cuadros', idioma)}>{secciones.cuadros.nombre[idioma]} →</a></li>
+      <li><a href={urlSeccion('esculturas', idioma)}>{secciones.esculturas.nombre[idioma]} →</a></li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .portada {
+    min-height: 60svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    margin: 0 0 2rem;
+    color: var(--suave);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 2rem;
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: 400;
+  }
+</style>

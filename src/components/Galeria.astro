@@ -1,0 +1,161 @@
+---
+// Rejilla de obras de una sección. Todas las tarjetas miden lo mismo: la foto
+// se recorta a 4:5 vertical (la obra entera se ve en su propia página).
+// El filtro "Disponibles" esconde las vendidas sin recargar la página.
+import { Image } from 'astro:assets';
+import { ficha, type Obra } from '../lib/obras';
+import { urlObra, type Idioma, type Seccion } from '../lib/rutas';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+  seccion: Seccion;
+  obras: Obra[];
+}
+
+const { idioma, seccion, obras } = Astro.props;
+const t = textos[idioma];
+const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
+---
+
+{hayVendidas && (
+  <div class="filtro" role="group" aria-label={t.filtrar}>
+    <button type="button" data-filtro="todas" aria-pressed="true">{t.todas}</button>
+    <button type="button" data-filtro="disponibles" aria-pressed="false">{t.disponibles}</button>
+  </div>
+)}
+
+<ul class="galeria" data-mostrando="todas">
+  {obras.map((obra, i) => {
+    const f = ficha(obra, idioma);
+    return (
+      <li data-vendida={f.vendida ? '' : undefined}>
+        <a href={urlObra(seccion, obra.id, idioma)}>
+          <div class="foto">
+            <Image
+              src={f.fotos[0]}
+              alt={f.titulo}
+              widths={[360, 540, 720, 1080]}
+              sizes="(min-width: 1200px) 370px, (min-width: 900px) 30vw, (min-width: 560px) 46vw, 92vw"
+              loading={i < 3 ? 'eager' : 'lazy'}
+            />
+          </div>
+          <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
+          <p class="datos">{[f.tecnica, f.medidas].filter(Boolean).join(' · ')}</p>
+          <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+        </a>
+      </li>
+    );
+  })}
+</ul>
+<p class="vacia" hidden>{t.ningunaDisponible}</p>
+
+<script>
+  const galeria = document.querySelector<HTMLElement>('.galeria');
+  const vacia = document.querySelector<HTMLElement>('.vacia');
+  const botones = document.querySelectorAll<HTMLButtonElement>('.filtro button');
+  for (const boton of botones) {
+    boton.addEventListener('click', () => {
+      for (const b of botones) b.setAttribute('aria-pressed', String(b === boton));
+      const filtro = boton.dataset.filtro!;
+      galeria!.dataset.mostrando = filtro;
+      const quedan = galeria!.querySelectorAll('li:not([data-vendida])').length;
+      vacia!.hidden = !(filtro === 'disponibles' && quedan === 0);
+    });
+  }
+</script>
+
+<style>
+  .filtro {
+    display: flex;
+    gap: 1rem;
+    margin: -0.5rem 0 1.5rem;
+  }
+
+  .filtro button {
+    font: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--suave);
+    cursor: pointer;
+  }
+
+  .filtro button[aria-pressed='true'] {
+    color: var(--texto);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  /* Una columna en el móvil, dos en tableta, tres en ordenador. */
+  .galeria {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem 1.5rem;
+  }
+
+  @media (min-width: 560px) {
+    .galeria {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .galeria {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem 2rem;
+    }
+  }
+
+  .galeria[data-mostrando='disponibles'] li[data-vendida] {
+    display: none;
+  }
+
+  a {
+    display: block;
+    text-decoration: none;
+  }
+
+  .foto {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--hueco);
+    margin-bottom: 0.75rem;
+  }
+
+  .foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  a:hover .foto img {
+    transform: scale(1.02);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .titulo {
+    font-weight: 400;
+  }
+
+  .titulo span,
+  .datos {
+    color: var(--suave);
+  }
+
+  .datos,
+  .precio {
+    font-size: 0.9rem;
+  }
+
+  li[data-vendida] .precio {
+    color: var(--suave);
+  }
+</style>

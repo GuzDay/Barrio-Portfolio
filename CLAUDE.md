@@ -14,8 +14,13 @@ consulta que hay**: ver más abajo.
   (Source: GitHub Actions).
 - Proyecto Astro creado de cero, `.github/workflows/publicar.yml` publicando
   con cada push a `main`. Primer despliegue verificado: 80 s.
-- Página de inicio **provisional** (`src/pages/index.astro`), con `noindex`.
-  Hay que sustituirla entera.
+- **Esqueleto completo de la web** (16-10-2026), sin diseño todavía: Inicio,
+  Cuadros, Esculturas (galería con tarjetas iguales en 4:5 y filtro de
+  disponibles), página de cada obra con botón de WhatsApp, Encargos, Acerca de
+  mí con Contacto, en ES (sin prefijo) y EN (`/en/...`). Las vistas están en
+  `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
+  `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
+- Las obras de color liso son de prueba y se borran antes de publicar.
 
 ## Dónde está cada cosa
 
@@ -24,11 +29,11 @@ consulta que hay**: ver más abajo.
 | Código | `~/Documents/GitHub/Barrio Portfolio` (esta carpeta) |
 | Contenido: fotos y fichas | `~/Documents/GÜZDAY/00 Barrio/Portfolio Barrio` |
 | Web provisional | https://guzday.github.io/Barrio-Portfolio/ |
-| Dominio | `pablobarrioarauz.com`, **apuntando todavía a Squarespace** |
+| Dominio | `pablobarrioarauz.com`, **apuntando todavía a su web actual: WordPress alojado en Piensa Solutions** (comprobado el 16-10-2026; antes se creía Squarespace) |
 
 **El dominio no se toca hasta que la web esté lista**, para que la web actual
 de Pablo siga funcionando sin un minuto de corte. Qué cambiar ese día está
-apuntado en `astro.config.mjs`. Avisar de no cancelar Squarespace antes.
+apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gestiona el dominio. Avisar de no cancelar ese alojamiento antes de tiempo.
 
 ## Decisiones ya tomadas (son de Pablo, no se cambian sin preguntarle)
 
