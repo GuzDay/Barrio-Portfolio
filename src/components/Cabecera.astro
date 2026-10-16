@@ -4,9 +4,9 @@
 //  - La firma, en blanco con fusión "exclusión": sobre fondo claro se ve casi
 //    negra y sobre las fotos cambia de color, así siempre se lee.
 //  - El menú, en cajitas de cristal translúcido (gris claro al 50 % y lo de
-//    detrás desenfocado). La sección actual va desplegada con su nombre y las
-//    demás plegadas en su número; al pasar el ratón se despliegan. En la
-//    portada, donde no se está en ninguna, van todas desplegadas.
+//    detrás desenfocado), cada una con su nombre. Al pasar el ratón, la cajita
+//    se ensancha un poco con una curva suave; la sección actual va algo más
+//    oscura.
 //  - El idioma (solo el otro: "EN" en la web en castellano) y, en el móvil, el
 //    botón del menú, en cajitas iguales.
 //
@@ -40,21 +40,15 @@ const menu = [
   { clave: 'encargos', texto: t.encargos, url: urlEncargos(idioma) },
   { clave: 'contacto', texto: t.contacto, url: urlContacto(idioma) },
 ];
-const todasDesplegadas = !menu.some((m) => m.clave === activa);
 ---
 
 <header class="cabecera">
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
 
-  <nav id="menu" class:list={['menu', { 'todas-desplegadas': todasDesplegadas }]} aria-label={t.menu}>
+  <nav id="menu" class="menu" aria-label={t.menu}>
     <ul>
-      {menu.map(({ clave, texto, url }, i) => (
-        <li>
-          <a class="caja" href={url} aria-current={activa === clave ? 'page' : undefined}>
-            <span class="etiqueta"><span>{texto}</span></span>
-            <sup aria-hidden="true">{i + 1}</sup>
-          </a>
-        </li>
+      {menu.map(({ clave, texto, url }) => (
+        <li><a class="caja" href={url} aria-current={activa === clave ? 'page' : undefined}>{texto}</a></li>
       ))}
     </ul>
   </nav>
@@ -80,10 +74,6 @@ const todasDesplegadas = !menu.some((m) => m.clave === activa);
       }
     });
   }
-
-  // Al llegar a una página, la cajita de la sección actual se despliega con
-  // una animación (en vez de aparecer ya abierta), como en gionatannese.com.
-  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector('.menu')?.classList.add('lista')));
 
   // Botón del menú en el móvil.
   const boton = document.querySelector<HTMLButtonElement>('.cabecera .abrir')!;
@@ -169,42 +159,26 @@ const todasDesplegadas = !menu.some((m) => m.clave === activa);
     gap: 4px;
   }
 
+  /* Al pasar el ratón, la cajita se ensancha 4 px por cada lado con la misma
+     curva suave que tenía el despliegue (0,6 s, arranca y frena despacio). */
   .menu .caja {
     font-family: var(--serif);
     font-weight: 300;
     line-height: 1.1;
-  }
-
-  /* El nombre se pliega y despliega animando su ancho (de 0 a lo que mida). */
-  .etiqueta {
-    display: grid;
-    grid-template-columns: 0fr;
-    transition: grid-template-columns 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .etiqueta > span {
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .menu.lista .caja[aria-current] .etiqueta,
-  .menu.todas-desplegadas .etiqueta,
-  .caja:hover .etiqueta,
-  .caja:focus-visible .etiqueta {
-    grid-template-columns: 1fr;
-  }
-
-  .menu .caja[aria-current],
-  .menu.todas-desplegadas .caja {
     padding-inline: 12px;
+    white-space: nowrap;
+    transition:
+      padding 0.6s cubic-bezier(0.76, 0, 0.24, 1),
+      background-color 0.25s ease;
   }
 
-  sup {
-    font-family: var(--sans);
-    font-size: 0.75em;
-    line-height: 1;
-    margin-left: 3px;
-    align-self: flex-start;
+  .menu .caja:hover,
+  .menu .caja:focus-visible {
+    padding-inline: 16px;
+  }
+
+  .menu .caja[aria-current] {
+    background: rgb(216 216 216 / 0.5);
   }
 
   /* ---------- Idioma ---------- */
@@ -341,18 +315,20 @@ const todasDesplegadas = !menu.some((m) => m.clave === activa);
       padding: 0.7rem 1rem;
       font-size: 1.115em; /* 14,5 px */
     }
-    .menu .etiqueta {
-      grid-template-columns: 1fr;
+    .menu .caja:hover,
+    .menu .caja:focus-visible {
+      padding-inline: 1rem;
     }
-    .menu .caja[aria-current] .etiqueta > span {
+    .menu .caja[aria-current] {
+      background: none;
       text-decoration: underline;
       text-underline-offset: 0.3em;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .etiqueta,
-    .caja {
+    .caja,
+    .menu .caja {
       transition: none;
     }
   }

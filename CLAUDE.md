@@ -30,7 +30,9 @@ consulta que hay**: ver más abajo.
 - **Cabecera fija estilo gionatannese.com** (16-10-2026): firma en blanco con
   `mix-blend-mode: exclusion` (cambia de color sobre las fotos; va suelta,
   fuera de cualquier capa, o no funciona), menú centrado en cajitas de cristal
-  con la sección actual desplegada, idioma en otra cajita.
+  siempre con su nombre (sin números: Guzmán los quitó), que se ensanchan
+  suavemente al pasar el ratón; la actual, algo más oscura. Idioma en otra
+  cajita.
 - **Tipografías** (16-10-2026): Newsreader para títulos, cabecera y pie, e
   Inter Tight para el resto. Son las gratuitas más parecidas a las que le
   gustan a Guzmán, Teodor y Forma DJR, que son de pago. Están en
