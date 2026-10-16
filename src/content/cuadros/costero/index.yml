@@ -1,0 +1,9 @@
+titulo: Costero
+texto: Vivienda unifamiliar en Las Palmas de Gran Canaria. Ficha de prueba con fotos de su web actual.
+medidas: 79 x 108 cm
+estado: vendido
+fotos:
+  - costero-1.jpg
+order: 12
+en:
+  texto: Test entry with photos from his current website.

@@ -1,0 +1,12 @@
+titulo: Las ventanas
+texto: Tríptico para una vivienda unifamiliar en Arucas. Ficha de prueba con fotos de su web actual.
+medidas: 100 x 120 cm
+estado: vendido
+fotos:
+  - las-ventanas-1.jpg
+  - las-ventanas-2.jpg
+  - las-ventanas-3.jpg
+  - las-ventanas-4.jpg
+order: 9
+en:
+  texto: Test entry with photos from his current website.

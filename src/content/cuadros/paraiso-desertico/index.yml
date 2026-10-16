@@ -1,0 +1,11 @@
+titulo: Paraíso desértico
+texto: "Opción I para Javier y Rosa, Playa del Hombre, Telde. Ficha de prueba con fotos de su web actual."
+medidas: 100 x 150 cm
+estado: disponible
+fotos:
+  - paraiso-desertico-1.jpg
+  - paraiso-desertico-2.jpg
+  - paraiso-desertico-3.jpg
+order: 6
+en:
+  texto: Test entry with photos from his current website.

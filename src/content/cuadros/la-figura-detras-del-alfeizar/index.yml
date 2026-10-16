@@ -1,0 +1,10 @@
+titulo: La figura detrás del alféizar
+texto: "Encargo para MH Global, c/ Ayala, Madrid. Ficha de prueba con fotos de su web actual."
+medidas: "100 x 100, 30 x 100 y 90 x 100 cm"
+estado: vendido
+fotos:
+  - la-figura-detras-del-alfeizar-1.jpg
+  - la-figura-detras-del-alfeizar-2.jpg
+order: 8
+en:
+  texto: Test entry with photos from his current website.

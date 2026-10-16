@@ -1,0 +1,10 @@
+titulo: Paisaje roto
+texto: Cocina de una vivienda en Las Palmas de Gran Canaria. Ficha de prueba con fotos de su web actual.
+medidas: "70 x 50, 40 x 40, 33 x 55 y 40 x 50 cm"
+estado: vendido
+fotos:
+  - paisaje-roto-1.jpg
+  - paisaje-roto-2.jpg
+order: 15
+en:
+  texto: Test entry with photos from his current website.

@@ -1,16 +1,10 @@
-lang:
-  - es
-  - en
-order: 3
 titulo: Azul
-tecnica: Acrílico sobre lienzo
-texto: Ficha de prueba con foto de color liso. Se borrará.
+texto: "Proyecto Recoletos: salón. Ficha de prueba con fotos de su web actual."
 medidas: 90 x 180 cm
-anio: 2023
 estado: vendido
 fotos:
   - azul-1.jpg
+  - azul-2.jpg
+order: 3
 en:
-  order: 3
-  tecnica: Acrylic on canvas
-  texto: Test entry with a plain colour photo. Will be deleted.
+  texto: Test entry with photos from his current website.

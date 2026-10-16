@@ -1,0 +1,9 @@
+titulo: Tajogaite
+texto: "Vivienda en Los Llanos, La Palma. Ficha de prueba con fotos de su web actual."
+medidas: 50 x 50 cm
+estado: vendido
+fotos:
+  - tajogaite-1.jpg
+order: 13
+en:
+  texto: Test entry with photos from his current website.

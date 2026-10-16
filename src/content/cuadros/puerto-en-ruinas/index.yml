@@ -1,0 +1,11 @@
+titulo: Puerto en ruinas
+texto: "Opción II para Javier y Rosa, Playa del Hombre, Telde. Ficha de prueba con fotos de su web actual."
+medidas: 70 x 170 cm
+estado: vendido
+fotos:
+  - puerto-en-ruinas-1.jpg
+  - puerto-en-ruinas-2.jpg
+  - puerto-en-ruinas-3.jpg
+order: 11
+en:
+  texto: Test entry with photos from his current website.

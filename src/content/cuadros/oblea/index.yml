@@ -1,17 +1,11 @@
-lang:
-  - es
-  - en
-order: 4
 titulo: Oblea
-tecnica: Técnica mixta sobre tabla
-texto: Ficha de prueba con foto de color liso. Se borrará.
-medidas: 62 x 62 cm
-anio: 2022
-precio: 800
-estado: disponible
+texto: "Proyecto Recoletos: sala de estar. Ficha de prueba con fotos de su web actual."
+medidas: 2 x (62 x 62) cm
+estado: vendido
 fotos:
   - oblea-1.jpg
+  - oblea-2.jpg
+  - oblea-3.jpg
+order: 4
 en:
-  order: 4
-  tecnica: Mixed media on board
-  texto: Test entry with a plain colour photo. Will be deleted.
+  texto: Test entry with photos from his current website.

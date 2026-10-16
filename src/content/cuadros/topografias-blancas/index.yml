@@ -1,17 +1,10 @@
-lang:
-  - es
-  - en
-order: 5
 titulo: Topografías blancas
-tecnica: Técnica mixta sobre lienzo
-texto: Ficha de prueba con foto de color liso. Se borrará.
-medidas: 85 x 65 cm
-anio: 2022
-precio: 950
-estado: disponible
+texto: "Proyecto Recoletos: hall. Ficha de prueba con fotos de su web actual."
+medidas: 2 x (85 x 65) cm
+estado: vendido
 fotos:
   - topografias-blancas-1.jpg
+  - topografias-blancas-2.jpg
+order: 5
 en:
-  order: 5
-  tecnica: Mixed media on canvas
-  texto: Test entry with a plain colour photo. Will be deleted.
+  texto: Test entry with photos from his current website.

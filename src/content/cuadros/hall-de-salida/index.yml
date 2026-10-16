@@ -1,0 +1,10 @@
+titulo: Hall de salida
+texto: "Vivienda en Ciudad Jardín, Las Palmas. Ficha de prueba con fotos de su web actual."
+medidas: 51 x 38 cm
+estado: vendido
+fotos:
+  - hall-de-salida-1.jpg
+  - hall-de-salida-2.jpg
+order: 14
+en:
+  texto: Test entry with photos from his current website.

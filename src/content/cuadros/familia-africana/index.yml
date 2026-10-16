@@ -1,0 +1,13 @@
+titulo: Familia africana
+texto: "Tríptico irregular para una vivienda en Santo Domingo, Madrid. Ficha de prueba con fotos de su web actual."
+medidas: 180 x 220 cm
+estado: vendido
+fotos:
+  - familia-africana-1.jpg
+  - familia-africana-2.jpg
+  - familia-africana-3.jpg
+  - familia-africana-4.jpg
+  - familia-africana-5.jpg
+order: 7
+en:
+  texto: Test entry with photos from his current website.
