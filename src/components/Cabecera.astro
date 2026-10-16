@@ -151,10 +151,13 @@ const menu = [
         ],
         { duration: 380, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)' },
       );
+      // Si la página tiene animación de salida (las tarjetas de Pintura y
+      // Escultura), se lanza a la vez y se espera a que termine.
+      const salida = (window as unknown as { __salida?: () => number }).__salida?.() ?? 0;
       setTimeout(() => {
         apuntar(caja, i);
         location.href = caja.href;
-      }, 180);
+      }, Math.max(180, salida));
     }),
   );
   // La cajita que viene "ensanchada" de la página anterior se encoge (con su

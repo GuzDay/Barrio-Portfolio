@@ -8,6 +8,10 @@
 //  - con ratón, al pasar por encima de la tarjeta, que además gana relieve;
 //  - en pantallas táctiles (sin "pasar por encima"), con el scroll: solo las
 //    dos más centradas en pantalla en cada momento; el resto, en gris.
+//
+// Al llegar a la sección, las tarjetas entran volando desde la izquierda
+// como si alguien las lanzara, y al irse salen disparadas por la derecha
+// (pedido de Guzmán, 16-10-2026).
 import { Image } from 'astro:assets';
 import EstadoObra from './EstadoObra.astro';
 import { ficha, type Obra } from '../lib/obras';
@@ -57,6 +61,19 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     );
   })}
 </ul>
+<script is:inline>
+  // Antes de pintar: las tarjetas empiezan escondidas para que entren
+  // volando (ver "llegar" abajo) en vez de verse un instante en su sitio.
+  // Red de seguridad: si algo falla, aparecen solas a los 4 s.
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var g = document.currentScript.previousElementSibling;
+    g.classList.add('por-llegar');
+    setTimeout(function () {
+      g.classList.remove('por-llegar');
+    }, 4000);
+  })();
+</script>
 <p class="vacia" hidden>{t.ningunaDisponible}</p>
 
 <script>
@@ -77,6 +94,78 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   // más centradas en pantalla (con dos columnas, suelen ser las de la fila
   // del medio). Se recalcula al hacer scroll. Con ratón no hace falta: lo
   // hace el CSS al pasar por encima.
+  // ---------- Llegada y salida ----------
+  const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const azar = (a: number, b: number) => a + Math.random() * (b - a);
+  const tarjetasLi = () => [...(galeria?.querySelectorAll<HTMLElement>('li') ?? [])];
+
+  // Llegada: cada tarjeta entra desde fuera de la pantalla por la izquierda,
+  // girada y a una altura algo distinta; se pasa un poco de su sitio y se
+  // asienta enderezándose. Una detrás de otra, como lanzadas.
+  function llegar() {
+    if (!galeria || sinMovimiento) return;
+    tarjetasLi().forEach((li, i) => {
+      li.getAnimations().forEach((a) => a.cancel());
+      li.animate(
+        [
+          { transform: `translate(-110vw, ${azar(-80, 60)}px) rotate(${azar(-28, -12)}deg)`, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+          { transform: `translate(14px, 0) rotate(${azar(1.5, 3.5)}deg)`, offset: 0.72, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' },
+          { transform: 'none' },
+        ],
+        { duration: 1000, delay: Math.min(i, 12) * 75, fill: 'backwards' },
+      );
+    });
+    galeria.classList.remove('por-llegar');
+  }
+
+  // Salida: las tarjetas a la vista salen disparadas por la derecha,
+  // acelerando, empezando por las de la derecha. Devuelve cuánto tarda, para
+  // que el cambio de página espere a que se hayan ido.
+  function salir(): number {
+    if (!galeria || sinMovimiento) return 0;
+    const visibles: { li: HTMLElement; r: DOMRect }[] = [];
+    const resto: HTMLElement[] = [];
+    for (const li of tarjetasLi()) {
+      const r = li.getBoundingClientRect();
+      if (r.height && r.bottom > 0 && r.top < innerHeight) visibles.push({ li, r });
+      else resto.push(li);
+    }
+    visibles.sort((a, b) => b.r.left - a.r.left || a.r.top - b.r.top);
+    const DURACION = 480;
+    const animar = (li: HTMLElement, delay: number) =>
+      li.animate(
+        [{ transform: 'none' }, { transform: `translate(110vw, ${azar(-60, 40)}px) rotate(${azar(10, 24)}deg)` }],
+        { duration: DURACION, delay, easing: 'cubic-bezier(0.55, 0, 0.85, 0.25)', fill: 'forwards' },
+      );
+    visibles.forEach(({ li }, i) => animar(li, i * 35));
+    resto.forEach((li) => animar(li, 0));
+    return DURACION + Math.max(visibles.length - 1, 0) * 35;
+  }
+
+  if (galeria) {
+    llegar();
+    // La cabecera la usa al pulsar una sección (coordina su latido con esto).
+    (window as unknown as { __salida?: () => number }).__salida = salir;
+    // Cualquier otro enlace que saque de la sección (firma, idioma, menú del
+    // móvil…). Los de las propias tarjetas no: abrir una obra no es irse.
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented) return;
+      const a = (e.target as Element).closest('a');
+      if (!a || a.closest('.galeria')) return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+      const url = new URL(a.href, location.href);
+      if (url.origin !== location.origin || (url.pathname === location.pathname && url.hash)) return;
+      const ms = salir();
+      if (!ms) return;
+      e.preventDefault();
+      setTimeout(() => (location.href = a.href), ms);
+    });
+    // Al volver con el botón "atrás", el navegador puede enseñar la página tal
+    // como quedó (con las tarjetas fuera): se las hace llegar de nuevo.
+    addEventListener('pageshow', (e) => e.persisted && llegar());
+  }
+
+  // ---------- Color en pantallas táctiles ----------
   const COMO_MUCHO = 2;
   if (galeria && !matchMedia('(hover: hover) and (pointer: fine)').matches) {
     let pendiente = false;
@@ -144,6 +233,10 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1.25rem clamp(0.4rem, 0.7vw, 0.75rem);
     }
+  }
+
+  .galeria.por-llegar li {
+    visibility: hidden;
   }
 
   .galeria[data-mostrando='disponibles'] li[data-vendida] {
