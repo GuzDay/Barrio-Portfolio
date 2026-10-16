@@ -642,6 +642,15 @@ const menu = [
     }
   }
 
+  /* Solo al abrir la web (ver el script de Base.astro). */
+  :global(html.sin-apertura) .portada .menu .caja,
+  :global(html.sin-apertura) .portada .idiomas,
+  :global(html.sin-apertura) .portada .abrir,
+  :global(html.sin-apertura) .portada .marca,
+  :global(html.sin-apertura) .portada .marca::before {
+    animation: none;
+  }
+
   @keyframes entrar-caja {
     from {
       transform: translateY(14px) scale(0.94);
