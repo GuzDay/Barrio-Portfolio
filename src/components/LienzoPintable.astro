@@ -97,7 +97,8 @@ const { foto } = Astro.props;
   // Una pincelada: varias manchas suaves alrededor del punto, con algo de
   // azar, para que el borde no sea un círculo perfecto sino de brocha.
   function pincelada(x: number, y: number) {
-    const radio = Math.min(Math.max(innerWidth * 0.045, 36), 80) / escala;
+    // En el móvil, el pincel algo más fino (30 px de radio en vez de 36).
+    const radio = Math.min(Math.max(innerWidth * 0.045, conRaton ? 36 : 30), 80) / escala;
     const mx = (x - dx) / escala;
     const my = (y - dy) / escala;
     for (let i = 0; i < 5; i++) {
