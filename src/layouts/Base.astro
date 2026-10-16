@@ -62,16 +62,6 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
         })();
       </script>
     )}
-    {/* La apertura animada de la portada solo sale al abrir la web: la
-        primera página de la visita deja una marca y, si ya existe, se añade
-        "sin-apertura" y la cabecera de la portada aparece directamente
-        (ver Cabecera.astro). El fundido del pie sí se repite. */}
-    <script is:inline>
-      try {
-        if (sessionStorage.getItem('web-abierta')) document.documentElement.classList.add('sin-apertura');
-        else sessionStorage.setItem('web-abierta', '1');
-      } catch (e) {}
-    </script>
     <title>{tituloCompleto}</title>
     {descripcion && <meta name="description" content={descripcion} />}
     <link rel="canonical" href={absoluta(alternativas[idioma])} />
