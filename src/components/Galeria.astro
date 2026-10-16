@@ -100,19 +100,21 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   const tarjetasLi = () => [...(galeria?.querySelectorAll<HTMLElement>('li') ?? [])];
 
   // Llegada: cada tarjeta entra desde fuera de la pantalla por la izquierda,
-  // girada y a una altura algo distinta; se pasa un poco de su sitio y se
-  // asienta enderezándose. Una detrás de otra, como lanzadas.
+  // un poco girada, como lanzada, y frena de forma larga y progresiva (llega
+  // rápida y va perdiendo velocidad muy poco a poco) hasta asentarse con un
+  // vaivén apenas perceptible. Aparece fundiéndose. Una tras otra.
   function llegar() {
     if (!galeria || sinMovimiento) return;
     tarjetasLi().forEach((li, i) => {
       li.getAnimations().forEach((a) => a.cancel());
       li.animate(
         [
-          { transform: `translate(-110vw, ${azar(-80, 60)}px) rotate(${azar(-28, -12)}deg)`, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
-          { transform: `translate(14px, 0) rotate(${azar(1.5, 3.5)}deg)`, offset: 0.72, easing: 'cubic-bezier(0.45, 0, 0.55, 1)' },
-          { transform: 'none' },
+          { transform: `translate(-100vw, ${azar(-24, 16)}px) rotate(${azar(-8, -4)}deg)`, opacity: 0, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+          { opacity: 1, offset: 0.35, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+          { transform: `translate(5px, 0) rotate(${azar(0.4, 0.9)}deg)`, offset: 0.82, easing: 'cubic-bezier(0.37, 0, 0.63, 1)' },
+          { transform: 'none', opacity: 1 },
         ],
-        { duration: 1000, delay: Math.min(i, 12) * 75, fill: 'backwards' },
+        { duration: 1400, delay: Math.min(i, 12) * 90, fill: 'backwards' },
       );
     });
     galeria.classList.remove('por-llegar');
@@ -131,15 +133,23 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       else resto.push(li);
     }
     visibles.sort((a, b) => b.r.left - a.r.left || a.r.top - b.r.top);
-    const DURACION = 480;
+    // Arranca despacio y acelera de forma progresiva, sin tirón; poco giro y
+    // se desvanece al final.
+    const DURACION = 620;
+    const PASO = 40;
     const animar = (li: HTMLElement, delay: number) =>
       li.animate(
-        [{ transform: 'none' }, { transform: `translate(110vw, ${azar(-60, 40)}px) rotate(${azar(10, 24)}deg)` }],
-        { duration: DURACION, delay, easing: 'cubic-bezier(0.55, 0, 0.85, 0.25)', fill: 'forwards' },
+        [
+          { transform: 'none', opacity: 1 },
+          { opacity: 1, offset: 0.55 },
+          { transform: `translate(100vw, ${azar(-16, 12)}px) rotate(${azar(4, 8)}deg)`, opacity: 0 },
+        ],
+        { duration: DURACION, delay, easing: 'cubic-bezier(0.55, 0.05, 0.68, 0.19)', fill: 'forwards' },
       );
-    visibles.forEach(({ li }, i) => animar(li, i * 35));
+    visibles.forEach(({ li }, i) => animar(li, i * PASO));
     resto.forEach((li) => animar(li, 0));
-    return DURACION + Math.max(visibles.length - 1, 0) * 35;
+    // Se cambia de página cuando la última ya casi ha desaparecido.
+    return Math.round((DURACION + Math.max(visibles.length - 1, 0) * PASO) * 0.9);
   }
 
   if (galeria) {
