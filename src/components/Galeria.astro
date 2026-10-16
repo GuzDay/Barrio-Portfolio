@@ -110,21 +110,22 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     text-underline-offset: 0.3em;
   }
 
-  /* Dos columnas en el móvil y la tableta, cuatro en ordenador. Mismo corte
-     (1000 px) y misma separación que la galería de la web de Blanca. */
+  /* Dos columnas en el móvil y la tableta, cuatro en ordenador (corte en
+     1000 px, como en la web de Blanca). La separación es algo menor que la
+     de Blanca para que las tarjetas ganen tamaño (pedido de Guzmán). */
   .galeria {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem var(--hueco);
+    gap: 0.9rem clamp(0.4rem, 0.7vw, 0.75rem);
   }
 
   @media (min-width: 1000px) {
     .galeria {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 2rem var(--hueco);
+      gap: 1.25rem clamp(0.4rem, 0.7vw, 0.75rem);
     }
   }
 
@@ -205,7 +206,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
 
   .datos,
   .pie-tarjeta :global(.estado-tarjeta) {
-    font-size: 0.9rem;
+    font-size: 0.9em;
   }
 
   /* En dos columnas de móvil la tarjeta es estrecha: letra y relleno menores. */
@@ -214,11 +215,11 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       padding: 0.55rem 0.6rem 0.65rem;
     }
     .titulo {
-      font-size: 0.9rem;
+      font-size: 0.9em;
     }
     .datos,
     .pie-tarjeta :global(.estado-tarjeta) {
-      font-size: 0.8rem;
+      font-size: 0.8em;
     }
   }
 
