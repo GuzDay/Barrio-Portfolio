@@ -139,8 +139,7 @@ const menu = [
   /* Ordenador, como en offforum.com: al pasar el ratón, una raya fina crece
      bajo la palabra de izquierda a derecha (0,5 s, arranca y frena suave) y
      al quitarlo se recoge hacia la izquierda. La sección en la que se está
-     la tiene siempre puesta. El selector de idioma enseña solo el OTRO
-     idioma ("EN" en la web en castellano), del tamaño del menú. */
+     la tiene siempre puesta. */
   @media (min-width: 900px) {
     /* Todos como bloque: así las secciones y el idioma tienen la misma caja
        y la raya queda a la misma altura (antes la de "EN" iba 2,5 px más
@@ -170,9 +169,11 @@ const menu = [
     .idiomas a:focus-visible::after {
       transform: scaleX(1);
     }
-    .idiomas a[aria-current] {
-      display: none;
-    }
+  }
+
+  /* En todas las pantallas, el selector enseña solo el OTRO idioma. */
+  .idiomas a[aria-current] {
+    display: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -270,8 +271,7 @@ const menu = [
       display: flex;
       order: 3;
     }
-    /* Idiomas como en la web de Blanca: pequeños, algo espaciados, y el que
-       no está activo atenuado. */
+    /* El idioma, pequeño y algo espaciado, como en la web de Blanca. */
     .idiomas {
       order: 2;
       gap: 0.3rem;
@@ -282,9 +282,6 @@ const menu = [
       padding: 0.4rem 0.15rem; /* zona de toque, sin agrandar el texto */
       letter-spacing: 0.04em;
       color: var(--texto);
-    }
-    .idiomas a:not([aria-current]) {
-      opacity: 0.45;
     }
     .blanca .idiomas a {
       color: #fff;
