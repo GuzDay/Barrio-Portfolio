@@ -5,16 +5,24 @@
   --texto: #1a1a1a;
   --suave: #6b6760;
   --linea: #dcd7cf;
-  --hueco: #e9e5de; /* fondo de las fotos mientras cargan */
+  --vacio: #e9e5de; /* fondo de las fotos mientras cargan */
   --acento: #1a1a1a;
-  --margen: 16px;
-  --ancho: 1200px;
+  /* Márgenes copiados de la web de Blanca (blancagtarrio.com), que se
+     ajustaron allí a ojo durante días. El lateral crece con la pantalla. */
+  --margen: clamp(1rem, 8.35vw, 13.25rem);
+  --hueco: clamp(0.5rem, 1.2vw, 1.25rem); /* separación entre tarjetas */
+  --ancho-max: 1440px;
+  /* En pantallas enormes el contenido no pasa de --ancho-max y se centra;
+     cabecera, contenido y pie usan este mismo relleno para ir alineados. */
+  --lateral: max(var(--margen), calc((100% - var(--ancho-max)) / 2));
   color-scheme: light;
 }
 
-@media (min-width: 720px) {
+/* En el móvil el margen se queda fijo en 16 px: ahí no sobra sitio a los
+   lados (igual que en la web de Blanca). */
+@media (max-width: 700px) {
   :root {
-    --margen: 32px;
+    --margen: 1rem;
   }
 }
 
@@ -42,10 +50,7 @@ body {
 
 main {
   flex: 1;
-  width: 100%;
-  max-width: var(--ancho);
-  margin: 0 auto;
-  padding: 0 var(--margen) 4rem;
+  padding: 1.5rem var(--lateral) 5rem;
 }
 
 img {
@@ -67,7 +72,7 @@ h3 {
 
 h1 {
   font-size: clamp(1.6rem, 4vw, 2.4rem);
-  margin: 2rem 0 1.5rem;
+  margin: 0.5rem 0 1.5rem;
 }
 
 .saltar {

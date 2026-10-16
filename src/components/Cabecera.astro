@@ -72,10 +72,7 @@ const menu = [
 
 <style>
   .cabecera {
-    width: 100%;
-    max-width: var(--ancho);
-    margin: 0 auto;
-    padding: 1.25rem var(--margen);
+    padding: 1.1rem var(--lateral);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -135,6 +132,9 @@ const menu = [
   /* Móvil: nombre, idioma y botón de menú en una línea; el menú se despliega
      debajo, a todo el ancho. */
   @media (max-width: 899px) {
+    .cabecera {
+      padding-block: 0.9rem;
+    }
     .abrir {
       display: block;
       order: 3;

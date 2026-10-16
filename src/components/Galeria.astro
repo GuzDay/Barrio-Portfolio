@@ -35,9 +35,9 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
             <Image
               src={f.fotos[0]}
               alt={f.titulo}
-              widths={[360, 540, 720, 1080]}
-              sizes="(min-width: 1200px) 370px, (min-width: 900px) 30vw, (min-width: 560px) 46vw, 92vw"
-              loading={i < 3 ? 'eager' : 'lazy'}
+              widths={[240, 360, 540, 720]}
+              sizes="(min-width: 1760px) 350px, (min-width: 1000px) 20vw, 46vw"
+              loading={i < 4 ? 'eager' : 'lazy'}
             />
           </div>
           <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
@@ -87,26 +87,21 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     text-underline-offset: 0.3em;
   }
 
-  /* Una columna en el móvil, dos en tableta, tres en ordenador. */
+  /* Dos columnas en el móvil y la tableta, cuatro en ordenador. Mismo corte
+     (1000 px) y misma separación que la galería de la web de Blanca. */
   .galeria {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 2.5rem 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem var(--hueco);
   }
 
-  @media (min-width: 560px) {
+  @media (min-width: 1000px) {
     .galeria {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 900px) {
-    .galeria {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3rem 2rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2.5rem var(--hueco);
     }
   }
 
@@ -122,8 +117,8 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   .foto {
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: var(--hueco);
-    margin-bottom: 0.75rem;
+    background: var(--vacio);
+    margin-bottom: 0.6rem;
   }
 
   .foto img {
@@ -153,6 +148,17 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   .datos,
   .precio {
     font-size: 0.9rem;
+  }
+
+  /* En dos columnas de móvil la tarjeta es estrecha: letra algo menor. */
+  @media (max-width: 699px) {
+    .titulo {
+      font-size: 0.9rem;
+    }
+    .datos,
+    .precio {
+      font-size: 0.8rem;
+    }
   }
 
   li[data-vendida] .precio {

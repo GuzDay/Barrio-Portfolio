@@ -22,11 +22,7 @@ const t = textos[Astro.props.idioma];
 
 <style>
   .pie {
-    width: 100%;
-    max-width: var(--ancho);
-    margin: 0 auto;
-    padding: 2rem var(--margen);
-    border-top: 1px solid var(--linea);
+    padding: 2rem var(--lateral);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -54,5 +50,13 @@ const t = textos[Astro.props.idioma];
 
   a:hover {
     color: var(--texto);
+  }
+
+  /* En el móvil, la barra del navegador se dibuja encima de lo último de la
+     página: se le deja hueco (aprendido en la web de Blanca). */
+  @media (max-width: 700px) {
+    .pie {
+      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    }
   }
 </style>
