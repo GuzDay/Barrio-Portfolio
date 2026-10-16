@@ -23,8 +23,22 @@ const { blanco } = Astro.props;
     color: var(--suave);
   }
 
+  /* En la portada, aparece con un fundido al final de la apertura. */
   .pie.blanco {
     color: #fff;
+    animation: pie-aparece 0.8s ease 0.9s backwards;
+  }
+
+  @keyframes pie-aparece {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pie.blanco {
+      animation: none;
+    }
   }
 
   /* Al 70 % de opacidad, en todas las páginas (pedido de Guzmán). */
