@@ -1,0 +1,41 @@
+---
+// Si una obra está disponible o vendida, con un punto de color a la derecha:
+// verde si está disponible, negro si está vendida. Sustituye al precio, que
+// no se enseña en la web (decisión de Guzmán, 16-10-2026).
+import type { Idioma } from '../lib/rutas';
+import { textos } from '../lib/textos';
+
+interface Props {
+  idioma: Idioma;
+  vendida: boolean;
+  class?: string;
+}
+
+const { idioma, vendida, class: clase } = Astro.props;
+const t = textos[idioma];
+---
+
+<p class:list={['estado', clase, { vendida }]}>
+  {vendida ? t.vendida : t.disponible}<span class="punto" aria-hidden="true"></span>
+</p>
+
+<style>
+  .estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    margin: 0;
+  }
+
+  .punto {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #2e9d4f;
+    flex: none;
+  }
+
+  .vendida .punto {
+    background: #1a1a1a;
+  }
+</style>

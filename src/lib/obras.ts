@@ -1,7 +1,6 @@
 // Las obras, tal como las guarda el panel, listas para enseñar en un idioma.
 import { getCollection } from 'astro:content';
 import type { Idioma, Seccion } from './rutas';
-import { MOSTRAR_PRECIO } from './sitio';
 
 export async function obrasDe(seccion: Seccion) {
   const obras = await getCollection(seccion);
@@ -22,15 +21,8 @@ export function ficha(obra: Obra, idioma: Idioma) {
     texto: en.texto ?? d.texto,
     medidas: d.medidas,
     anio: d.anio,
+    // El precio no se enseña en la web: solo si está disponible o vendida.
     vendida: d.estado === 'vendido',
-    precio:
-      MOSTRAR_PRECIO && d.precio
-        ? new Intl.NumberFormat(idioma === 'en' ? 'en-GB' : 'es-ES', {
-            style: 'currency',
-            currency: 'EUR',
-            maximumFractionDigits: 0,
-          }).format(d.precio)
-        : undefined,
     fotos: d.fotos,
   };
 }

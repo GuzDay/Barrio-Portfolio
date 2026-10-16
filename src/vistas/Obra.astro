@@ -3,6 +3,7 @@
 // el botón para preguntar por WhatsApp. Abajo, anterior y siguiente.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import EstadoObra from '../components/EstadoObra.astro';
 import { ficha, obrasDe } from '../lib/obras';
 import { ambas, secciones, urlObra, urlSeccion, type Idioma, type Seccion } from '../lib/rutas';
 import { urlWhatsApp } from '../lib/sitio';
@@ -52,7 +53,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
         {[f.tecnica, f.medidas, f.anio].filter(Boolean).map((dato) => <li>{dato}</li>)}
       </ul>
       {f.texto && <p class="texto">{f.texto}</p>}
-      <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+      <EstadoObra idioma={idioma} vendida={f.vendida} class="estado-ficha" />
       {!f.vendida && (
         <a class="boton" href={urlWhatsApp(t.mensajeObra(f.titulo, direccion))}>{t.preguntarObra}</a>
       )}
@@ -106,7 +107,9 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     margin: 0 0 1.25rem;
   }
 
-  .precio {
+  .ficha :global(.estado-ficha) {
+    display: flex;
+    width: fit-content;
     margin: 0 0 1.25rem;
     font-weight: 400;
   }

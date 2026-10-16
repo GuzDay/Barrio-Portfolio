@@ -58,6 +58,9 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   ningún texto. No copiar aquel criterio.
 - **Estado de venta**: quiere marcar las obras como vendidas / no disponibles,
   y le interesaba poder filtrar por disponibles.
+- **El precio no se enseña en la web** (decisión de Guzmán, 16-10-2026): en
+  su lugar sale "Disponible" con un punto verde o "Vendida" con un punto
+  negro. El campo de precio sigue en el panel, guardado, por si se quiere.
 - **Encargos** es un embudo de ventas: 3 o 4 pasos del proceso y un botón de
   contacto. No es una galería más.
 - **Contacto**: prefiere **WhatsApp** antes que correo ("me da más confianza").
@@ -73,7 +76,6 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
 
 ## Pendiente de decidir
 
-- Si el **precio** se enseña en público o se pone "consultar precio" (con Pablo).
 - **CMS: en prueba Sveltia CMS** (16-10-2026), elegido frente a Pages CMS
   porque es el único que permite ordenar obras arrastrando y tiene castellano
   e inglés en la misma ficha. Pablo lo usará desde el ordenador. Piezas:

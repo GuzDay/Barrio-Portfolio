@@ -9,6 +9,7 @@
 //  - en pantallas táctiles (sin "pasar por encima"), al entrar en pantalla
 //    con el scroll, y vuelven al gris al salir.
 import { Image } from 'astro:assets';
+import EstadoObra from './EstadoObra.astro';
 import { ficha, type Obra } from '../lib/obras';
 import { urlObra, type Idioma, type Seccion } from '../lib/rutas';
 import { textos } from '../lib/textos';
@@ -49,7 +50,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
           <div class="pie-tarjeta">
             <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
             <p class="datos">{[f.tecnica, f.medidas].filter(Boolean).join(' · ')}</p>
-            <p class="precio">{f.vendida ? t.vendida : (f.precio ?? t.consultarPrecio)}</p>
+            <EstadoObra idioma={idioma} vendida={f.vendida} class="estado-tarjeta" />
           </div>
         </a>
       </li>
@@ -203,7 +204,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   }
 
   .datos,
-  .precio {
+  .pie-tarjeta :global(.estado-tarjeta) {
     font-size: 0.9rem;
   }
 
@@ -216,13 +217,9 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       font-size: 0.9rem;
     }
     .datos,
-    .precio {
+    .pie-tarjeta :global(.estado-tarjeta) {
       font-size: 0.8rem;
     }
-  }
-
-  li[data-vendida] .precio {
-    color: var(--suave);
   }
 
   /* Quien pide en su sistema menos movimiento: sin levantar la tarjeta. */

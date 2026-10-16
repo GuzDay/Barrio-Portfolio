@@ -71,7 +71,7 @@ collections:
       - { name: texto, label: Texto breve, widget: text, required: false, i18n: true, hint: 'Una o dos frases. Puede quedarse vacío.' }
       - { name: medidas, label: Medidas, widget: string, required: false, hint: 'Por ejemplo: 130 x 130 cm' }
       - { name: anio, label: Año, widget: number, value_type: int, required: false }
-      - { name: precio, label: Precio (€), widget: number, value_type: int, required: false, hint: 'Solo el número. Vacío si no se quiere enseñar.' }
+      - { name: precio, label: Precio (€), widget: number, value_type: int, required: false, hint: 'Solo el número. No se enseña en la web: queda guardado por si algún día se quiere poner.' }
       - name: estado
         label: Estado
         widget: select
