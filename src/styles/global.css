@@ -58,9 +58,19 @@ html:has(.lienzo) {
   scrollbar-gutter: auto;
 }
 
-html:has(.lienzo) .cabecera,
 html:has(.lienzo) .pie {
   padding-right: calc(var(--lateral) + var(--barra, 0px));
+}
+
+/* Las piezas fijas de la cabecera, igual: que no se muevan respecto a las
+   demás páginas (solo importa en ordenador; en el móvil la barra flota). */
+@media (min-width: 900px) {
+  html:has(.lienzo) .cabecera .idiomas {
+    right: calc(var(--lateral) + var(--barra, 0px));
+  }
+  html:has(.lienzo) .cabecera .menu {
+    transform: translateX(calc(-50% - var(--barra, 0px) / 2));
+  }
 }
 
 body {

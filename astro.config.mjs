@@ -17,6 +17,15 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  // Para qué navegadores se preparan los estilos. Sin esto, al construir se
+  // quitaba el "-webkit-backdrop-filter" (el desenfoque de las cajitas de
+  // cristal tal como lo entiende Safari) y los iPhone con Safari anterior al
+  // 18 se quedaban sin efecto. Safari 15 cubre los iPhone de hace años.
+  vite: {
+    build: {
+      cssTarget: ['safari15', 'ios15', 'chrome100', 'firefox100', 'edge100'],
+    },
+  },
   // En la web anterior de Pablo, "Acerca de mí" era una página aparte. Ahora
   // va dentro de Contacto: la dirección vieja (y la que tuvo esta web en
   // pruebas, en inglés) llevan allí.

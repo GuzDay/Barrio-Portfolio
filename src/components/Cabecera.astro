@@ -1,6 +1,18 @@
 ---
-// Cabecera: nombre, menú e idioma. En el móvil el menú se pliega tras un botón;
-// el cambio de idioma se queda siempre a la vista.
+// Cabecera, inspirada en gionatannese.com (pedido de Guzmán, 16-10-2026):
+//  - Todo fijo arriba: no se va al hacer scroll.
+//  - La firma, en blanco con fusión "exclusión": sobre fondo claro se ve casi
+//    negra y sobre las fotos cambia de color, así siempre se lee.
+//  - El menú, en cajitas de cristal translúcido (gris claro al 50 % y lo de
+//    detrás desenfocado). La sección actual va desplegada con su nombre y las
+//    demás plegadas en su número; al pasar el ratón se despliegan. En la
+//    portada, donde no se está en ninguna, van todas desplegadas.
+//  - El idioma (solo el otro: "EN" en la web en castellano) y, en el móvil, el
+//    botón del menú, en cajitas iguales.
+//
+// El elemento <header> solo reserva el alto; cada pieza va fija por su
+// cuenta. La firma tiene que ir suelta: si estuviera dentro de una capa
+// propia, la fusión se haría con esa capa y no con la página.
 import {
   secciones,
   urlContacto,
@@ -9,7 +21,6 @@ import {
   urlSeccion,
   type Idioma,
 } from '../lib/rutas';
-import { sitio } from '../lib/sitio';
 import firma from '../assets/firma.svg?raw';
 import { textos } from '../lib/textos';
 
@@ -17,13 +28,10 @@ interface Props {
   idioma: Idioma;
   alternativas: Record<Idioma, string>;
   activa?: string;
-  blanca?: boolean; // en la portada va sobre la foto: firma y menú en blanco
+  blanca?: boolean; // portada: hoy no cambia nada (la firma se adapta sola)
 }
 
-const { idioma, alternativas, activa, blanca } = Astro.props;
-// La firma va metida en la página (no como <img>) para que tome el color del
-// texto: negra normalmente y blanca en la portada. Safari no aplica filtros de
-// color a una imagen SVG, así que no vale con pintarla de blanco por CSS.
+const { idioma, alternativas, activa } = Astro.props;
 const firmaEnLinea = firma.replace('<svg ', '<svg fill="currentColor" ');
 const t = textos[idioma];
 const menu = [
@@ -32,24 +40,33 @@ const menu = [
   { clave: 'encargos', texto: t.encargos, url: urlEncargos(idioma) },
   { clave: 'contacto', texto: t.contacto, url: urlContacto(idioma) },
 ];
+const todasDesplegadas = !menu.some((m) => m.clave === activa);
 ---
 
-<header class:list={['cabecera', { blanca }]}>
+<header class="cabecera">
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
-  <button class="abrir" type="button" aria-expanded="false" aria-controls="menu" aria-label={t.menu} data-abrir={t.menu} data-cerrar={t.cerrar}>
-    <span class="icono" aria-hidden="true"></span>
-  </button>
-  <nav id="menu" class="menu">
+
+  <nav id="menu" class:list={['menu', { 'todas-desplegadas': todasDesplegadas }]} aria-label={t.menu}>
     <ul>
-      {menu.map(({ clave, texto, url }) => (
-        <li><a href={url} aria-current={activa === clave ? 'page' : undefined}>{texto}</a></li>
+      {menu.map(({ clave, texto, url }, i) => (
+        <li>
+          <a class="caja" href={url} aria-current={activa === clave ? 'page' : undefined}>
+            <span class="etiqueta"><span>{texto}</span></span>
+            <sup aria-hidden="true">{i + 1}</sup>
+          </a>
+        </li>
       ))}
     </ul>
   </nav>
-  <div class="idiomas" aria-label={t.idioma}>
+
+  <div class="idiomas caja" aria-label={t.idioma}>
     <a href={alternativas.es} lang="es" hreflang="es" data-idioma="es" aria-current={idioma === 'es' ? 'true' : undefined}>ES</a>
     <a href={alternativas.en} lang="en" hreflang="en" data-idioma="en" aria-current={idioma === 'en' ? 'true' : undefined}>EN</a>
   </div>
+
+  <button class="abrir caja" type="button" aria-expanded="false" aria-controls="menu" aria-label={t.menu} data-abrir={t.menu} data-cerrar={t.cerrar}>
+    <span class="icono" aria-hidden="true"></span>
+  </button>
 </header>
 
 <script>
@@ -64,37 +81,47 @@ const menu = [
     });
   }
 
+  // Al llegar a una página, la cajita de la sección actual se despliega con
+  // una animación (en vez de aparecer ya abierta), como en gionatannese.com.
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector('.menu')?.classList.add('lista')));
+
   // Botón del menú en el móvil.
   const boton = document.querySelector<HTMLButtonElement>('.cabecera .abrir')!;
+  const panel = document.querySelector('.cabecera .menu')!;
   const abrir = (si: boolean) => {
+    panel.classList.toggle('abierto', si);
     boton.setAttribute('aria-expanded', String(si));
     boton.setAttribute('aria-label', (si ? boton.dataset.cerrar : boton.dataset.abrir)!);
   };
   boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
-  // Al pulsar una entrada del menú en el móvil, el menú se cierra.
   for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
     enlace.addEventListener('click', () => abrir(false));
   }
 </script>
 
 <style>
-  /* La letra de la cabecera va 2 px por debajo de la del resto de la web
-     (13 px con la base de 15): pedido de Guzmán. Lo de dentro va en em. */
+  /* Reserva el alto de la cabecera, que ahora va fija (sus piezas no ocupan
+     sitio en la página). La letra va 2 px por debajo de la base y en la
+     serif un tamaño más (ver global.css). */
   .cabecera {
+    height: 91px;
     font-size: calc((1em - 2px) * var(--serif-escala));
-    padding: 1.1rem var(--lateral);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1.5rem;
   }
+
+  /* ---------- Firma ---------- */
 
   /* La firma de Pablo: src/assets/firma.svg, sacada tal cual de scripts/firma/Firma Barrio.svg
      (el archivo que pasó Guzmán) sin los datos internos de Adobe y con el recuadro
-     ajustado al borde de la tinta. Toma el color del texto. */
+     ajustado al borde de la tinta. Blanca con fusión "exclusión" (como el
+     "GN .D" de gionatannese.com): casi negra sobre el fondo claro y de otro
+     color sobre las fotos. */
   .marca {
-    margin-right: auto;
-    color: var(--texto);
+    position: fixed;
+    top: 18px;
+    left: var(--lateral);
+    z-index: 60;
+    color: #fff;
+    mix-blend-mode: exclusion;
   }
 
   .marca :global(svg) {
@@ -104,10 +131,34 @@ const menu = [
     width: auto;
   }
 
-  @media (max-width: 899px) {
-    .marca :global(svg) {
-      height: 44px;
-    }
+  /* ---------- Cajitas de cristal ---------- */
+
+  .caja {
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: rgb(237 237 237 / 0.5);
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
+    color: var(--texto);
+    text-decoration: none;
+    transition: background-color 0.25s ease;
+  }
+
+  .caja:hover,
+  .caja:focus-visible {
+    background: rgb(216 216 216 / 0.5);
+  }
+
+  /* ---------- Menú (ordenador) ---------- */
+
+  .menu {
+    position: fixed;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
   }
 
   .menu ul {
@@ -115,107 +166,86 @@ const menu = [
     margin: 0;
     padding: 0;
     display: flex;
-    gap: 1.5rem;
+    gap: 4px;
   }
 
-  .menu a,
-  .idiomas a {
-    text-decoration: none;
-    color: var(--suave);
+  .menu .caja {
+    font-family: var(--serif);
+    font-weight: 300;
+    line-height: 1.1;
   }
 
-  .menu a:hover,
-  .idiomas a:hover,
-  .menu a[aria-current],
-  .idiomas a[aria-current] {
-    color: var(--texto);
+  /* El nombre se pliega y despliega animando su ancho (de 0 a lo que mida). */
+  .etiqueta {
+    display: grid;
+    grid-template-columns: 0fr;
+    transition: grid-template-columns 0.6s cubic-bezier(0.76, 0, 0.24, 1);
   }
+
+  .etiqueta > span {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .menu.lista .caja[aria-current] .etiqueta,
+  .menu.todas-desplegadas .etiqueta,
+  .caja:hover .etiqueta,
+  .caja:focus-visible .etiqueta {
+    grid-template-columns: 1fr;
+  }
+
+  .menu .caja[aria-current],
+  .menu.todas-desplegadas .caja {
+    padding-inline: 12px;
+  }
+
+  sup {
+    font-family: var(--sans);
+    font-size: 0.75em;
+    line-height: 1;
+    margin-left: 3px;
+    align-self: flex-start;
+  }
+
+  /* ---------- Idioma ---------- */
 
   .idiomas {
-    display: flex;
-    gap: 0.6rem;
+    position: fixed;
+    top: 32px;
+    right: var(--lateral);
+    z-index: 50;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
   }
 
-  /* Ordenador, como en offforum.com: al pasar el ratón, una raya fina crece
-     bajo la palabra de izquierda a derecha (0,5 s, arranca y frena suave) y
-     al quitarlo se recoge hacia la izquierda. La sección en la que se está
-     la tiene siempre puesta. */
-  @media (min-width: 900px) {
-    /* Todos como bloque: así las secciones y el idioma tienen la misma caja
-       y la raya queda a la misma altura (antes la de "EN" iba 2,5 px más
-       baja). */
-    .menu a,
-    .idiomas a {
-      position: relative;
-      display: block;
-    }
-    .menu a::after,
-    .idiomas a::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -3px;
-      height: 1px;
-      background: currentColor;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
-    }
-    .menu a:hover::after,
-    .menu a:focus-visible::after,
-    .menu a[aria-current]::after,
-    .idiomas a:hover::after,
-    .idiomas a:focus-visible::after {
-      transform: scaleX(1);
-    }
+  .idiomas a {
+    color: inherit;
+    text-decoration: none;
   }
 
-  /* En todas las pantallas, el selector enseña solo el OTRO idioma. */
+  /* El selector enseña solo el OTRO idioma. */
   .idiomas a[aria-current] {
     display: none;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .menu a::after,
-    .idiomas a::after {
-      transition: none;
-    }
-  }
+  /* ---------- Botón del menú (móvil) ---------- */
 
-  /* Cabecera blanca (portada, sobre la foto). */
-  .blanca .marca {
-    color: #fff;
-  }
-
-  .blanca .menu a,
-  .blanca .idiomas a {
-    color: rgb(255 255 255 / 0.75);
-  }
-
-  .blanca .menu a:hover,
-  .blanca .idiomas a:hover,
-  .blanca .menu a[aria-current],
-  .blanca .idiomas a[aria-current],
-  .blanca .abrir {
-    color: #fff;
-  }
-
-  /* Botón del menú en el móvil: tres rayas finas que, abierto, se vuelven
-     una equis. Medidas copiadas de la web de Blanca (20 px de ancho, rayas
-     de 1 px separadas 6 px). El botón es más grande que el dibujo para que
-     sea fácil de tocar; el margen negativo lo deja alineado con el borde. */
+  /* Tres rayas finas que, abierto, se vuelven una equis (medidas de la web
+     de Blanca: 20 px de ancho, rayas de 1 px separadas 6 px). */
   .abrir {
     display: none;
+    position: fixed;
+    top: 20px;
+    right: var(--lateral);
+    z-index: 50;
+    width: 2.25rem;
+    height: 2rem;
+    padding: 0;
     align-items: center;
     justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin: -0.9rem calc(var(--margen) * -0.4) -0.9rem 0;
-    padding: 0;
-    background: none;
     border: 0;
-    color: var(--texto);
     cursor: pointer;
   }
 
@@ -260,53 +290,70 @@ const menu = [
     transform: translateY(-6px) rotate(-45deg);
   }
 
-  /* Móvil: firma, idioma y botón de menú en una línea; el menú se despliega
-     debajo, a todo el ancho. */
+  /* ---------- Móvil ---------- */
+
+  /* Firma a la izquierda; idioma y botón del menú en cajitas a la derecha.
+     El menú se abre como un panel de cristal debajo. */
   @media (max-width: 899px) {
     .cabecera {
-      padding-block: 0.9rem;
-      gap: 0.5rem 0.6rem;
+      height: 73px;
+    }
+    .marca {
+      top: 14px;
+    }
+    .marca :global(svg) {
+      height: 44px;
     }
     .abrir {
       display: flex;
-      order: 3;
     }
-    /* El idioma, pequeño y algo espaciado, como en la web de Blanca. */
     .idiomas {
-      order: 2;
-      gap: 0.3rem;
-      margin-right: 0.35rem;
-      font-size: 0.846em; /* 11 px */
-    }
-    .idiomas a {
-      padding: 0.4rem 0.15rem; /* zona de toque, sin agrandar el texto */
-      letter-spacing: 0.04em;
-      color: var(--texto);
-    }
-    .blanca .idiomas a {
-      color: #fff;
+      top: 20px;
+      right: calc(var(--lateral) + 2.25rem + 6px);
+      height: 2rem;
+      align-items: center;
+      padding: 0 10px;
     }
     .menu {
-      order: 4;
-      flex-basis: 100%;
+      top: 60px;
+      left: var(--lateral);
+      right: var(--lateral);
+      transform: none;
       display: none;
+      padding: 0.5rem 0;
+      border-radius: 4px;
+      background: rgb(237 237 237 / 0.5);
+      -webkit-backdrop-filter: blur(40px);
+      backdrop-filter: blur(40px);
     }
-    .abrir[aria-expanded='true'] ~ .menu {
+    .menu.abierto {
       display: block;
     }
     .menu ul {
       flex-direction: column;
       gap: 0;
-      padding: 0.5rem 0 0.75rem;
     }
-    .menu a {
-      display: block;
-      padding: 0.6rem 0;
+    /* Dentro del panel, cada sección es una línea normal, con su nombre. */
+    .menu .caja {
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      padding: 0.7rem 1rem;
       font-size: 1.115em; /* 14,5 px */
     }
-    .menu a[aria-current] {
+    .menu .etiqueta {
+      grid-template-columns: 1fr;
+    }
+    .menu .caja[aria-current] .etiqueta > span {
       text-decoration: underline;
       text-underline-offset: 0.3em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .etiqueta,
+    .caja {
+      transition: none;
     }
   }
 </style>
