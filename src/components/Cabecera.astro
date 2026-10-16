@@ -519,11 +519,10 @@ const menu = [
   /* ---------- Apertura de la portada ----------
      Al llegar a la portada (pedido de Guzmán, 16-10-2026):
      - Las cajitas (secciones, idioma y, en el móvil, el botón del menú)
-       aparecen como puntos, una tras otra, y a los 0,6 s hacen "bloop" todas
-       a la vez: el punto se abre en la cajita con un pequeño rebote. Luego
+       aparecen como puntos, todas a la vez, y a los 0,6 s hacen "bloop": el punto se abre en la cajita con un pequeño rebote. Luego
        aparece el texto.
      - La firma se descubre de izquierda a derecha, de borrosa a nítida.
-     Las animaciones se encadenan así: "punto" (escala, escalonada), "abrir"
+     Las animaciones se encadenan así: "punto" (escala, todas a la vez), "abrir"
      (recorte, a la vez), "rebote" (escala) y "texto" (color). Del orden de la
      lista depende cuál manda en la escala: "punto" va después de "rebote". */
   .portada .menu:not(.abierto) .caja,
@@ -533,22 +532,7 @@ const menu = [
       apertura-rebote 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s backwards,
       apertura-texto 0.3s ease 0.78s backwards,
       apertura-abrir 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards,
-      apertura-punto 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) var(--punto, 0.1s) backwards;
-  }
-  .portada .menu li:nth-child(2) .caja {
-    --punto: 0.17s;
-  }
-  .portada .menu li:nth-child(3) .caja {
-    --punto: 0.24s;
-  }
-  .portada .menu li:nth-child(4) .caja {
-    --punto: 0.31s;
-  }
-  .portada .idiomas {
-    --punto: 0.38s;
-  }
-  .portada .abrir {
-    --punto: 0.45s;
+      apertura-punto 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
   }
 
   .portada .marca {
