@@ -102,8 +102,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   // Llegada: cada tarjeta entra desde fuera de la pantalla por la izquierda,
   // un poco girada, como lanzada, y frena de forma larga y progresiva (llega
   // rápida y va perdiendo velocidad muy poco a poco) hasta asentarse con un
-  // vaivén apenas perceptible. Viaja medio transparente y solo se vuelve del
-  // todo opaca al llegar a su sitio. Una tras otra.
+  // vaivén apenas perceptible. Aparece fundiéndose. Una tras otra.
   function llegar() {
     if (!galeria || sinMovimiento) return;
     tarjetasLi().forEach((li, i) => {
@@ -111,8 +110,8 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
       li.animate(
         [
           { transform: `translate(-100vw, ${azar(-24, 16)}px) rotate(${azar(-8, -4)}deg)`, opacity: 0, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-          { opacity: 0.3, offset: 0.25, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-          { transform: `translate(5px, 0) rotate(${azar(0.4, 0.9)}deg)`, opacity: 1, offset: 0.82, easing: 'cubic-bezier(0.37, 0, 0.63, 1)' },
+          { opacity: 1, offset: 0.35, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+          { transform: `translate(5px, 0) rotate(${azar(0.4, 0.9)}deg)`, offset: 0.82, easing: 'cubic-bezier(0.37, 0, 0.63, 1)' },
           { transform: 'none', opacity: 1 },
         ],
         { duration: 1400, delay: Math.min(i, 12) * 90, fill: 'backwards' },
@@ -135,14 +134,14 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     }
     visibles.sort((a, b) => b.r.left - a.r.left || a.r.top - b.r.top);
     // Arranca despacio y acelera de forma progresiva, sin tirón; poco giro y
-    // se va desvaneciendo mientras sale.
+    // se desvanece al final.
     const DURACION = 620;
     const PASO = 40;
     const animar = (li: HTMLElement, delay: number) =>
       li.animate(
         [
           { transform: 'none', opacity: 1 },
-          { opacity: 0.6, offset: 0.4 },
+          { opacity: 1, offset: 0.55 },
           { transform: `translate(100vw, ${azar(-16, 12)}px) rotate(${azar(4, 8)}deg)`, opacity: 0 },
         ],
         { duration: DURACION, delay, easing: 'cubic-bezier(0.55, 0.05, 0.68, 0.19)', fill: 'forwards' },
