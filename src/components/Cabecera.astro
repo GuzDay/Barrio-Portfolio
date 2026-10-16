@@ -28,10 +28,10 @@ interface Props {
   idioma: Idioma;
   alternativas: Record<Idioma, string>;
   activa?: string;
-  blanca?: boolean; // portada: hoy no cambia nada (la firma se adapta sola)
+  blanca?: boolean; // portada: la firma va blanca del todo, sobre la foto
 }
 
-const { idioma, alternativas, activa } = Astro.props;
+const { idioma, alternativas, activa, blanca } = Astro.props;
 const firmaEnLinea = firma.replace('<svg ', '<svg fill="currentColor" ');
 const t = textos[idioma];
 const menu = [
@@ -42,7 +42,7 @@ const menu = [
 ];
 ---
 
-<header class="cabecera">
+<header class:list={['cabecera', { blanca }]}>
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
 
   <nav id="menu" class="menu" aria-label={t.menu}>
@@ -196,7 +196,7 @@ const menu = [
      color sobre las fotos. */
   .marca {
     position: fixed;
-    top: 18px;
+    top: 22px;
     left: var(--lateral);
     z-index: 60;
     color: #fff;
@@ -206,16 +206,24 @@ const menu = [
   .marca :global(svg) {
     display: block;
     aspect-ratio: 1840.62 / 687.38;
-    height: 56px;
+    height: 48px;
     width: auto;
+  }
+
+  /* En la portada, blanca del todo sobre la foto (sin fusión). */
+  .blanca .marca {
+    mix-blend-mode: normal;
   }
 
   /* ---------- Cajitas de cristal ---------- */
 
+  /* El texto va bajado 2,4 px (8,4 arriba y 3,6 abajo en vez de 6 y 6):
+     Newsreader reserva mucho hueco para las colas de letras como la "g" y,
+     con el relleno igual, las letras quedaban altas. Medido sobre la tinta. */
   .caja {
     display: flex;
-    align-items: flex-end;
-    padding: 6px 8px;
+    align-items: center;
+    padding: 8.4px 8px 3.6px;
     border-radius: 4px;
     background: rgb(237 237 237 / 0.5);
     -webkit-backdrop-filter: blur(40px);
@@ -365,10 +373,10 @@ const menu = [
       height: 73px;
     }
     .marca {
-      top: 14px;
+      top: 17px;
     }
     .marca :global(svg) {
-      height: 44px;
+      height: 38px;
     }
     .abrir {
       display: flex;
@@ -378,7 +386,8 @@ const menu = [
       right: calc(var(--lateral) + 2.25rem + 6px);
       height: 2rem;
       align-items: center;
-      padding: 0 10px;
+      /* Bajado 2,8 px para centrar las letras (ver .caja). */
+      padding: 5.6px 10px 0;
     }
     .menu {
       top: 60px;

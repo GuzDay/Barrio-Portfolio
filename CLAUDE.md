@@ -27,6 +27,10 @@ consulta que hay**: ver más abajo.
   se le quitan los datos internos de Adobe y se ajusta el recuadro al borde
   de la tinta. **No vectorizar la firma por nuestra cuenta**: Guzmán notó la
   diferencia.
+- **Todas las cabeceras deben ser idénticas** en todas las páginas, ordenador
+  y móvil (lo ha pedido Guzmán expresamente). Solo cambia el color en la
+  portada: firma blanca del todo. Tras tocar la cabecera, medir portada y
+  secciones y comparar.
 - **Cabecera fija estilo gionatannese.com** (16-10-2026): firma en blanco con
   `mix-blend-mode: exclusion` (cambia de color sobre las fotos; va suelta,
   fuera de cualquier capa, o no funciona), menú centrado en cajitas de cristal
