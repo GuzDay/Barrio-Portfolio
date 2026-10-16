@@ -17,9 +17,11 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  // En la web anterior de Pablo, Contacto era una página aparte. Ahora va
-  // dentro de "Acerca de mí": la dirección vieja lleva allí.
+  // En la web anterior de Pablo, "Acerca de mí" era una página aparte. Ahora
+  // va dentro de Contacto: la dirección vieja (y la que tuvo esta web en
+  // pruebas, en inglés) llevan allí.
   redirects: {
-    '/contacto': `${RUTA_BASE}/acerca-de-mi/#contacto`,
+    '/acerca-de-mi': `${RUTA_BASE}/contacto/`,
+    '/en/about': `${RUTA_BASE}/en/contact/`,
   },
 });

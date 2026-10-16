@@ -16,8 +16,8 @@ consulta que hay**: ver más abajo.
   con cada push a `main`. Primer despliegue verificado: 80 s.
 - **Esqueleto completo de la web** (16-10-2026), sin diseño todavía: Inicio,
   Cuadros, Esculturas (galería con tarjetas iguales en 4:5 y filtro de
-  disponibles), página de cada obra con botón de WhatsApp, Encargos, Acerca de
-  mí con Contacto, en ES (sin prefijo) y EN (`/en/...`). Las vistas están en
+  disponibles), página de cada obra con botón de WhatsApp, Encargos y
+  Contacto (con el texto sobre Pablo debajo), en ES (sin prefijo) y EN (`/en/...`). Las vistas están en
   `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
   `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
 - Las obras de color liso son de prueba y se borran antes de publicar.
@@ -51,8 +51,9 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   En la web se llaman **Pintura y Escultura** (Painting / Sculpture), por
   decisión de Guzmán (16-10-2026); las direcciones siguen siendo /cuadros/ y
   /esculturas/. Las dos usan la misma galería: un cambio vale para las dos.
-- Secciones previstas: Cuadros · Esculturas · Encargos · Acerca de mí y
-  Contacto (estas dos juntas en una sola página; lo decidió Guzmán, 16-10-2026).
+- Secciones: Pintura · Escultura · Encargos · Contacto. "Acerca de mí" va
+  dentro de Contacto, debajo de los datos (lo decidió Guzmán, 16-10-2026);
+  /acerca-de-mi/ redirige a /contacto/.
 - **Cada obra lleva ficha**: título, técnica, medidas, año, precio y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
   ningún texto. No copiar aquel criterio.

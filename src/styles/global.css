@@ -34,6 +34,21 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Reserva siempre el hueco de la barra de desplazamiento, aunque la página
+     no la necesite. Si no, en un Mac con la barra siempre visible, las páginas
+     largas (con barra) tenían la cabecera 15 px más estrecha que las cortas y
+     el menú "saltaba" al cambiar de sección. */
+  scrollbar-gutter: stable;
+}
+
+/* Excepto en la portada (la de la foto que se pinta): ver LienzoPintable. */
+html:has(.lienzo) {
+  scrollbar-gutter: auto;
+}
+
+html:has(.lienzo) .cabecera,
+html:has(.lienzo) .pie {
+  padding-right: calc(var(--lateral) + var(--barra, 0px));
 }
 
 body {

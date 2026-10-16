@@ -27,8 +27,7 @@ export const urlSeccion = (seccion: Seccion, idioma: Idioma) => `${prefijo(idiom
 export const urlObra = (seccion: Seccion, obra: string, idioma: Idioma) =>
   `${urlSeccion(seccion, idioma)}${obra}/`;
 export const urlEncargos = (idioma: Idioma) => conBase(idioma === 'en' ? '/en/commissions/' : '/encargos/');
-export const urlAcercaDe = (idioma: Idioma) => conBase(idioma === 'en' ? '/en/about/' : '/acerca-de-mi/');
-export const urlContacto = (idioma: Idioma) => `${urlAcercaDe(idioma)}#contacto`;
+export const urlContacto = (idioma: Idioma) => conBase(idioma === 'en' ? '/en/contact/' : '/contacto/');
 
 // La misma página en los dos idiomas, para el botón ES/EN y los buscadores.
 export const ambas = (url: (idioma: Idioma) => string): Record<Idioma, string> => ({ es: url('es'), en: url('en') });

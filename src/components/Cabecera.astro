@@ -3,7 +3,6 @@
 // el cambio de idioma se queda siempre a la vista.
 import {
   secciones,
-  urlAcercaDe,
   urlContacto,
   urlEncargos,
   urlInicio,
@@ -31,7 +30,6 @@ const menu = [
   { clave: 'cuadros', texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
   { clave: 'esculturas', texto: secciones.esculturas.nombre[idioma], url: urlSeccion('esculturas', idioma) },
   { clave: 'encargos', texto: t.encargos, url: urlEncargos(idioma) },
-  { clave: 'acerca', texto: t.acercaDe, url: urlAcercaDe(idioma) },
   { clave: 'contacto', texto: t.contacto, url: urlContacto(idioma) },
 ];
 ---
@@ -70,7 +68,7 @@ const menu = [
     const abierto = boton.getAttribute('aria-expanded') === 'true';
     boton.setAttribute('aria-expanded', String(!abierto));
   });
-  // Al pulsar "Contacto" el menú lleva a otra parte de la misma página: se cierra.
+  // Al pulsar una entrada del menú en el móvil, el menú se cierra.
   for (const enlace of document.querySelectorAll('.cabecera .menu a')) {
     enlace.addEventListener('click', () => boton.setAttribute('aria-expanded', 'false'));
   }

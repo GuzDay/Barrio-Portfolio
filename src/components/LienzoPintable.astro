@@ -31,6 +31,20 @@ const { foto } = Astro.props;
   />
   <canvas></canvas>
 </div>
+<script is:inline>
+  // La portada no reserva el hueco de la barra de desplazamiento (ver
+  // global.css): nunca la tiene, y el hueco quedaría como una franja vacía al
+  // lado de la foto. Para que la cabecera y el pie queden igual que en las
+  // demás páginas, se mide lo que ocupa la barra en este ordenador (0 en los
+  // Mac con barras que solo aparecen al desplazar) y se les deja ese margen.
+  (function () {
+    var m = document.createElement('div');
+    m.style.cssText = 'position:absolute;top:-9999px;width:100px;height:100px;overflow:scroll';
+    document.documentElement.appendChild(m);
+    document.documentElement.style.setProperty('--barra', m.offsetWidth - m.clientWidth + 'px');
+    m.remove();
+  })();
+</script>
 
 <script>
   const capa = document.querySelector<HTMLElement>('.lienzo')!;
