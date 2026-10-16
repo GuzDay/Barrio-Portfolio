@@ -142,9 +142,13 @@ const menu = [
      la tiene siempre puesta. El selector de idioma enseña solo el OTRO
      idioma ("EN" en la web en castellano), del tamaño del menú. */
   @media (min-width: 900px) {
+    /* Todos como bloque: así las secciones y el idioma tienen la misma caja
+       y la raya queda a la misma altura (antes la de "EN" iba 2,5 px más
+       baja). */
     .menu a,
     .idiomas a {
       position: relative;
+      display: block;
     }
     .menu a::after,
     .idiomas a::after {
