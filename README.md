@@ -1,43 +1,30 @@
-# Astro Starter Kit: Minimal
+# Web de Pablo Barrio Araúz
 
-```sh
-npm create astro@latest -- --template minimal
-```
+## Enlaces
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+| | |
+|---|---|
+| **Web publicada** | https://guzday.github.io/Barrio-Portfolio/ |
+| **Panel de edición (CMS), publicado** | https://guzday.github.io/Barrio-Portfolio/admin/ (aún sin inicio de sesión) |
+| **Web en tu ordenador** | http://localhost:4322/Barrio-Portfolio/ |
+| **Panel en tu ordenador** | http://localhost:4322/Barrio-Portfolio/admin/index.html |
+| Repositorio | https://github.com/GuzDay/Barrio-Portfolio |
+| Publicaciones (si una falla) | https://github.com/GuzDay/Barrio-Portfolio/actions |
 
-## 🚀 Project Structure
+## Usar el panel en tu ordenador
 
-Inside of your Astro project, you'll see the following folders and files:
+1. Encender la web en local, desde esta carpeta en la terminal:
+   `npx astro dev --port 4322`
+2. Abrir en **Chrome** (no Safari) http://localhost:4322/Barrio-Portfolio/admin/index.html
+3. Pulsar **"Trabajar con un repositorio local"** y elegir la carpeta `Barrio Portfolio`.
+4. Lo que se cambie se guarda solo en el ordenador: para que llegue a la web
+   publicada hay que subirlo (GitHub Desktop → Commit → Push).
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Si algo borrado en el panel sigue saliendo en localhost: parar el servidor
+(`npx astro dev stop`), borrar `node_modules/.astro` y `.astro/data-store.json`
+y volver a encenderlo.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Notas del proyecto
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Las decisiones, el porqué de cada cosa y las trampas conocidas están en
+`CLAUDE.md`.
