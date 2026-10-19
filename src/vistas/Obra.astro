@@ -1,6 +1,8 @@
 ---
-// Página de una obra: todas sus fotos enteras (sin recortar) y su ficha, con
-// el botón para preguntar por WhatsApp. Abajo, anterior y siguiente.
+// Página de una obra: sus fotos enteras (sin recortar) en un carrusel que
+// cabe en la pantalla y se arrastra a los lados, con flechas a media altura;
+// al lado, la ficha con el botón para preguntar por WhatsApp. Abajo, la obra
+// anterior y la siguiente.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import EstadoObra from '../components/EstadoObra.astro';
@@ -36,16 +38,31 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 >
   <p class="volver"><a href={urlSeccion(seccion, idioma)}>← {t.volver(nombreSeccion)}</a></p>
   <article class="obra">
-    <div class="fotos">
-      {f.fotos.map((foto, i) => (
-        <Image
-          src={foto}
-          alt={i === 0 ? f.titulo : ''}
-          widths={[600, 900, 1200, 1800]}
-          sizes="(min-width: 900px) 60vw, 92vw"
-          loading={i === 0 ? 'eager' : 'lazy'}
-        />
-      ))}
+    <div class="carrusel" data-varias={f.fotos.length > 1 ? '' : undefined}>
+      <ul class="pista" aria-label={t.fotos} tabindex="0">
+        {f.fotos.map((foto, i) => (
+          <li>
+            <Image
+              src={foto}
+              alt={i === 0 ? f.titulo : ''}
+              widths={[600, 900, 1200, 1800]}
+              sizes="(min-width: 900px) 60vw, 92vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              draggable="false"
+            />
+          </li>
+        ))}
+      </ul>
+      {f.fotos.length > 1 && (
+        <>
+          <button class="flecha anterior" type="button" aria-label={t.fotoAnterior} disabled>
+            <span aria-hidden="true">‹</span>
+          </button>
+          <button class="flecha siguiente" type="button" aria-label={t.fotoSiguiente}>
+            <span aria-hidden="true">›</span>
+          </button>
+        </>
+      )}
     </div>
     <div class="ficha">
       <h1>{f.titulo}</h1>
@@ -64,6 +81,63 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     {siguiente && <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a>}
   </nav>
 </Base>
+
+<script>
+  // Carrusel: la pista es una fila de fotos con desplazamiento lateral y
+  // "imán" a cada foto (scroll-snap), así que el dedo y el trackpad ya
+  // funcionan solos. Aquí se añaden las flechas y arrastrar con el ratón.
+  for (const carrusel of document.querySelectorAll<HTMLElement>('.carrusel[data-varias]')) {
+    const pista = carrusel.querySelector<HTMLElement>('.pista')!;
+    const ant = carrusel.querySelector<HTMLButtonElement>('.anterior')!;
+    const sig = carrusel.querySelector<HTMLButtonElement>('.siguiente')!;
+    const actual = () => Math.round(pista.scrollLeft / pista.clientWidth);
+    const total = pista.children.length;
+    const ir = (i: number) =>
+      pista.scrollTo({ left: Math.max(0, Math.min(total - 1, i)) * pista.clientWidth, behavior: 'smooth' });
+    const flechas = () => {
+      const i = actual();
+      ant.disabled = i <= 0;
+      sig.disabled = i >= total - 1;
+    };
+    ant.addEventListener('click', () => ir(actual() - 1));
+    sig.addEventListener('click', () => ir(actual() + 1));
+    pista.addEventListener('scroll', flechas, { passive: true });
+    pista.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') (e.preventDefault(), ir(actual() - 1));
+      if (e.key === 'ArrowRight') (e.preventDefault(), ir(actual() + 1));
+    });
+    flechas();
+
+    // Arrastrar con el ratón (el dedo ya lo hace el navegador). Mientras se
+    // arrastra se quita el imán; al soltar, se va a la foto más cercana, o a
+    // la siguiente si se ha arrastrado un trozo hacia ese lado.
+    let inicioX = 0;
+    let inicioScroll = 0;
+    let arrastrando = false;
+    pista.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      arrastrando = true;
+      inicioX = e.clientX;
+      inicioScroll = pista.scrollLeft;
+      pista.classList.add('arrastrando');
+      pista.setPointerCapture(e.pointerId);
+    });
+    pista.addEventListener('pointermove', (e) => {
+      if (arrastrando) pista.scrollLeft = inicioScroll - (e.clientX - inicioX);
+    });
+    const soltar = (e: PointerEvent) => {
+      if (!arrastrando) return;
+      arrastrando = false;
+      pista.classList.remove('arrastrando');
+      const movido = e.clientX - inicioX;
+      const desde = Math.round(inicioScroll / pista.clientWidth);
+      const umbral = pista.clientWidth * 0.12;
+      ir(movido < -umbral ? desde + 1 : movido > umbral ? desde - 1 : desde);
+    };
+    pista.addEventListener('pointerup', soltar);
+    pista.addEventListener('pointercancel', soltar);
+  }
+</script>
 
 <style>
   .volver {
@@ -87,9 +161,112 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     gap: 2rem;
   }
 
-  .fotos {
+  /* ---------- Carrusel de fotos ---------- */
+
+  /* Alto limitado para que la foto quepa entera en la pantalla sin bajar:
+     lo que queda debajo de la cabecera y del "volver", con un tope. */
+  .carrusel {
+    position: relative;
+    --alto: min(calc(100svh - 230px), 780px);
+  }
+
+  .pista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    background: #f5f5f5;
+  }
+
+  .pista::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pista li {
+    flex: 0 0 100%;
+    height: var(--alto);
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pista img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .carrusel[data-varias] .pista {
+    cursor: grab;
+  }
+
+  .pista.arrastrando {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  /* Flechas a media altura, en cajitas de cristal como las de la cabecera. */
+  .flecha {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    width: 2.5rem;
+    height: 2.5rem;
     display: grid;
-    gap: 1rem;
+    place-items: center;
+    padding: 0 0 3px;
+    border: 0;
+    border-radius: 4px;
+    background: rgb(237 237 237 / 0.5);
+    -webkit-backdrop-filter: blur(40px);
+    backdrop-filter: blur(40px);
+    color: var(--texto);
+    font: 300 1.8rem/1 var(--serif);
+    cursor: pointer;
+    transition:
+      opacity 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .flecha:hover {
+    background: rgb(216 216 216 / 0.6);
+  }
+
+  .flecha:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .anterior {
+    left: 12px;
+  }
+
+  .siguiente {
+    right: 12px;
+  }
+
+  @media (max-width: 899px) {
+    .carrusel {
+      --alto: min(68svh, 560px);
+    }
+    .flecha {
+      width: 2.1rem;
+      height: 2.1rem;
+      font-size: 1.5rem;
+    }
+    .anterior {
+      left: 8px;
+    }
+    .siguiente {
+      right: 8px;
+    }
   }
 
   .ficha h1 {
@@ -114,17 +291,13 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     font-weight: 400;
   }
 
-  /* En ordenador, fotos a la izquierda y la ficha fija a la derecha mientras
-     se bajan las fotos. */
+  /* En ordenador, el carrusel a la izquierda y la ficha a la derecha,
+     centrada a la altura de la foto. */
   @media (min-width: 900px) {
     .obra {
       grid-template-columns: 3fr 2fr;
       gap: 3rem;
-      align-items: start;
-    }
-    .ficha {
-      position: sticky;
-      top: 2rem;
+      align-items: center;
     }
   }
 
