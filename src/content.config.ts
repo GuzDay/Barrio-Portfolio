@@ -8,7 +8,7 @@ import { z } from 'astro/zod';
 
 // El panel guarda los campos que se dejan sin rellenar como texto vacío ('')
 // o como nada (null), según el campo. Se tratan como si no existieran: así
-// una ficha con huecos no rompe la web (pasó con el precio vacío), y en
+// una ficha con huecos no rompe la web (pasó con un número vacío), y en
 // inglés se enseña el castellano en su lugar.
 const vacioANada = (v: unknown) => (v === '' || v === null ? undefined : v);
 const textoOpcional = z.preprocess(vacioANada, z.string().optional());
@@ -24,7 +24,6 @@ const fichaDeObra = ({ image }: SchemaContext) =>
     // Lo que no cambia con el idioma.
     medidas: textoOpcional,
     anio: numeroOpcional,
-    precio: numeroOpcional,
     estado: z.enum(['disponible', 'vendido']).default('disponible'),
     fotos: z.array(image()).min(1),
     // Lo escribe el panel cuando Pablo arrastra las obras para ordenarlas.

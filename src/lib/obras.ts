@@ -21,7 +21,7 @@ export function ficha(obra: Obra, idioma: Idioma) {
     texto: en.texto ?? d.texto,
     medidas: d.medidas,
     anio: d.anio,
-    // El precio no se enseña en la web: solo si está disponible o vendida.
+    // Sin precio (se quitó del todo): solo si está disponible o vendida.
     vendida: d.estado === 'vendido',
     fotos: d.fotos,
   };

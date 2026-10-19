@@ -70,14 +70,15 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
 - Secciones: Pintura · Escultura · Encargos · Contacto. "Acerca de mí" va
   dentro de Contacto, debajo de los datos (lo decidió Guzmán, 16-10-2026);
   /acerca-de-mi/ redirige a /contacto/.
-- **Cada obra lleva ficha**: título, técnica, medidas, año, precio y un texto
+- **Cada obra lleva ficha**: título, técnica, medidas, año y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
   ningún texto. No copiar aquel criterio.
 - **Estado de venta**: quiere marcar las obras como vendidas / no disponibles,
   y le interesaba poder filtrar por disponibles.
 - **El precio no se enseña en la web** (decisión de Guzmán, 16-10-2026): en
   su lugar sale "Disponible" o "Vendida" (sin puntos de color: se probaron y
-  Guzmán los quitó). El campo de precio sigue en el panel, por si se quiere.
+  Guzmán los quitó). **El campo de precio se quitó también del panel**
+  (20-10-2026): no existe en ningún sitio.
 - **Encargos** es un embudo de ventas: 3 o 4 pasos del proceso y un botón de
   contacto. No es una galería más.
 - **Contacto**: prefiere **WhatsApp** antes que correo ("me da más confianza").
