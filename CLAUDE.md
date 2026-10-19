@@ -172,6 +172,12 @@ porque costó semanas de tropiezos:
   parándolo (`npx astro dev stop`), borrando `node_modules/.astro` y
   `.astro/data-store.json` y volviéndolo a arrancar. La web publicada no
   tiene este problema.
+- **El panel en local no funciona en el navegador integrado de VS Code**:
+  enseña la ventana de elegir carpeta pero no da el permiso, y sale "No se
+  pudo seleccionar un directorio raíz". Pasa si VS Code tiene activado
+  `workbench.browser.openLocalhostLinks` (abre los enlaces a localhost
+  dentro de VS Code). Abrir el panel en Chrome (el acceso del Escritorio,
+  carpeta "Web Barrio", lo hace siempre).
 - **El build quitaba el `-webkit-backdrop-filter`** (el desenfoque tal como
   lo entiende Safari anterior al 18). Se arregla fijando `vite.build.cssTarget`
   en `astro.config.mjs`. Ojo: el motor de Safari de Playwright no pinta los
