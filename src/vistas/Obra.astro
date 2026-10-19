@@ -218,31 +218,30 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     scroll-snap-type: none;
   }
 
-  /* Flechas a media altura, en cajitas de cristal como las de la cabecera. */
+  /* Flechas a media altura, sin recuadro: en blanco con fusión "exclusión"
+     (como la firma), así se ven sobre cualquier color de la foto. */
   .flecha {
     position: absolute;
     top: 50%;
     translate: 0 -50%;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 3.5rem;
     display: grid;
     place-items: center;
-    padding: 0 0 3px;
+    padding: 0 0 4px;
     border: 0;
-    border-radius: 4px;
-    background: rgb(237 237 237 / 0.5);
-    -webkit-backdrop-filter: blur(40px);
-    backdrop-filter: blur(40px);
-    color: var(--texto);
-    font: 300 1.8rem/1 var(--serif);
+    background: none;
+    color: #fff;
+    mix-blend-mode: exclusion;
+    font: 200 3rem/1 var(--serif);
     cursor: pointer;
     transition:
       opacity 0.25s ease,
-      background-color 0.25s ease;
+      scale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .flecha:hover {
-    background: rgb(216 216 216 / 0.6);
+    scale: 1.15;
   }
 
   .flecha:disabled {
@@ -251,11 +250,11 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   }
 
   .anterior {
-    left: 12px;
+    left: 4px;
   }
 
   .siguiente {
-    right: 12px;
+    right: 4px;
   }
 
   @media (max-width: 899px) {
@@ -263,15 +262,15 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       --alto: min(72svh, 600px);
     }
     .flecha {
-      width: 2.1rem;
-      height: 2.1rem;
-      font-size: 1.5rem;
+      width: 2.25rem;
+      height: 3rem;
+      font-size: 2.5rem;
     }
     .anterior {
-      left: 8px;
+      left: 0;
     }
     .siguiente {
-      right: 8px;
+      right: 0;
     }
   }
 
