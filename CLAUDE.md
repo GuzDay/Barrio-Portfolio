@@ -173,6 +173,10 @@ porque costó semanas de tropiezos:
   parándolo (`npx astro dev stop`), borrando `node_modules/.astro` y
   `.astro/data-store.json` y volviéndolo a arrancar. La web publicada no
   tiene este problema.
+- **No borrar fotos "sin usar" de las carpetas de obras**: el panel recuerda
+  las fotos que ha visto y deja volver a elegirlas; si el archivo ya no está,
+  la ficha apunta a una foto que no existe y la web no se construye (pasó con
+  Palitroques con agujeros, 20-10-2026). Dejarlas: ocupan poco.
 - **El panel en local no funciona en el navegador integrado de VS Code**:
   enseña la ventana de elegir carpeta pero no da el permiso, y sale "No se
   pudo seleccionar un directorio raíz". Pasa si VS Code tiene activado
