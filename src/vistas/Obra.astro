@@ -296,15 +296,26 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     font-weight: 400;
   }
 
-  /* En ordenador, el carrusel a la izquierda (con su ancho de 4:5) y la
-     ficha a la derecha, centrada a la altura de la foto. */
+  /* En ordenador (pedido de Guzmán): el carrusel 4:5 centrado en la
+     pantalla, en la columna del medio de tres iguales a los lados; la ficha
+     en la columna de la derecha, separada de la foto, y empezando algo por
+     debajo del borde de arriba de la foto (un 12 % de su alto). */
   @media (min-width: 900px) {
     .obra {
       /* Columna de las fotos con el ancho exacto del 4:5 (como mucho el
-         60 %); si fuera "auto", se estiraba con la fila de fotos. */
-      grid-template-columns: min(calc(var(--alto) * 0.8), 60%) minmax(0, 1fr);
-      gap: 3rem;
-      align-items: center;
+         50 %); si fuera "auto", se estiraba con la fila de fotos. */
+      grid-template-columns: minmax(0, 1fr) min(calc(var(--alto) * 0.8), 50%) minmax(0, 1fr);
+      gap: 0;
+      align-items: start;
+    }
+    .carrusel {
+      grid-column: 2;
+    }
+    .ficha {
+      grid-column: 3;
+      margin-top: calc(var(--alto) * 0.12);
+      padding-left: clamp(2rem, 6vw, 6rem);
+      max-width: 26rem;
     }
   }
 
