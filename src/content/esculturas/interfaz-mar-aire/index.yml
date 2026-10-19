@@ -1,10 +1,16 @@
-titulo: Interfaz mar-aire
-tecnica: Chapa plegada
+lang:
+  - es
+  - en
+order: 2
+titulo: Palitroques con agujeros
+tecnica: Piedra, palos y agujeros
+texto: ''
 medidas: 20 x 40 x 20 cm
 anio: 2023
-estado: vendido
+precio: null
+estado: disponible
 fotos:
-  - interfaz-1.jpg
-order: 2
+  - barrio-escultura-2.webp
 en:
   tecnica: Folded sheet metal
+  texto: ''

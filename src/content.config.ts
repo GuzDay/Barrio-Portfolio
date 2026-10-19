@@ -6,21 +6,25 @@ import { defineCollection, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-// El panel guarda como texto vacío lo que se deja sin rellenar en inglés. Se
-// trata como si no existiera, para que la web enseñe el castellano en su lugar.
-const textoOpcional = z.preprocess((v) => (v === '' ? undefined : v), z.string().optional());
+// El panel guarda los campos que se dejan sin rellenar como texto vacío ('')
+// o como nada (null), según el campo. Se tratan como si no existieran: así
+// una ficha con huecos no rompe la web (pasó con el precio vacío), y en
+// inglés se enseña el castellano en su lugar.
+const vacioANada = (v: unknown) => (v === '' || v === null ? undefined : v);
+const textoOpcional = z.preprocess(vacioANada, z.string().optional());
+const numeroOpcional = z.preprocess(vacioANada, z.number().optional());
 
 const fichaDeObra = ({ image }: SchemaContext) =>
   z.object({
     // El título no se traduce: es el mismo en los dos idiomas.
     titulo: z.string(),
     // En castellano, el idioma principal.
-    tecnica: z.string().optional(),
-    texto: z.string().optional(),
+    tecnica: textoOpcional,
+    texto: textoOpcional,
     // Lo que no cambia con el idioma.
-    medidas: z.string().optional(),
-    anio: z.number().optional(),
-    precio: z.number().optional(),
+    medidas: textoOpcional,
+    anio: numeroOpcional,
+    precio: numeroOpcional,
     estado: z.enum(['disponible', 'vendido']).default('disponible'),
     fotos: z.array(image()).min(1),
     // Lo escribe el panel cuando Pablo arrastra las obras para ordenarlas.
