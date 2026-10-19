@@ -1,6 +1,6 @@
 ---
 // Rejilla de obras de una sección (Pintura y Escultura usan esta misma). Todas
-// las tarjetas miden lo mismo: la foto se recorta a 4:5 vertical (la obra
+// las tarjetas miden lo mismo: la foto se recorta a 3:4 vertical (la obra
 // entera se ve en su propia página). El filtro "Disponibles" esconde las
 // vendidas sin recargar la página.
 //
@@ -272,7 +272,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   }
 
   .foto {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--vacio);
   }

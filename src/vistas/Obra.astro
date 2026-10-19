@@ -1,5 +1,5 @@
 ---
-// Página de una obra: sus fotos en un carrusel vertical 4:5 que cabe en la
+// Página de una obra: sus fotos en un carrusel vertical 3:4 que cabe en la
 // pantalla y se arrastra a los lados, con flechas a media altura;
 // al lado, la ficha con el botón para preguntar por WhatsApp. Abajo, la obra
 // anterior y la siguiente.
@@ -163,7 +163,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
   /* ---------- Carrusel de fotos ---------- */
 
-  /* Formato vertical 4:5 (como las tarjetas de la galería), con la foto
+  /* Formato vertical 3:4 (como las tarjetas de la galería), con la foto
      recortada para llenarlo (pedido de Guzmán). El alto, limitado a lo que
      cabe en la pantalla bajo la cabecera, manda sobre el ancho. */
   .obra {
@@ -173,7 +173,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   .carrusel {
     position: relative;
     min-width: 0;
-    width: min(100%, calc(var(--alto) * 0.8));
+    width: min(100%, calc(var(--alto) * 0.75));
   }
 
   .pista {
@@ -194,7 +194,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
   .pista li {
     flex: 0 0 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     scroll-snap-align: center;
     display: flex;
     align-items: center;
@@ -296,15 +296,15 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     font-weight: 400;
   }
 
-  /* En ordenador (pedido de Guzmán): el carrusel 4:5 centrado en la
+  /* En ordenador (pedido de Guzmán): el carrusel 3:4 centrado en la
      pantalla, en la columna del medio de tres iguales a los lados; la ficha
      en la columna de la derecha, separada de la foto, y empezando algo por
      debajo del borde de arriba de la foto (un 12 % de su alto). */
   @media (min-width: 900px) {
     .obra {
-      /* Columna de las fotos con el ancho exacto del 4:5 (como mucho el
+      /* Columna de las fotos con el ancho exacto del 3:4 (como mucho el
          50 %); si fuera "auto", se estiraba con la fila de fotos. */
-      grid-template-columns: minmax(0, 1fr) min(calc(var(--alto) * 0.8), 50%) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) min(calc(var(--alto) * 0.75), 50%) minmax(0, 1fr);
       gap: 0;
       align-items: start;
     }
