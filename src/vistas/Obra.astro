@@ -272,8 +272,17 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     }
   }
 
+  /* Título de la obra algo más pequeño que el de las páginas de sección
+     (pedido de Guzmán): 32 px en ordenador y 23 en móvil, antes 38,4 y 25,6. */
   .ficha h1 {
     margin: 0 0 0.75rem;
+    font-size: calc(2em * var(--serif-escala));
+  }
+
+  @media (max-width: 899px) {
+    .ficha h1 {
+      font-size: calc(1.44em * var(--serif-escala));
+    }
   }
 
   .datos {
