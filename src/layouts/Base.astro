@@ -18,7 +18,7 @@ interface Props {
   descripcion?: string;
   activa?: string; // qué entrada del menú se marca
   portada?: boolean; // la portada: cabecera sobre la foto y pie en blanco
-  sinCabecera?: boolean; // la página de cada obra va sin cabecera (pedido de Guzmán)
+  sinCabecera?: boolean; // la página de cada obra va sin cabecera ni pie (pedido de Guzmán)
 }
 
 const { idioma, alternativas, titulo, descripcion, activa, portada, sinCabecera } = Astro.props;
@@ -78,6 +78,6 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
     <main id="contenido">
       <slot />
     </main>
-    <Pie blanco={portada} />
+    {!sinCabecera && <Pie blanco={portada} />}
   </body>
 </html>

@@ -1,8 +1,9 @@
 ---
-// Página de una obra, sin cabecera (pedido de Guzmán): sus fotos en un
-// carrusel vertical 3:4 que cabe en la pantalla, con "volver" debajo y se arrastra a los lados, con flechas a media altura;
-// al lado, la ficha con el botón para preguntar por WhatsApp. Abajo, la obra
-// anterior y la siguiente.
+// Página de una obra, sin cabecera ni pie (pedido de Guzmán): sus fotos en
+// un carrusel vertical 3:4 que se arrastra a los lados, con flechas a media
+// altura y "volver" debajo; al lado, la ficha con el botón para preguntar
+// por WhatsApp. En ordenador ocupa justo la pantalla, sin scroll, con la
+// foto centrada en vertical.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import EstadoObra from '../components/EstadoObra.astro';
@@ -22,8 +23,6 @@ const t = textos[idioma];
 const obras = await obrasDe(seccion);
 const pos = obras.findIndex((o) => o.id === id);
 const obra = obras[pos]!;
-const anterior = obras[pos - 1];
-const siguiente = obras[pos + 1];
 const f = ficha(obra, idioma);
 const nombreSeccion = secciones[seccion].nombre[idioma];
 const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
@@ -79,10 +78,6 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       )}
     </div>
   </article>
-  <nav class="vecinas">
-    {anterior ? <a href={urlObra(seccion, anterior.id, idioma)}>← {t.anterior}</a> : <span />}
-    {siguiente && <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a>}
-  </nav>
 </Base>
 
 <script>
@@ -148,14 +143,12 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     font-size: 0.9em;
   }
 
-  .volver a,
-  .vecinas a {
+  .volver a {
     color: var(--suave);
     text-decoration: none;
   }
 
-  .volver a:hover,
-  .vecinas a:hover {
+  .volver a:hover {
     color: var(--texto);
   }
 
@@ -306,29 +299,41 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      en la columna de la derecha, separada de la foto, y empezando algo por
      debajo del borde de arriba de la foto (un 12 % de su alto). */
   @media (min-width: 900px) {
+    /* Sin scroll: la página mide justo la pantalla y la foto va centrada en
+       vertical, con el mismo margen arriba que abajo (--hueco-v). "Volver"
+       cuelga debajo de la foto, dentro de ese margen de abajo. */
+    :global(body:has(.obra)) {
+      height: 100svh;
+      overflow: hidden;
+    }
+    :global(main:has(.obra)) {
+      padding-block: 0;
+    }
     .obra {
+      --hueco-v: clamp(2.5rem, 7svh, 4.5rem);
+      --alto: calc(100svh - 2 * var(--hueco-v));
+      height: 100svh;
       /* Columna de las fotos con el ancho exacto del 3:4 (como mucho el
          50 %); si fuera "auto", se estiraba con la fila de fotos. */
       grid-template-columns: minmax(0, 1fr) min(calc(var(--alto) * 0.75), 50%) minmax(0, 1fr);
       gap: 0;
-      align-items: start;
+      align-items: center;
     }
     .columna-fotos {
       grid-column: 2;
+      position: relative;
+    }
+    .volver {
+      position: absolute;
+      top: 100%;
+      left: 0;
     }
     .ficha {
       grid-column: 3;
-      margin-top: calc(var(--alto) * 0.12);
+      align-self: start;
+      margin-top: calc(var(--hueco-v) + var(--alto) * 0.12);
       padding-left: clamp(2rem, 6vw, 6rem);
       max-width: 26rem;
     }
-  }
-
-  .vecinas {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--linea);
   }
 </style>

@@ -30,7 +30,7 @@ consulta que hay**: ver más abajo.
 - **Todas las cabeceras deben ser idénticas** en todas las páginas, ordenador
   y móvil (lo ha pedido Guzmán expresamente). Solo cambia el color en la
   portada. **Excepción: la página de cada obra no lleva cabecera** (pedido de
-  Guzmán, 20-10-2026); allí "Volver a pintura/escultura" va debajo de la foto. Tras tocar la cabecera, medir portada y
+  Guzmán, 20-10-2026) ni pie, ni "Anterior / Siguiente"; allí "Volver a pintura/escultura" va debajo de la foto, y en ordenador la página ocupa justo la pantalla, sin scroll, con la foto centrada en vertical. Tras tocar la cabecera, medir portada y
   secciones y comparar.
 - **Cabecera fija estilo gionatannese.com** (16-10-2026): firma en blanco con
   `mix-blend-mode: exclusion` (cambia de color sobre las fotos; va suelta,
