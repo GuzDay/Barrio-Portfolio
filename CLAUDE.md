@@ -53,7 +53,7 @@ consulta que hay**: ver más abajo.
 | | |
 |---|---|
 | Código | `~/Documents/GitHub/Barrio Portfolio` (esta carpeta) |
-| Contenido: fotos y fichas | `~/Documents/GÜZDAY/00 Barrio/Portfolio Barrio` |
+| Archivo de obras (fotos y fichas) | `~/Documents/GÜZDAY/00 Barrio/Obras` |
 | Web provisional | https://guzday.github.io/Barrio-Portfolio/ |
 | Dominio | `pablobarrioarauz.com`, **apuntando todavía a su web actual: WordPress alojado en Piensa Solutions** (comprobado el 16-10-2026; antes se creía Squarespace) |
 
@@ -107,33 +107,32 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
 
 ## Cómo se organiza el contenido
 
-Una carpeta por obra. El número del nombre manda el orden.
+**En la web**: cada obra es una carpeta en `src/content/<cuadros|esculturas>/<obra>/`
+con `index.yml` y sus fotos (lo que lee y escribe el panel).
 
-```
-Portfolio Barrio/
-├─ Cuadros/
-│   └─ 01 Rojo/
-│       ├─ obra.txt
-│       └─ (fotos)
-└─ Esculturas/
-    └─ 01 Interfaz mar-aire/
-```
-
-`obra.txt`, un campo por línea; los vacíos no salen en la web:
+**En el ordenador de Guzmán** (archivo maestro, desde 20-10-2026):
+`~/Documents/GÜZDAY/00 Barrio/Obras/<Pintura|Escultura>/<NN Título>/`, con las
+fotos en calidad original numeradas `1.jpg, 2.jpg…` (la 1 es la portada) y un
+`ficha.txt`. El número de la carpeta es el orden. Se pasa a la web cuando
+Guzmán lo pide ("sube las obras"): reducir fotos, crear las fichas de la web.
 
 ```
 titulo: Rojo
-tecnica: Óleo sobre lienzo
+tecnica: Técnica mixta sobre lienzo
 medidas: 130 x 130 cm
-anio: 2024
-precio: 1200
-estado: disponible        (o: vendido)
-texto: Una o dos frases. Puede quedarse vacío.
+anio:
+estado: vendido           (o: disponible)
+proyecto: Proyecto 01 Recoletos     (opcional; la web aún no lo usa)
+texto: Una o dos frases.
+
+tecnica_en: Mixed media on canvas
+texto_en: One or two sentences.
 ```
 
-Guzmán fotografía y edita las obras en `00 Barrio/Cuadros PRO/…`, con
-subcarpetas `Brutos` y `Done`. Eso es su flujo de edición y **no** es la
-carpeta de la web.
+Lo que manda Pablo se guarda tal cual en `00 Barrio/Web/Recibido de Pablo
+<fecha>/`. Resto de `00 Barrio`: `Fotos obras/` (Cuadros PRO, Esculturas PRO:
+el flujo de edición de Guzmán, con `Brutos` y `Done`), `Sesiones/`,
+`Materia viva/`, `Cat Lightroom/`.
 
 ## La web de Blanca: qué mirar y qué no
 
