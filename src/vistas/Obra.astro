@@ -123,17 +123,37 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     pista.addEventListener('pointermove', (e) => {
       if (arrastrando) pista.scrollLeft = inicioScroll - (e.clientX - inicioX);
     });
+    let fueArrastre = false;
     const soltar = (e: PointerEvent) => {
       if (!arrastrando) return;
       arrastrando = false;
       pista.classList.remove('arrastrando');
       const movido = e.clientX - inicioX;
+      fueArrastre = Math.abs(movido) > 5;
+      if (!fueArrastre) return; // un clic: lo resuelve el "click" de abajo
       const desde = Math.round(inicioScroll / pista.clientWidth);
       const umbral = pista.clientWidth * 0.12;
       ir(movido < -umbral ? desde + 1 : movido > umbral ? desde - 1 : desde);
     };
     pista.addEventListener('pointerup', soltar);
     pista.addEventListener('pointercancel', soltar);
+
+    // Pulsar en la foto (sin arrastrar) pasa de foto: en la mitad derecha, a
+    // la siguiente; en la izquierda, a la anterior (pedido de Guzmán). Vale
+    // para el ratón y para un toque con el dedo. El cursor lo indica.
+    pista.addEventListener('click', (e) => {
+      if (fueArrastre) return void (fueArrastre = false);
+      const r = pista.getBoundingClientRect();
+      ir(actual() + (e.clientX > r.left + r.width / 2 ? 1 : -1));
+    });
+    pista.addEventListener('mousemove', (e) => {
+      if (arrastrando) return;
+      const r = pista.getBoundingClientRect();
+      const derecha = e.clientX > r.left + r.width / 2;
+      const i = actual();
+      const puede = derecha ? i < total - 1 : i > 0;
+      pista.style.cursor = puede ? (derecha ? 'e-resize' : 'w-resize') : 'default';
+    });
   }
 </script>
 
