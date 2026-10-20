@@ -81,6 +81,14 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </Base>
 
 <script>
+  // Esc sale de la obra y vuelve a su sección, como el enlace "Volver"
+  // (pedido de Guzmán).
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    const volver = document.querySelector<HTMLAnchorElement>('.volver a');
+    if (volver) location.href = volver.href;
+  });
+
   // Carrusel: la pista es una fila de fotos con desplazamiento lateral y
   // "imán" a cada foto (scroll-snap), así que el dedo y el trackpad ya
   // funcionan solos. Aquí se añaden las flechas y arrastrar con el ratón.
