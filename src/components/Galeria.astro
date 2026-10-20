@@ -65,9 +65,15 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   // Antes de pintar: las tarjetas empiezan escondidas para que entren
   // volando (ver "llegar" abajo) en vez de verse un instante en su sitio.
   // Red de seguridad: si algo falla, aparecen solas a los 4 s.
+  // Si se vuelve de una de sus obras, no hay lanzamiento: la foto vuelve
+  // volando a su tarjeta (transición entre páginas, ver más abajo).
   (function () {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var g = document.currentScript.previousElementSibling;
+    try {
+      var r = new URL(document.referrer);
+      if (r.origin === location.origin && r.pathname !== location.pathname && r.pathname.indexOf(location.pathname) === 0) return;
+    } catch (e) {}
     g.classList.add('por-llegar');
     setTimeout(function () {
       g.classList.remove('por-llegar');
@@ -152,8 +158,45 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     return Math.round((DURACION + Math.max(visibles.length - 1, 0) * PASO) * 0.9);
   }
 
+  // ---------- Transición a la página de una obra ----------
+  // Al pulsar una tarjeta, su foto "vuela" hasta donde queda en la página de
+  // la obra y el resto se funde (pedido de Guzmán); al volver, al revés.
+  // Usa las transiciones entre páginas del navegador (Chrome 126+, Safari
+  // 18.2+); en los demás, se cambia de página sin más. La foto que vuela se
+  // marca con el nombre "foto-obra" justo en el momento del cambio.
+  const deEstaSeccion = (url: string) => {
+    try {
+      const u = new URL(url, location.href);
+      return u.origin === location.origin && u.pathname !== location.pathname && u.pathname.startsWith(location.pathname);
+    } catch {
+      return false;
+    }
+  };
+  const marcar = (url: string) => {
+    const a = [...(galeria?.querySelectorAll<HTMLAnchorElement>('.tarjeta') ?? [])].find(
+      (t) => new URL(t.href).pathname === new URL(url, location.href).pathname,
+    );
+    const img = a?.querySelector<HTMLElement>('img');
+    if (img) img.style.viewTransitionName = 'foto-obra';
+    return img;
+  };
+  addEventListener('pageswap', (e: any) => {
+    if (!e.viewTransition) return;
+    const destino = e.activation?.entry?.url ?? '';
+    if (!deEstaSeccion(destino)) return e.viewTransition.skipTransition();
+    marcar(destino);
+  });
+  addEventListener('pagereveal', (e: any) => {
+    if (!e.viewTransition) return;
+    const desde = (globalThis as any).navigation?.activation?.from?.url ?? document.referrer;
+    if (!deEstaSeccion(desde)) return e.viewTransition.skipTransition();
+    const img = marcar(desde);
+    e.viewTransition.finished.finally(() => img && (img.style.viewTransitionName = ''));
+  });
+
   if (galeria) {
-    llegar();
+    if (!deEstaSeccion(document.referrer) || sinMovimiento) llegar();
+    else galeria.classList.remove('por-llegar');
     // La cabecera la usa al pulsar una sección (coordina su latido con esto).
     (window as unknown as { __salida?: () => number }).__salida = salir;
     // Cualquier otro enlace que saque de la sección (firma, idioma, menú del
@@ -354,6 +397,19 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     }
     .tarjeta:hover {
       transform: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Activa las transiciones entre esta página y la otra (galería ↔ obra).
+     Hace falta en las dos; el resto de páginas no lo llevan. */
+  @view-transition {
+    navigation: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition {
+      navigation: none;
     }
   }
 </style>

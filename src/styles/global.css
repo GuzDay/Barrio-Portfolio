@@ -95,6 +95,28 @@ html:has(.lienzo) .pie {
   }
 }
 
+/* Transiciones entre páginas: solo las activan la galería y la página de
+   cada obra (con @view-transition en sus estilos), para que la foto vuele de
+   la tarjeta a su sitio. Aquí, cómo se ven. */
+::view-transition-group(foto-obra) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+/* La foto que vuela pasa de un tamaño a otro sin deformarse (las dos son 3:4)
+   y del gris de la tarjeta al color de la obra fundiéndose. */
+::view-transition-old(foto-obra),
+::view-transition-new(foto-obra) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 0.5s;
+}
+
 body {
   margin: 0;
   /* Las tarjetas de la galería entran y salen volando desde fuera de la

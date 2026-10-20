@@ -83,6 +83,36 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 <script>
   // Esc sale de la obra y vuelve a su sección, como el enlace "Volver"
   // (pedido de Guzmán).
+  // Transición con la galería (ver Galeria.astro): la foto visible es la que
+  // vuela, con el nombre "foto-obra". Solo hacia o desde su propia sección.
+  const seccion = () => new URL(document.querySelector<HTMLAnchorElement>('.volver a')!.href).pathname;
+  const esSeccion = (url: string) => {
+    try {
+      return new URL(url, location.href).pathname === seccion();
+    } catch {
+      return false;
+    }
+  };
+  const fotoVisible = () => {
+    const pista = document.querySelector<HTMLElement>('.pista')!;
+    const i = Math.round(pista.scrollLeft / pista.clientWidth);
+    return pista.querySelectorAll<HTMLElement>('img')[i];
+  };
+  addEventListener('pageswap', (e: any) => {
+    if (!e.viewTransition) return;
+    if (!esSeccion(e.activation?.entry?.url ?? '')) return e.viewTransition.skipTransition();
+    const img = fotoVisible();
+    if (img) img.style.viewTransitionName = 'foto-obra';
+  });
+  addEventListener('pagereveal', (e: any) => {
+    if (!e.viewTransition) return;
+    const desde = (globalThis as any).navigation?.activation?.from?.url ?? document.referrer;
+    if (!esSeccion(desde)) return e.viewTransition.skipTransition();
+    const img = fotoVisible();
+    if (img) img.style.viewTransitionName = 'foto-obra';
+    e.viewTransition.finished.finally(() => img && (img.style.viewTransitionName = ''));
+  });
+
   addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || e.defaultPrevented) return;
     const volver = document.querySelector<HTMLAnchorElement>('.volver a');
@@ -371,6 +401,19 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       margin-top: calc(var(--hueco-v) + var(--alto) * 0.12);
       padding-left: clamp(2rem, 6vw, 6rem);
       max-width: 26rem;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Activa las transiciones entre esta página y la otra (galería ↔ obra).
+     Hace falta en las dos; el resto de páginas no lo llevan. */
+  @view-transition {
+    navigation: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition {
+      navigation: none;
     }
   }
 </style>
