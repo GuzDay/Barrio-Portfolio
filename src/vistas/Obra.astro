@@ -1,6 +1,6 @@
 ---
-// Página de una obra: sus fotos en un carrusel vertical 3:4 que cabe en la
-// pantalla y se arrastra a los lados, con flechas a media altura;
+// Página de una obra, sin cabecera (pedido de Guzmán): sus fotos en un
+// carrusel vertical 3:4 que cabe en la pantalla, con "volver" debajo y se arrastra a los lados, con flechas a media altura;
 // al lado, la ficha con el botón para preguntar por WhatsApp. Abajo, la obra
 // anterior y la siguiente.
 import { Image } from 'astro:assets';
@@ -35,9 +35,10 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   titulo={f.titulo}
   descripcion={f.texto}
   activa={seccion}
+  sinCabecera
 >
-  <p class="volver"><a href={urlSeccion(seccion, idioma)}>← {t.volver(nombreSeccion)}</a></p>
   <article class="obra">
+    <div class="columna-fotos">
     <div class="carrusel" data-varias={f.fotos.length > 1 ? '' : undefined}>
       <ul class="pista" aria-label={t.fotos} tabindex="0">
         {f.fotos.map((foto, i) => (
@@ -63,6 +64,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
           </button>
         </>
       )}
+    </div>
+      <p class="volver"><a href={urlSeccion(seccion, idioma)}>← {t.volver(nombreSeccion)}</a></p>
     </div>
     <div class="ficha">
       <h1>{f.titulo}</h1>
@@ -141,7 +144,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
 <style>
   .volver {
-    margin: 0 0 1.5rem;
+    margin: 1rem 0 0;
     font-size: 0.9em;
   }
 
@@ -167,7 +170,9 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      recortada para llenarlo (pedido de Guzmán). El alto, limitado a lo que
      cabe en la pantalla bajo la cabecera, manda sobre el ancho. */
   .obra {
-    --alto: min(calc(100svh - 230px), 780px);
+    /* Sin cabecera: la foto puede ocupar casi todo el alto, dejando sitio
+       arriba y para el "volver" de debajo. */
+    --alto: min(calc(100svh - 150px), 860px);
   }
 
   .carrusel {
@@ -308,7 +313,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       gap: 0;
       align-items: start;
     }
-    .carrusel {
+    .columna-fotos {
       grid-column: 2;
     }
     .ficha {
