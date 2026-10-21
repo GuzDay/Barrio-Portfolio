@@ -133,6 +133,8 @@ const menu = [
   const boton = document.querySelector<HTMLButtonElement>('.cabecera .abrir')!;
   const panel = document.querySelector('.cabecera .menu')!;
   const abrir = (si: boolean) => {
+    panel.classList.remove('saliendo');
+    panel.querySelector('.elegida')?.classList.remove('elegida');
     panel.classList.toggle('abierto', si);
     document.documentElement.classList.toggle('menu-abierto', si);
     boton.setAttribute('aria-expanded', String(si));
@@ -166,7 +168,7 @@ const menu = [
     caja.addEventListener('click', (e) => {
       const normal = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
       if (!normal || sinMovimiento.matches) return apuntar(caja, i);
-      if (!conRaton.matches) return latidoMovil(e, caja);
+      if (!conRaton.matches) return panel.classList.contains('abierto') ? salirDelMenu(e, caja) : latidoMovil(e, caja);
       e.preventDefault();
       const ahora = getComputedStyle(caja).paddingLeft;
       caja.animate(
@@ -201,6 +203,23 @@ const menu = [
     );
     const salida = (window as unknown as { __salida?: () => number }).__salida?.() ?? 0;
     setTimeout(() => (location.href = caja.href), Math.max(180, salida));
+  }
+
+  // Al elegir una sección en el menú del móvil (pedido de Guzmán): las
+  // cajitas se van como entraron pero al revés, bajando un poco y
+  // desvaneciéndose una tras otra (la elegida, la última), mientras el fondo
+  // recupera la nitidez poco a poco. El icono vuelve a ser las tres rayas a
+  // la vez. Se cambia de página cuando ya no queda nada (o cuando acaban de
+  // irse las tarjetas, si la página las tiene). Ver ".saliendo" en el CSS.
+  const SALIDA_MENU = 520;
+  function salirDelMenu(e: MouseEvent, caja: HTMLAnchorElement) {
+    e.preventDefault();
+    caja.closest('li')?.classList.add('elegida');
+    panel.classList.add('saliendo');
+    boton.setAttribute('aria-expanded', 'false');
+    boton.setAttribute('aria-label', boton.dataset.abrir!);
+    const salida = (window as unknown as { __salida?: () => number }).__salida?.() ?? 0;
+    setTimeout(() => (location.href = caja.href), Math.max(SALIDA_MENU, salida));
   }
 
   // La cajita que viene "ensanchada" de la página anterior se encoge (con su
@@ -528,6 +547,37 @@ const menu = [
     }
     .menu.abierto .cerrar {
       animation-delay: 0.18s;
+    }
+    /* Al elegir una sección: la salida (ver salirDelMenu). Las cajitas usan
+       los mismos retrasos escalonados que al entrar; la "×" se va la
+       primera y la elegida, la última. Aquí sí se desvanecen: se están
+       yendo, y el fondo pierde su desenfoque a la vez. */
+    .menu.saliendo .caja {
+      animation: salir-caja 0.34s cubic-bezier(0.55, 0, 0.75, 0.2) forwards;
+    }
+    .menu.saliendo .cerrar {
+      animation-delay: 0s;
+    }
+    .menu.saliendo li.elegida .caja {
+      animation-delay: 0.17s;
+    }
+    .menu.saliendo::before {
+      animation: fondo-nitido 0.5s cubic-bezier(0.33, 0, 0.67, 1) forwards;
+    }
+  }
+
+  @keyframes salir-caja {
+    to {
+      transform: translateY(14px) scale(0.94);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fondo-nitido {
+    to {
+      background-color: rgb(255 255 255 / 0);
+      -webkit-backdrop-filter: blur(0);
+      backdrop-filter: blur(0);
     }
   }
 
