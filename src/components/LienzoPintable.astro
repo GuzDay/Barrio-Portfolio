@@ -42,6 +42,7 @@ const vertical = fotoVertical
     />
   </picture>
   <canvas></canvas>
+  <div class="velo"></div>
 </div>
 <script is:inline>
   // La foto entra con un poco de zoom (ver "acercar" abajo): hasta que esté
@@ -220,6 +221,14 @@ const vertical = fotoVertical
             easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           });
         }
+        // A la vez, la foto sale de un velo blanco, el fondo de las demás
+        // páginas: así no aparece de golpe y hay continuidad al llegar desde
+        // ellas (pedido de Guzmán: que casi no se note). Más corto que el
+        // zoom, para que este siga cuando la foto ya se ve entera.
+        capa.querySelector('.velo')!.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 1100,
+          easing: 'cubic-bezier(0.33, 0, 0.25, 1)',
+        });
         capa.classList.remove('por-acercar');
       });
   }
@@ -290,6 +299,21 @@ const vertical = fotoVertical
   .lienzo.por-acercar img,
   .lienzo.por-acercar canvas {
     transform: scale(1.06);
+  }
+
+  /* Velo blanco por encima de todo lo de la capa (también del degradado de
+     abajo): tapa la foto mientras se prepara y luego se desvanece. */
+  .velo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lienzo.por-acercar .velo {
+    opacity: 1;
   }
 
   /* Degradado sutil abajo, para que el copyright (en blanco) se lea sobre
