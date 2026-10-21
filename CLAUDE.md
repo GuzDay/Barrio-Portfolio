@@ -48,10 +48,11 @@ consulta que hay**: ver más abajo.
   siempre con su nombre (sin números: Guzmán los quitó), que se ensanchan
   suavemente al pasar el ratón; la actual, algo más oscura. Idioma en otra
   cajita.
-- **Tipografías** (16-10-2026): Newsreader para títulos, cabecera y pie, e
-  Inter Tight para el resto. Son las gratuitas más parecidas a las que le
-  gustan a Guzmán, Teodor y Forma DJR, que son de pago. Están en
-  `--serif` / `--sans` de `global.css`.
+- **Tipografías**: Newsreader para títulos, cabecera y pie (la gratuita más
+  parecida a Teodor, de pago) y, para el resto, **DM Mono**, monoespaciada
+  (pedido de Guzmán, 21-10-2026; antes Inter Tight). Están en `--serif` /
+  `--sans` de `global.css` (la variable sigue llamándose --sans). DM Mono
+  solo tiene pesos 300, 400 y 500.
 - Probado y descartado por Guzmán (16-10-2026): relieve (luz arriba a la
   izquierda) en las cajitas del menú del móvil.
 - Probado y descartado por Guzmán (16-10-2026): una entrada en la portada en la
