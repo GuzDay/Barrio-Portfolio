@@ -5,7 +5,9 @@
 // Encargos, pedido de Guzmán, 21-10-2026); solo cambian los textos.
 // Encargos es para particulares; Colabora conmigo, para negocios y espacios
 // abiertos al público.
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import fotoEncargos from '../assets/encargos/cabecera.jpg';
 import { ambas, urlColabora, urlEncargos, type Idioma } from '../lib/rutas';
 import { urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -24,6 +26,13 @@ const p =
 ---
 
 <Base idioma={idioma} alternativas={ambas(p.url)} titulo={p.nombre} descripcion={p.intro[0]} activa={pagina}>
+  {/* Encargos lleva una foto arriba, a todo el ancho (pedido de Guzmán,
+      21-10-2026): un cuadro colgado en una casa. Colabora conmigo, no. */}
+  {pagina === 'encargos' && (
+    <figure class="portada">
+      <Image src={fotoEncargos} alt="" widths={[600, 900, 1080]} sizes="(min-width: 1440px) 1200px, 100vw" loading="eager" fetchpriority="high" />
+    </figure>
+  )}
   <h1>{p.nombre}</h1>
   <div class="texto-largo">
     {p.intro.map((parrafo) => <p>{parrafo}</p>)}
@@ -44,6 +53,28 @@ const p =
 </Base>
 
 <style>
+  /* La foto de arriba, apaisada en ordenador y recortada en torno al
+     cuadro; en el móvil, vertical. */
+  .portada {
+    margin: 0.5rem 0 2rem;
+    overflow: hidden;
+    background: var(--vacio);
+  }
+
+  .portada :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  @media (min-width: 700px) {
+    .portada :global(img) {
+      aspect-ratio: 21 / 9;
+      max-height: 62svh;
+      object-position: 50% 35%;
+    }
+  }
+
   h2 {
     margin: 3rem 0 1.5rem;
   }
