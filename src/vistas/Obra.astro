@@ -102,19 +102,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
           Para volver a ponerlos, ver el commit que los quitó. */}
     </div>
     <div class="ficha">
-      {/* El título, letra a letra (pocas letras: ligero). Las palabras van
-          enteras para que no se partan al final de la línea. */}
-      <h1 aria-label={f.titulo}>
-        {(() => {
-          let n = 0;
-          return f.titulo.split(' ').map((palabra, k, todas) => (
-            <>
-              <span class="palabra" aria-hidden="true">{[...palabra].map((l) => <span class="letra" style={`--i: ${n++}`}>{l}</span>)}</span>
-              {k < todas.length - 1 && ' '}
-            </>
-          ));
-        })()}
-      </h1>
+      <h1>{f.titulo}</h1>
       <ul class="datos">
         {/* Medidas, año y técnica, en ese orden (pedido de Guzmán). */}
         {[f.medidas, f.anio, f.tecnica].filter(Boolean).map((dato, i) => <li style={`--n: ${i}`}>{dato}</li>)}
@@ -295,22 +283,12 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
 <style>
   /* ---------- Entrada de la obra ----------
-     Como el resto de la web, pero muy ligera (pedido de Guzmán): solo el
-     título va letra a letra (con desenfoque, son pocas letras); lo demás
-     entra en bloque, con opacidad y desplazamiento, que el navegador anima
-     sin esfuerzo. Lo activa el script del principio. */
-  .palabra {
-    display: inline-block;
-    white-space: nowrap;
-  }
-
-  .letra {
-    display: inline-block;
-  }
-
-  :global(html.obra-anima) .ficha h1 .letra {
-    animation: obra-letra 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(0.12s + var(--i) * 35ms);
+     Muy ligera (pedido de Guzmán): todo entra en bloque, uno tras otro,
+     solo con opacidad y desplazamiento, que el navegador anima sin
+     esfuerzo. El título también (letra a letra tardaba en verse). Lo
+     activa el script del principio. */
+  :global(html.obra-anima) .ficha h1 {
+    animation: obra-sube 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
 
   :global(html.obra-anima) .ficha .datos li,
@@ -323,35 +301,27 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   }
 
   :global(html.obra-anima) .ficha .datos li {
-    animation-delay: calc(0.3s + var(--n) * 60ms);
+    animation-delay: calc(0.1s + var(--n) * 50ms);
   }
   :global(html.obra-anima) .ficha .texto {
-    animation-delay: 0.45s;
+    animation-delay: 0.22s;
   }
   :global(html.obra-anima) .ficha :global(.estado-ficha) {
-    animation-delay: 0.55s;
+    animation-delay: 0.3s;
   }
   :global(html.obra-anima) .ficha .boton {
-    animation-delay: 0.62s;
+    animation-delay: 0.36s;
   }
   :global(html.obra-anima) .cerrar,
   :global(html.obra-anima) .vecina {
     animation-name: obra-funde;
-    animation-delay: 0.3s;
+    animation-delay: 0.15s;
   }
 
   /* La foto: aparece con un zoom suave, como la portada (solo opacidad y
      escala). Desde la galería no: allí llega volando desde su tarjeta. */
   :global(html.obra-anima-foto) .carrusel {
     animation: obra-foto 1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-
-  @keyframes obra-letra {
-    from {
-      opacity: 0;
-      transform: translateY(0.4em);
-      filter: blur(4px);
-    }
   }
 
   @keyframes obra-sube {
