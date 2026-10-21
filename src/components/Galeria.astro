@@ -194,8 +194,32 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     e.viewTransition.finished.finally(() => img && (img.style.viewTransitionName = ''));
   });
 
+  // ---------- Volver a la misma altura ----------
+  // "Volver a pintura/escultura" es un enlace normal, así que la galería se
+  // abría arriba del todo. Al pulsar una tarjeta se apunta por dónde iba el
+  // scroll (y el filtro, que cambia la altura); al volver de esa obra se
+  // deja igual antes de pintar, para que la foto vuele a su tarjeta.
+  const CLAVE = 'galeria:' + location.pathname;
+  galeria?.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('a.tarjeta')) return;
+    try {
+      sessionStorage.setItem(CLAVE, JSON.stringify({ y: scrollY, filtro: galeria.dataset.mostrando ?? '' }));
+    } catch {}
+  });
+  const volviendo = deEstaSeccion((globalThis as any).navigation?.activation?.from?.url ?? document.referrer);
+  if (galeria && volviendo) {
+    try {
+      const antes = JSON.parse(sessionStorage.getItem(CLAVE) ?? 'null');
+      if (antes) {
+        if (antes.filtro && antes.filtro !== galeria.dataset.mostrando)
+          [...botones].find((b) => b.dataset.filtro === antes.filtro)?.click();
+        scrollTo(0, antes.y);
+      }
+    } catch {}
+  }
+
   if (galeria) {
-    if (!deEstaSeccion(document.referrer) || sinMovimiento) llegar();
+    if (!volviendo || sinMovimiento) llegar();
     else galeria.classList.remove('por-llegar');
     // La cabecera la usa al pulsar una sección (coordina su latido con esto).
     (window as unknown as { __salida?: () => number }).__salida = salir;
