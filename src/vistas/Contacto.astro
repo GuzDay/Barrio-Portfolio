@@ -1,8 +1,9 @@
 ---
-// Contacto (rehecha desde cero a petición de Guzmán, 21-10-2026): el texto
-// de Pablo en el centro de la pantalla, centrado, y debajo sus enlaces, uno
-// tras otro en una lista. El título "Contacto" no se ve, pero sigue ahí para
-// buscadores y lectores de pantalla.
+// Contacto (21-10-2026, pedido de Guzmán): el texto de Pablo llena la
+// pantalla, lo más grande que quepa en cada una, y abajo una franja blanca
+// con sus enlaces de contacto. La página mide justo la pantalla, sin scroll.
+// El título "Contacto" no se ve, pero sigue ahí para buscadores y lectores
+// de pantalla.
 import Base from '../layouts/Base.astro';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
@@ -26,8 +27,10 @@ const enlaces = [
   <h1 class="oculto">{t.contacto}</h1>
 
   <div class="contacto">
-    <div class="biografia">
-      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+    <div class="hueco">
+      <div class="biografia">
+        {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+      </div>
     </div>
 
     <ul class="enlaces">
@@ -35,6 +38,33 @@ const enlaces = [
     </ul>
   </div>
 </Base>
+
+<script>
+  // El tamaño de letra más grande con el que el texto cabe en su hueco: se
+  // busca probando (búsqueda binaria, al medio píxel) cada vez que cambia
+  // el tamaño de la ventana y cuando ha cargado la tipografía.
+  const hueco = document.querySelector<HTMLElement>('.contacto .hueco')!;
+  const texto = hueco.querySelector<HTMLElement>('.biografia')!;
+  function ajustar() {
+    let min = 8;
+    let max = 160;
+    while (max - min > 0.5) {
+      const medio = (min + max) / 2;
+      texto.style.fontSize = `${medio}px`;
+      if (texto.scrollHeight <= hueco.clientHeight && texto.scrollWidth <= hueco.clientWidth) min = medio;
+      else max = medio;
+    }
+    texto.style.fontSize = `${min}px`;
+    texto.classList.add('ajustado');
+  }
+  ajustar();
+  document.fonts.ready.then(ajustar);
+  let pendiente = 0;
+  addEventListener('resize', () => {
+    cancelAnimationFrame(pendiente);
+    pendiente = requestAnimationFrame(ajustar);
+  });
+</script>
 
 <style>
   .oculto {
@@ -46,35 +76,63 @@ const enlaces = [
     white-space: nowrap;
   }
 
-  /* Todo en el centro: a lo ancho y, si cabe, también a lo alto. */
+  /* La página, justo la pantalla: cabecera, el texto ocupando todo lo que
+     queda y, abajo, la franja con los enlaces y el pie. */
+  :global(body:has(.contacto)) {
+    height: 100svh;
+    overflow: hidden;
+  }
+
   :global(main:has(.contacto)) {
     display: flex;
+    min-height: 0;
+    padding-bottom: 0;
   }
 
   .contacto {
-    margin: auto;
-    max-width: 40rem;
-    padding: 2rem 0;
-    text-align: center;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hueco {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .biografia {
     font-family: var(--serif);
-    font-size: calc(1.25em * var(--serif-escala));
     font-weight: 400;
-    line-height: 1.35;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    /* Escondido hasta que se ha ajustado el tamaño, para que no se vea
+       saltar. */
+    visibility: hidden;
+  }
+
+  .biografia.ajustado {
+    visibility: visible;
   }
 
   .biografia p {
-    margin: 0 0 0.8em;
+    margin: 0 0 0.45em;
   }
 
+  .biografia p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* La franja de abajo: los enlaces en una fila, separados, con aire
+     encima. */
   .enlaces {
     list-style: none;
-    margin: 2.5rem 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0.35rem;
+    margin: 0;
+    padding: 1.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 2.5rem;
   }
 
   .enlaces a {
@@ -84,5 +142,12 @@ const enlaces = [
   .enlaces a:hover {
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  @media (max-width: 899px) {
+    .enlaces {
+      gap: 0.25rem 1.5rem;
+      padding-top: 1rem;
+    }
   }
 </style>
