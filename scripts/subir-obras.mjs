@@ -11,21 +11,23 @@
 // están en el archivo desaparecen, y los cambios hechos desde el panel se
 // pierden). Las obras con la ficha a medias (sin técnica o sin estado) se
 // saltan y se avisa.
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const ARCHIVO = process.argv[2] ?? join(homedir(), 'Documents/GÜZDAY/00 Barrio/Obras');
 const WEB = fileURLToPath(new URL('../src/content/', import.meta.url));
 const SECCIONES = { Pintura: 'cuadros', Escultura: 'esculturas' };
-// La web nunca enseña una foto a más de 1800 px de ancho (página de la
-// obra), así que con 2400 de lado mayor sobra; la web genera luego sus
-// propias versiones reducidas. A 3000 px y calidad 90, las 64 fotos de
-// 21-10-2026 ocupaban 113 MB.
-const LADO_MAX = 2400;
-const CALIDAD = 85;
+// Estas fotos no las ve nadie: son los originales de los que la web saca
+// luego sus propias versiones, con la calidad que necesita cada una (ver
+// src/lib/servicio-fotos.mjs). Por eso no se recomprimen si no hace falta:
+// la que ya cabe en 3000 px se copia tal cual (recomprimir es perder calidad
+// para siempre, sin ganar nada en la web). Solo las más grandes se reducen,
+// con calidad muy alta. Lo mismo que en la web de Blanca.
+const LADO_MAX = 3000;
+const CALIDAD = 92;
 
 // La dirección de la obra, como la haría el panel: sin tildes, en minúsculas.
 const nombreWeb = (titulo) =>
@@ -50,6 +52,8 @@ const y = (texto) => JSON.stringify(texto);
 
 const saltadas = [];
 let total = 0;
+let copiadas = 0;
+let reducidas = 0;
 for (const [carpeta, seccion] of Object.entries(SECCIONES)) {
   const destino = join(WEB, seccion);
   rmSync(destino, { recursive: true, force: true });
@@ -78,17 +82,26 @@ for (const [carpeta, seccion] of Object.entries(SECCIONES)) {
     const nombre = nombreWeb(f.titulo);
     const dir = join(destino, nombre);
     mkdirSync(dir);
-    const nombresFotos = fotos.map((foto, i) => {
+    const nombresFotos = [];
+    for (const [i, foto] of fotos.entries()) {
       const salida = `${nombre}-${i + 1}.jpg`;
-      execFileSync('sips', [
-        '-Z', String(LADO_MAX),
-        '-s', 'format', 'jpeg',
-        '-s', 'formatOptions', String(CALIDAD),
-        join(origen, foto),
-        '--out', join(dir, salida),
-      ], { stdio: 'ignore' });
-      return salida;
-    });
+      const entrada = join(origen, foto);
+      const meta = await sharp(entrada).metadata();
+      const cabe = Math.max(meta.width, meta.height) <= LADO_MAX;
+      const derecha = !meta.orientation || meta.orientation === 1;
+      if (cabe && derecha && meta.format === 'jpeg') {
+        copyFileSync(entrada, join(dir, salida));
+        copiadas++;
+      } else {
+        await sharp(entrada)
+          .rotate()
+          .resize({ width: LADO_MAX, height: LADO_MAX, fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: CALIDAD, mozjpeg: true })
+          .toFile(join(dir, salida));
+        reducidas++;
+      }
+      nombresFotos.push(salida);
+    }
     const lineas = [
       `titulo: ${y(f.titulo)}`,
       f.tecnica && `tecnica: ${y(f.tecnica)}`,
@@ -108,5 +121,5 @@ for (const [carpeta, seccion] of Object.entries(SECCIONES)) {
     console.log(`${seccion}/${nombre}  (${fotos.length} fotos)`);
   }
 }
-console.log(`\n${total} obras en la web.`);
+console.log(`\n${total} obras en la web. Fotos: ${copiadas} copiadas tal cual, ${reducidas} reducidas a ${LADO_MAX} px.`);
 if (saltadas.length) console.log('Saltadas:\n  ' + saltadas.join('\n  '));

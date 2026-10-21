@@ -24,7 +24,13 @@ consulta que hay**: ver más abajo.
   del archivo de GÜZDAY con `node scripts/subir-obras.mjs`. Ese programa
   SUSTITUYE todas las obras de la web por las del archivo (lo hecho desde el
   panel se pierde) y salta las fichas a medias (salió "Cosa de dos", sin
-  técnica ni estado). Fotos a 2400 px de lado mayor, JPEG 85.
+  técnica ni estado). Las fotos que caben en 3000 px se copian tal cual; las
+  más grandes se reducen a 3000 (JPEG 92).
+- **Fotos de la web** (21-10-2026, `src/lib/servicio-fotos.mjs`): al construir,
+  cada foto recibe la calidad mínima que aún se ve igual que la original (de
+  70 a 94; método de la web de Blanca), un enfoque suave al reducir, y cada
+  versión sale ya recortada a 3:4 (`src/lib/fotos.ts`), en vez de mandar la
+  foto entera para que la recorte el navegador.
 - **Firma de Pablo** en la cabecera (`src/assets/firma.svg`, metida en la
   página para que tome el color del texto). Sale del SVG que
   pasó Guzmán (`scripts/firma/Firma Barrio.svg`) con los trazos intactos: solo

@@ -8,6 +8,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import EstadoObra from '../components/EstadoObra.astro';
+import { marco34 } from '../lib/fotos';
 import { ficha, obrasDe } from '../lib/obras';
 import { ambas, secciones, urlObra, urlSeccion, type Idioma, type Seccion } from '../lib/rutas';
 import { urlWhatsApp } from '../lib/sitio';
@@ -49,8 +50,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
             <Image
               src={foto}
               alt={i === 0 ? f.titulo : ''}
-              widths={[600, 900, 1200, 1800]}
-              sizes="(min-width: 900px) 600px, 92vw"
+              {...marco34(foto, [600, 900, 1200, 1800, 2400])}
+              sizes="(min-width: 900px) 66vh, 92vw"
               loading={i === 0 ? 'eager' : 'lazy'}
               draggable="false"
             />

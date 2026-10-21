@@ -14,6 +14,7 @@
 // (pedido de Guzmán, 16-10-2026).
 import { Image } from 'astro:assets';
 import EstadoObra from './EstadoObra.astro';
+import { marco34 } from '../lib/fotos';
 import { ficha, type Obra } from '../lib/obras';
 import { urlObra, type Idioma, type Seccion } from '../lib/rutas';
 import { textos } from '../lib/textos';
@@ -46,7 +47,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
             <Image
               src={f.fotos[0]}
               alt={f.titulo}
-              widths={[240, 360, 540, 720]}
+              {...marco34(f.fotos[0], [240, 360, 540, 720])}
               sizes="(min-width: 1760px) 350px, (min-width: 1000px) 20vw, 46vw"
               loading={i < 4 ? 'eager' : 'lazy'}
             />
