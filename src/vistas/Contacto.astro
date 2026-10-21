@@ -1,11 +1,19 @@
 ---
-// Contacto: una sola página con el contacto arriba (lo primero que busca quien
-// entra aquí) y, debajo, el texto de Pablo sobre sí mismo. Antes eran "Acerca
-// de mí" y "Contacto"; Guzmán las unió (16-10-2026).
+// Contacto (rehecha a petición de Guzmán, 21-10-2026): arriba y centrado, un
+// carrusel en 3D con fotos de Pablo trabajando, que gira solo; debajo, su
+// texto sobre sí mismo, sin título; y al final, sencillos, sus datos y el
+// botón de WhatsApp. El título "Contacto" no se ve, pero sigue ahí para
+// buscadores y lectores de pantalla.
 import Base from '../layouts/Base.astro';
+import Carrusel3D from '../components/Carrusel3D.astro';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
+
+// Fotos de prueba, de momento (las que pasó Guzmán el 21-10-2026).
+const fotos = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }),
+).map((m) => m.default);
 
 interface Props {
   idioma: Idioma;
@@ -16,51 +24,75 @@ const t = textos[idioma];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
-  <h1>{t.contacto}</h1>
-  <p>{t.contactoIntro}</p>
-  <p><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.escribirWhatsApp}</a></p>
-  <dl>
-    <div><dt>{t.telefono}</dt><dd><a href={`tel:+${sitio.whatsapp}`}>{sitio.telefonoVisible}</a></dd></div>
-    <div><dt>{t.correo}</dt><dd><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></dd></div>
-    <div><dt>{t.instagram}</dt><dd><a href={urlInstagram}>@{sitio.instagram}</a></dd></div>
-  </dl>
+  <h1 class="oculto">{t.contacto}</h1>
 
-  <section class="sobre-mi">
-    <h2>{t.acercaDe}</h2>
-    <div class="texto-largo">
-      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
-    </div>
-  </section>
+  <Carrusel3D fotos={fotos} />
+
+  <div class="texto-largo sobre-mi">
+    {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+  </div>
+
+  <div class="datos">
+    <ul>
+      <li><a href={`tel:+${sitio.whatsapp}`}>{sitio.telefonoVisible}</a></li>
+      <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>
+      <li><a href={urlInstagram}>@{sitio.instagram}</a></li>
+    </ul>
+    <a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a>
+  </div>
 </Base>
 
 <style>
-  dl {
-    margin: 2rem 0 0;
-    display: grid;
-    gap: 0.75rem;
-  }
-
-  dl div {
-    display: flex;
-    gap: 1rem;
-  }
-
-  dt {
-    min-width: 6rem;
-    color: var(--suave);
-  }
-
-  dd {
-    margin: 0;
+  .oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .sobre-mi {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--linea);
+    margin: 0 auto;
   }
 
-  h2 {
-    margin: 0 0 1rem;
+  .datos {
+    margin: 4rem auto 0;
+    text-align: center;
+  }
+
+  /* Teléfono, correo e Instagram en una línea, separados por puntos (en el
+     móvil, uno debajo de otro). */
+  .datos ul {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 0;
+    color: var(--suave);
+  }
+
+  .datos li + li::before {
+    content: '·';
+    margin: 0 0.75rem;
+  }
+
+  .datos a:not(.boton) {
+    text-decoration: none;
+  }
+
+  .datos a:not(.boton):hover {
+    color: var(--texto);
+  }
+
+  @media (max-width: 560px) {
+    .datos ul {
+      flex-direction: column;
+    }
+    .datos li + li::before {
+      content: none;
+    }
   }
 </style>

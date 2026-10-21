@@ -83,7 +83,11 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   réplica de Encargos para negocios y espacios abiertos al público, con el
   texto que mandó Pablo; las dos páginas salen de `src/vistas/Encargos.astro`.
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
-  dentro de Contacto, debajo de los datos (lo decidió Guzmán, 16-10-2026);
+  dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
+  Contacto no enseña título: arriba un carrusel 3D que gira solo
+  (`src/components/Carrusel3D.astro`, fotos de prueba en
+  `src/assets/contacto/`), debajo el texto de Pablo sin título, y al final
+  los datos y el botón "Contacta conmigo";
   /acerca-de-mi/ redirige a /contacto/.
 - **Cada obra lleva ficha**: título, técnica, medidas, año y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
