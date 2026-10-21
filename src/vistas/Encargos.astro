@@ -26,16 +26,19 @@ const p =
 ---
 
 <Base idioma={idioma} alternativas={ambas(p.url)} titulo={p.nombre} descripcion={p.intro[0]} activa={pagina}>
-  {/* Encargos lleva una foto arriba, a todo el ancho (pedido de Guzmán,
-      21-10-2026): un cuadro colgado en una casa. Colabora conmigo, no. */}
-  {pagina === 'encargos' && (
-    <figure class="portada">
-      <Image src={fotoEncargos} alt="" widths={[600, 900, 1080]} sizes="(min-width: 1440px) 1200px, 100vw" loading="eager" fetchpriority="high" />
-    </figure>
-  )}
-  <h1>{p.nombre}</h1>
-  <div class="texto-largo">
-    {p.intro.map((parrafo) => <p>{parrafo}</p>)}
+  {/* Encargos lleva una foto vertical 3:4, como todas las de la web (pedido
+      de Guzmán, 21-10-2026): en el móvil entre el título y el texto; en
+      ordenador, a la derecha de los dos. Colabora conmigo, no. */}
+  <div class:list={['cabeza', { 'con-foto': pagina === 'encargos' }]}>
+    <h1>{p.nombre}</h1>
+    {pagina === 'encargos' && (
+      <figure class="foto">
+        <Image src={fotoEncargos} alt="" widths={[400, 600, 900]} sizes="(min-width: 900px) 26vw, 100vw" loading="eager" fetchpriority="high" />
+      </figure>
+    )}
+    <div class="texto-largo">
+      {p.intro.map((parrafo) => <p>{parrafo}</p>)}
+    </div>
   </div>
 
   <h2>{t.encargosComo}</h2>
@@ -53,25 +56,35 @@ const p =
 </Base>
 
 <style>
-  /* La foto de arriba, apaisada en ordenador y recortada en torno al
-     cuadro; en el móvil, vertical. */
-  .portada {
-    margin: 0.5rem 0 2rem;
+  .foto {
+    margin: 0 0 1.5rem;
     overflow: hidden;
     background: var(--vacio);
   }
 
-  .portada :global(img) {
+  .foto :global(img) {
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
   }
 
-  @media (min-width: 700px) {
-    .portada :global(img) {
-      aspect-ratio: 21 / 9;
-      max-height: 62svh;
-      object-position: 50% 35%;
+  /* En ordenador, la foto a la derecha del título y el texto, ocupando su
+     alto desde arriba. */
+  @media (min-width: 900px) {
+    .cabeza.con-foto {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) min(26vw, 24rem);
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(2rem, 6vw, 6rem);
+    }
+    .con-foto h1,
+    .con-foto .texto-largo {
+      grid-column: 1;
+    }
+    .con-foto .foto {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      margin: 0.5rem 0 0;
     }
   }
 
