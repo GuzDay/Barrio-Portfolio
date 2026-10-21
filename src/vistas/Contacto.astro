@@ -1,9 +1,18 @@
 ---
-// Contacto (rehecha desde cero a petición de Guzmán, 21-10-2026): el texto
-// de Pablo en el centro de la pantalla, centrado, y debajo sus enlaces, uno
-// tras otro en una lista. El título "Contacto" no se ve, pero sigue ahí para
+// Contacto (21-10-2026, pedido de Guzmán): el texto de Pablo centrado en
+// mitad de la pantalla, con una foto redonda en el centro que lo aparta a
+// los lados: las líneas que pasan por el círculo se parten en dos, una a
+// cada lado, y se siguen leyendo de izquierda a derecha. Debajo, sus
+// enlaces en una lista. El título "Contacto" no se ve, pero sigue ahí para
 // buscadores y lectores de pantalla.
+//
+// Con CSS solo se puede rodear una forma por un lado (float + shape-outside),
+// así que la maquetación la hace el script de abajo: mide cada palabra y la
+// coloca línea a línea. Sin él (o mientras carga) se ve el texto normal,
+// centrado, con la foto encima.
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import circulo from '../assets/contacto/circulo.jpg';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -26,8 +35,11 @@ const enlaces = [
   <h1 class="oculto">{t.contacto}</h1>
 
   <div class="contacto">
-    <div class="biografia">
-      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+    <div class="texto">
+      <Image class="circulo" src={circulo} alt="" widths={[300, 500, 800]} sizes="(min-width: 900px) 300px, 50vw" loading="eager" />
+      <div class="biografia">
+        {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+      </div>
     </div>
 
     <ul class="enlaces">
@@ -36,8 +48,110 @@ const enlaces = [
   </div>
 </Base>
 
+<script>
+  // Maquetación alrededor del círculo. Para cada línea se calcula qué tramo
+  // ocupa el círculo a esa altura (más un margen) y se rellenan con palabras
+  // el trozo de la izquierda y luego el de la derecha. El círculo va
+  // centrado en el bloque de texto: como su posición cambia cuánto ocupa el
+  // texto, se repite un par de veces hasta que encaja.
+  const caja = document.querySelector<HTMLElement>('.contacto .texto')!;
+  const bio = caja.querySelector<HTMLElement>('.biografia')!;
+  const img = caja.querySelector<HTMLElement>('.circulo')!;
+  const parrafos = [...bio.querySelectorAll('p')].map((p) => p.textContent!.trim().split(/\s+/));
+  const capa = document.createElement('div');
+  capa.className = 'maquetado';
+  capa.setAttribute('aria-hidden', 'true');
+  caja.append(capa);
+  bio.classList.add('oculto');
+  const medidor = document.createElement('canvas').getContext('2d')!;
+
+  function maquetar() {
+    const estilo = getComputedStyle(bio);
+    const tam = parseFloat(estilo.fontSize);
+    const lh = parseFloat(estilo.lineHeight);
+    const entre = tam * 0.8; // espacio entre párrafos
+    medidor.font = `${estilo.fontWeight} ${estilo.fontSize} ${estilo.fontFamily}`;
+    const ancho = (s: string) => medidor.measureText(s).width;
+    const espacio = ancho(' ');
+    const W = caja.clientWidth;
+    const D = Math.round(W * 0.36);
+    const R = D / 2;
+    const margen = tam * (W < 600 ? 0.5 : 0.9); // aire entre el círculo y el texto
+    const minimo = tam * 3; // un trozo más estrecho que esto, se deja vacío
+    const cx = W / 2;
+
+    // Coloca todo con el centro del círculo a la altura cy y devuelve las
+    // líneas y el alto total.
+    const colocar = (cy: number) => {
+      const lineas: { y: number; x: number; w: number; texto: string; lado: string }[] = [];
+      let y = 0;
+      parrafos.forEach((palabras, n) => {
+        if (n) y += entre;
+        let i = 0;
+        while (i < palabras.length) {
+          // Lo más cerca que pasa la línea del centro del círculo.
+          const dy = Math.max(0, Math.abs(cy - (y + lh / 2)) - lh / 2);
+          const tramos: { x: number; w: number; lado: string }[] = [];
+          if (dy < R + margen * 0.5) {
+            const medio = Math.sqrt(Math.max(0, R * R - Math.min(dy, R) ** 2)) + margen;
+            const izq = cx - medio;
+            if (izq >= minimo) tramos.push({ x: 0, w: izq, lado: 'izq' });
+            if (W - (cx + medio) >= minimo) tramos.push({ x: cx + medio, w: W - (cx + medio), lado: 'der' });
+          } else tramos.push({ x: 0, w: W, lado: 'centro' });
+          for (const tramo of tramos) {
+            let texto = '';
+            let w = 0;
+            while (i < palabras.length) {
+              const p = palabras[i];
+              const nuevo = w + (texto ? espacio : 0) + ancho(p);
+              if (nuevo > tramo.w && texto) break;
+              if (nuevo > tramo.w && tramo.lado !== 'centro') break;
+              texto += (texto ? ' ' : '') + p;
+              w = nuevo;
+              i++;
+            }
+            if (texto) lineas.push({ y, x: tramo.x, w: tramo.w, texto, lado: tramo.lado });
+          }
+          y += lh;
+        }
+      });
+      return { lineas, alto: y };
+    };
+
+    // El círculo, centrado en el bloque (y nunca más arriba que su borde).
+    let cy = R;
+    let r = colocar(cy);
+    for (let k = 0; k < 4; k++) {
+      cy = Math.max(R, r.alto / 2);
+      r = colocar(cy);
+    }
+
+    capa.replaceChildren(
+      ...r.lineas.map((l) => {
+        const d = document.createElement('div');
+        d.className = `linea ${l.lado}`;
+        d.style.cssText = `top:${l.y}px;left:${l.x}px;width:${l.w}px`;
+        d.textContent = l.texto;
+        return d;
+      }),
+    );
+    capa.style.height = `${Math.max(r.alto, cy + R)}px`;
+    img.style.cssText = `width:${D}px;height:${D}px;left:${cx - R}px;top:${cy - R}px`;
+    caja.classList.add('maquetado-listo');
+  }
+
+  maquetar();
+  document.fonts.ready.then(maquetar);
+  let pendiente = 0;
+  addEventListener('resize', () => {
+    cancelAnimationFrame(pendiente);
+    pendiente = requestAnimationFrame(maquetar);
+  });
+</script>
+
 <style>
-  .oculto {
+  .oculto,
+  :global(.contacto .biografia.oculto) {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -53,12 +167,18 @@ const enlaces = [
 
   .contacto {
     margin: auto;
-    max-width: 40rem;
-    padding: 2rem 0;
+    width: 100%;
+    max-width: 46rem;
+    padding: 1.5rem 0;
     text-align: center;
   }
 
-  .biografia {
+  .texto {
+    position: relative;
+  }
+
+  .biografia,
+  .texto :global(.maquetado) {
     font-family: var(--serif);
     font-size: calc(1.25em * var(--serif-escala));
     font-weight: 400;
@@ -67,6 +187,45 @@ const enlaces = [
 
   .biografia p {
     margin: 0 0 0.8em;
+  }
+
+  /* La foto, un círculo perfecto. Sin el script, centrada encima del texto. */
+  .texto :global(.circulo) {
+    display: block;
+    width: min(40%, 16rem);
+    aspect-ratio: 1;
+    height: auto;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--vacio);
+  }
+
+  .texto.maquetado-listo :global(.circulo) {
+    position: absolute;
+    margin: 0;
+  }
+
+  .texto :global(.maquetado) {
+    position: relative;
+  }
+
+  .texto :global(.linea) {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  /* Junto al círculo, cada trozo se arrima a él; lejos, centrado. */
+  .texto :global(.linea.izq) {
+    text-align: right;
+  }
+
+  .texto :global(.linea.der) {
+    text-align: left;
+  }
+
+  .texto :global(.linea.centro) {
+    text-align: center;
   }
 
   .enlaces {

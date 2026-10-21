@@ -87,8 +87,11 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
   Contacto (rehecha desde cero el 21-10-2026): sin título visible, el texto
-  de Pablo centrado en mitad de la pantalla y debajo, en lista, Contacta
-  conmigo (WhatsApp), teléfono, correo e Instagram. Probados y descartados
+  de Pablo centrado en mitad de la pantalla, con una foto redonda en el
+  centro que lo aparta a los lados (lo maqueta un script, palabra a
+  palabra; foto de prueba en `src/assets/contacto/circulo.jpg`), y debajo,
+  en lista, Contacta conmigo (WhatsApp), teléfono, correo e Instagram.
+  Probado y descartado: el texto llenando la pantalla. Probados y descartados
   por Guzmán: carrusel 3D, etiquetas numeradas, "B … RIO" en letra enorme y
   una lámina de fotos con retícula (están en el historial);
   /acerca-de-mi/ redirige a /contacto/.
