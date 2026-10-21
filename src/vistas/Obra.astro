@@ -42,8 +42,28 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   activa={seccion}
   sinCabecera
 >
+  <script is:inline>
+    // Entrada de la obra (ver "Entrada" en el CSS). Se decide antes de
+    // pintar: con movimiento reducido, nada. La foto solo hace su entrada si
+    // no se llega desde la galería de la sección: desde ahí ya llega volando
+    // desde su tarjeta (transición entre páginas).
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var html = document.documentElement;
+      html.classList.add('obra-anima');
+      var desde = '';
+      try {
+        desde = new URL(document.referrer).pathname;
+      } catch (e) {}
+      var seccion = location.pathname.replace(/[^/]+\/$/, '');
+      var vuela = desde === seccion && 'onpagereveal' in window;
+      if (!vuela) html.classList.add('obra-anima-foto');
+    })();
+  </script>
+
   {/* Pasar de obra: flechas a los lados de la pantalla, en ordenador
-      (pedido de Guzmán, 21-10-2026). */}
+      (pedido de Guzmán, 21-10-2026); también con las flechas del teclado y,
+      en el móvil, deslizando el dedo (ver el script). */}
   <nav class="vecinas" aria-label={nombreSeccion}>
     {anterior && <a class="vecina anterior-obra" href={urlObra(seccion, anterior.id, idioma)} aria-label={`${t.anterior}: ${ficha(anterior, idioma).titulo}`}><svg viewBox="0 0 12 22" aria-hidden="true"><path d="M11 1 1 11l10 10" /></svg></a>}
     {siguiente && <a class="vecina siguiente-obra" href={urlObra(seccion, siguiente.id, idioma)} aria-label={`${t.siguiente}: ${ficha(siguiente, idioma).titulo}`}><svg viewBox="0 0 12 22" aria-hidden="true"><path d="m1 1 10 10L1 21" /></svg></a>}
@@ -82,10 +102,22 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
           Para volver a ponerlos, ver el commit que los quitó. */}
     </div>
     <div class="ficha">
-      <h1>{f.titulo}</h1>
+      {/* El título, letra a letra (pocas letras: ligero). Las palabras van
+          enteras para que no se partan al final de la línea. */}
+      <h1 aria-label={f.titulo}>
+        {(() => {
+          let n = 0;
+          return f.titulo.split(' ').map((palabra, k, todas) => (
+            <>
+              <span class="palabra" aria-hidden="true">{[...palabra].map((l) => <span class="letra" style={`--i: ${n++}`}>{l}</span>)}</span>
+              {k < todas.length - 1 && ' '}
+            </>
+          ));
+        })()}
+      </h1>
       <ul class="datos">
         {/* Medidas, año y técnica, en ese orden (pedido de Guzmán). */}
-        {[f.medidas, f.anio, f.tecnica].filter(Boolean).map((dato) => <li>{dato}</li>)}
+        {[f.medidas, f.anio, f.tecnica].filter(Boolean).map((dato, i) => <li style={`--n: ${i}`}>{dato}</li>)}
       </ul>
       {f.texto && <p class="texto">{f.texto}</p>}
       <EstadoObra idioma={idioma} vendida={f.vendida} class="estado-ficha" />
@@ -145,6 +177,45 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     escPulsada = false;
     document.querySelector<HTMLAnchorElement>('.cerrar')?.click();
   });
+
+  // Pasar de obra sin las flechas de los lados (pedido de Guzmán):
+  // - Con las flechas izquierda / derecha del teclado. Si la foto tiene el
+  //   foco (se ha pulsado en ella), las flechas pasan de foto, como antes.
+  // - En el móvil, deslizando el dedo a un lado, fuera de un carrusel de
+  //   varias fotos (ahí el dedo pasa de foto). Hacia la izquierda, la
+  //   siguiente; hacia la derecha, la anterior.
+  const vecina = (cual: 'anterior' | 'siguiente') =>
+    document.querySelector<HTMLAnchorElement>(cual === 'anterior' ? '.anterior-obra' : '.siguiente-obra');
+  const irA = (cual: 'anterior' | 'siguiente') => {
+    const a = vecina(cual);
+    if (a) location.href = a.href;
+  };
+  addEventListener('keydown', (e) => {
+    if (e.defaultPrevented || e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (e.key === 'ArrowLeft') irA('anterior');
+    if (e.key === 'ArrowRight') irA('siguiente');
+  });
+  let toque: { x: number; y: number; t: number } | null = null;
+  addEventListener(
+    'touchstart',
+    (e) => {
+      const fuera = !(e.target as Element).closest('.carrusel[data-varias]');
+      toque = e.touches.length === 1 && fuera ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() } : null;
+    },
+    { passive: true },
+  );
+  addEventListener(
+    'touchend',
+    (e) => {
+      if (!toque) return;
+      const dx = e.changedTouches[0].clientX - toque.x;
+      const dy = e.changedTouches[0].clientY - toque.y;
+      const rapido = Date.now() - toque.t < 700;
+      toque = null;
+      if (rapido && Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) irA(dx < 0 ? 'siguiente' : 'anterior');
+    },
+    { passive: true },
+  );
 
   // Carrusel: la pista es una fila de fotos con desplazamiento lateral y
   // "imán" a cada foto (scroll-snap), así que el dedo y el trackpad ya
@@ -223,6 +294,86 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </script>
 
 <style>
+  /* ---------- Entrada de la obra ----------
+     Como el resto de la web, pero muy ligera (pedido de Guzmán): solo el
+     título va letra a letra (con desenfoque, son pocas letras); lo demás
+     entra en bloque, con opacidad y desplazamiento, que el navegador anima
+     sin esfuerzo. Lo activa el script del principio. */
+  .palabra {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .letra {
+    display: inline-block;
+  }
+
+  :global(html.obra-anima) .ficha h1 .letra {
+    animation: obra-letra 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.12s + var(--i) * 35ms);
+  }
+
+  :global(html.obra-anima) .ficha .datos li,
+  :global(html.obra-anima) .ficha .texto,
+  :global(html.obra-anima) .ficha :global(.estado-ficha),
+  :global(html.obra-anima) .ficha .boton,
+  :global(html.obra-anima) .cerrar,
+  :global(html.obra-anima) .vecina {
+    animation: obra-sube 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  :global(html.obra-anima) .ficha .datos li {
+    animation-delay: calc(0.3s + var(--n) * 60ms);
+  }
+  :global(html.obra-anima) .ficha .texto {
+    animation-delay: 0.45s;
+  }
+  :global(html.obra-anima) .ficha :global(.estado-ficha) {
+    animation-delay: 0.55s;
+  }
+  :global(html.obra-anima) .ficha .boton {
+    animation-delay: 0.62s;
+  }
+  :global(html.obra-anima) .cerrar,
+  :global(html.obra-anima) .vecina {
+    animation-name: obra-funde;
+    animation-delay: 0.3s;
+  }
+
+  /* La foto: aparece con un zoom suave, como la portada (solo opacidad y
+     escala). Desde la galería no: allí llega volando desde su tarjeta. */
+  :global(html.obra-anima-foto) .carrusel {
+    animation: obra-foto 1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  @keyframes obra-letra {
+    from {
+      opacity: 0;
+      transform: translateY(0.4em);
+      filter: blur(4px);
+    }
+  }
+
+  @keyframes obra-sube {
+    from {
+      opacity: 0;
+      translate: 0 0.6em;
+    }
+  }
+
+  @keyframes obra-funde {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes obra-foto {
+    from {
+      opacity: 0;
+      scale: 1.03;
+    }
+  }
+
   /* "Cerrar", encima de la foto y alineado con su borde derecho (pedido de
      Guzmán). En ordenador cuelga en el margen de arriba. */
   .cerrar {
@@ -344,6 +495,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   /* Las flechas para pasar de obra: muy a los lados de la pantalla, a
      media altura, del mismo trazo pero en gris, que se oscurece al pasar
      el ratón. Solo en ordenador. */
+  /* En el móvil no se ven (allí se pasa de obra deslizando el dedo), pero
+     siguen en la página: de ellas salen las direcciones. */
   .vecinas {
     display: none;
   }
