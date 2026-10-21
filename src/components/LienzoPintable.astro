@@ -235,6 +235,49 @@ const vertical = fotoVertical
       });
   }
 
+  // Al irse de la portada, lo mismo al revés (pedido de Guzmán): la foto se
+  // amplía un poco mientras se funde a blanco, y entonces cambia la página,
+  // que ya empieza en blanco. Más corta que la entrada, para no hacer
+  // esperar al pulsar. La cabecera la usa al pulsar una sección (como la
+  // salida de las tarjetas en Pintura y Escultura); los demás enlaces de la
+  // portada, aquí abajo.
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SALIDA = 800;
+  function salirDeLaPortada(): number {
+    if (quieto) return 0;
+    for (const pieza of [gris, lienzo]) {
+      pieza.animate([{ transform: 'none' }, { transform: 'scale(1.06)' }], {
+        duration: SALIDA,
+        easing: 'cubic-bezier(0.64, 0, 0.78, 0)',
+        fill: 'forwards',
+      });
+    }
+    capa.querySelector('.velo')!.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: SALIDA,
+      easing: 'cubic-bezier(0.75, 0, 0.67, 1)',
+      fill: 'forwards',
+    });
+    return SALIDA;
+  }
+  (window as unknown as { __salida?: () => number }).__salida = salirDeLaPortada;
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented) return;
+    const a = (e.target as Element).closest('a');
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || url.pathname === location.pathname) return;
+    const ms = salirDeLaPortada();
+    if (!ms) return;
+    e.preventDefault();
+    setTimeout(() => (location.href = a.href), ms);
+  });
+  // Al volver con "atrás", el navegador puede enseñar la portada tal como
+  // quedó, en blanco: se deshace la salida.
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    for (const pieza of [gris, lienzo, capa.querySelector('.velo')!]) pieza.getAnimations().forEach((an) => an.cancel());
+  });
+
   if (gris.complete && gris.naturalWidth) preparar();
   // También cada vez que cambia la foto (al girar el móvil se pasa de la
   // vertical a la horizontal): la versión en color tiene que ser la misma.
