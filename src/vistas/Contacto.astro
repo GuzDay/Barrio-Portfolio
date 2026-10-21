@@ -1,12 +1,23 @@
 ---
 // Contacto (rehecha a petición de Guzmán, 21-10-2026), siguiendo la lámina de
-// fotos de Vivien's Creative: mucho aire, fotos de distintos tamaños sueltas
-// por una rejilla, cada una con su numerito encima, y el texto de Pablo
-// partido en párrafos que acompañan a las fotos, en Newsreader grande y un
-// peso más gruesa. Al bajar, cada párrafo entra letra a letra y cada foto se
-// descubre. Al final, sus datos y el botón de WhatsApp. El título "Contacto"
-// no se ve, pero sigue ahí para buscadores y lectores de pantalla.
-import { getImage } from 'astro:assets';
+// fotos de Vivien's Creative: mucho aire, fotos de distintos tamaños con su
+// numerito encima y el texto de Pablo partido en párrafos que las acompañan,
+// en Newsreader grande y un peso más gruesa. Al bajar, cada párrafo entra
+// letra a letra y cada foto se descubre. Al final, sus datos y el botón de
+// WhatsApp. El título "Contacto" no se ve, pero sigue ahí para buscadores y
+// lectores de pantalla.
+//
+// Maquetada con una retícula al modo de Josef Müller-Brockmann ("Sistemas de
+// retícula"), que no se ve pero lo ordena todo (pedido de Guzmán):
+//  - Una línea base (--L): todo se mide en líneas. El texto pequeño ocupa
+//    una línea; el grande, dos exactas; espacios y márgenes, líneas enteras.
+//  - Columnas (12 en ordenador, 6 en el móvil) separadas por una calle de
+//    una línea.
+//  - Campos: filas de 4 líneas separadas también por una línea (un "paso"
+//    de 5 líneas). Cada foto ocupa columnas enteras de ancho y campos
+//    enteros de alto, recortada para encajar.
+//  - Lo que baja respecto a lo de al lado, baja pasos enteros.
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import f01 from '../assets/contacto/01.jpg';
 import f02 from '../assets/contacto/02.jpg';
@@ -25,23 +36,6 @@ interface Props {
 const { idioma } = Astro.props;
 const t = textos[idioma];
 
-// Una foto recortada a la proporción que le toca (ancho / alto), con sus
-// versiones para cada pantalla. Fotos de prueba: sesión de Julián Camarillo.
-async function foto(src: ImageMetadata, proporcion: number) {
-  const ancho = Math.min(src.width, Math.floor(src.height * proporcion));
-  const alto = Math.round(ancho / proporcion);
-  const anchos = [400, 700, 1000, 1400].filter((w) => w < ancho).concat(ancho);
-  const versiones = await Promise.all(
-    anchos.map((w) => getImage({ src, width: w, height: Math.round(w / proporcion), fit: 'cover', format: 'webp' })),
-  );
-  return {
-    src: versiones.at(-1)!.src,
-    srcset: versiones.map((v, i) => `${v.src} ${anchos[i]}w`).join(', '),
-    ancho,
-    alto,
-  };
-}
-
 // El texto, partido en palabras y letras para que entren una tras otra al
 // llegar a cada párrafo. Cada letra lleva su número dentro del párrafo.
 const parrafos = t.biografia.map((p) => {
@@ -49,24 +43,48 @@ const parrafos = t.biografia.map((p) => {
   return p.split(' ').map((palabra) => [...palabra].map((letra) => ({ letra, i: n++ })));
 });
 
-// La lámina: en qué orden van párrafos y fotos; dónde se colocan en la
-// rejilla de 12 columnas del ordenador, en el CSS (en el móvil, todo en una
-// columna, con las fotos a distintos anchos).
-const p = (indice: number, clase: string) => ({ tipo: 'texto' as const, indice, clase });
-const fo = async (src: ImageMetadata, proporcion: number, clase: string) => ({ tipo: 'foto' as const, clase, ...(await foto(src, proporcion)) });
-const piezas = [
-  p(0, 'p-1'),
-  await fo(f01, 3 / 4, 'f-1'),
-  await fo(f04, 3 / 4, 'f-2'),
-  p(1, 'p-2'),
-  await fo(f02, 4 / 3, 'f-3'),
-  p(2, 'p-3'),
-  await fo(f05, 3 / 4, 'f-4'),
-  await fo(f03, 3 / 4, 'f-5'),
-  p(3, 'p-4'),
-  await fo(f07, 1, 'f-6'),
-  p(4, 'p-5'),
+// Cada pieza en la retícula: columnas (inicio / fin) y cuántos pasos baja
+// respecto al principio de su fila; las fotos, además, cuántos campos de
+// alto. Ordenador y móvil por separado. Fotos de prueba: sesión de Julián
+// Camarillo.
+type Sitio = { col: string; baja?: number; campos?: number };
+type Pieza =
+  | { tipo: 'texto'; indice: number; o: Sitio; m: Sitio }
+  | { tipo: 'foto'; src: ImageMetadata; o: Sitio; m: Sitio };
+const texto = (indice: number, o: Sitio, m: Sitio): Pieza => ({ tipo: 'texto', indice, o, m });
+const foto = (src: ImageMetadata, o: Sitio, m: Sitio): Pieza => ({ tipo: 'foto', src, o, m });
+
+// Filas de la lámina, de arriba abajo.
+const filas: Pieza[][] = [
+  [
+    texto(0, { col: '1 / 10' }, { col: '1 / 7' }),
+    foto(f01, { col: '10 / 13', baja: 1, campos: 3 }, { col: '3 / 7', campos: 3 }),
+  ],
+  [
+    foto(f04, { col: '1 / 5', campos: 4 }, { col: '1 / 6', campos: 4 }),
+    texto(1, { col: '6 / 13', baja: 1 }, { col: '1 / 7' }),
+  ],
+  [foto(f02, { col: '4 / 10', campos: 3 }, { col: '1 / 7', campos: 2 })],
+  [texto(2, { col: '3 / 12' }, { col: '1 / 7' })],
+  [
+    foto(f05, { col: '2 / 5', campos: 3 }, { col: '1 / 4', campos: 2 }),
+    foto(f03, { col: '8 / 11', baja: 2, campos: 3 }, { col: '4 / 7', baja: 1, campos: 2 }),
+  ],
+  [texto(3, { col: '1 / 11' }, { col: '1 / 7' })],
+  [
+    texto(4, { col: '1 / 8', baja: 1 }, { col: '1 / 7' }),
+    foto(f07, { col: '9 / 13', campos: 3 }, { col: '2 / 6', campos: 3 }),
+  ],
 ];
+const estilo = ({ o, m }: Pieza) =>
+  [
+    `--col: ${o.col}`,
+    `--baja: ${o.baja ?? 0}`,
+    `--campos: ${o.campos ?? 0}`,
+    `--col-m: ${m.col}`,
+    `--baja-m: ${m.baja ?? 0}`,
+    `--campos-m: ${m.campos ?? 0}`,
+  ].join('; ');
 let numero = 0;
 
 const grupos = [
@@ -109,38 +127,33 @@ const grupos = [
   <div class="oculto">{t.biografia.map((parrafo) => <p>{parrafo}</p>)}</div>
 
   <div class="lamina">
-    {piezas.map((pieza) =>
-      pieza.tipo === 'texto' ? (
-        <p class:list={['parrafo', 'aparece', pieza.clase]} aria-hidden="true">
-          {parrafos[pieza.indice].map((letras, k) => (
-            <>
-              <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
-              {k < parrafos[pieza.indice].length - 1 && ' '}
-            </>
-          ))}
-        </p>
-      ) : (
-        <figure class:list={['foto', 'aparece', pieza.clase]}>
-          <figcaption>{String(++numero).padStart(2, '0')}</figcaption>
-          <div class="marco" style={`aspect-ratio: ${pieza.ancho} / ${pieza.alto}`}>
-            <img
-              src={pieza.src}
-              srcset={pieza.srcset}
-              sizes="(min-width: 900px) 33vw, 70vw"
-              width={pieza.ancho}
-              height={pieza.alto}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-        </figure>
-      ),
-    )}
+    {filas.map((fila) => (
+      <div class="fila">
+        {fila.map((pieza) =>
+          pieza.tipo === 'texto' ? (
+            <p class="parrafo aparece" style={estilo(pieza)} aria-hidden="true">
+              {parrafos[pieza.indice].map((letras, k) => (
+                <>
+                  <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
+                  {k < parrafos[pieza.indice].length - 1 && ' '}
+                </>
+              ))}
+            </p>
+          ) : (
+            <figure class="foto aparece" style={estilo(pieza)}>
+              <figcaption>{String(++numero).padStart(2, '0')}</figcaption>
+              <div class="marco">
+                <Image src={pieza.src} alt="" widths={[400, 700, 1000, 1400]} sizes="(min-width: 900px) 50vw, 100vw" loading="lazy" />
+              </div>
+            </figure>
+          ),
+        )}
+      </div>
+    ))}
 
-    <div class="datos aparece">
+    <div class="fila datos aparece">
       {grupos.map(({ titulo, enlaces }) => (
-        <div>
+        <div class="grupo">
           <h2>{titulo}</h2>
           <ul>
             {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
@@ -180,23 +193,45 @@ const grupos = [
     white-space: nowrap;
   }
 
-  /* ---------- La lámina ----------
-     Una columna en el móvil; en ordenador, una rejilla de 12 columnas con
-     mucho aire entre filas, donde cada pieza tiene su sitio (ver abajo). */
+  /* ---------- La retícula ----------
+     --L: la línea base. --paso: un campo (4 líneas) más su calle (1). */
   .lamina {
-    display: grid;
-    gap: 3.5rem;
-    padding: 2rem 0 2rem;
+    --L: 20px;
+    --columnas: 6;
+    --paso: calc(5 * var(--L));
+    padding: calc(2 * var(--L)) 0 var(--L);
   }
 
-  /* El texto de Pablo: Newsreader grande y un peso más gruesa que el resto
-     de la web (500 en vez de 400). */
+  /* Cada fila: las columnas de la retícula, con una calle de una línea, y
+     separada de la siguiente por dos pasos (dos campos de aire). */
+  .fila {
+    display: grid;
+    grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
+    column-gap: var(--L);
+    /* En el móvil, lo que comparte fila queda uno debajo de otro: dos
+       líneas de aire entre medias. */
+    row-gap: calc(2 * var(--L));
+    align-items: start;
+  }
+
+  .fila + .fila {
+    margin-top: calc(2 * var(--paso));
+  }
+
+  /* Cada pieza de la lámina en su sitio (los datos, aparte). */
+  .fila:not(.datos) > * {
+    grid-column: var(--col-m);
+    margin-top: calc(var(--baja-m) * var(--paso));
+  }
+
+  /* El texto de Pablo: Newsreader un peso más gruesa (500) y grande, con un
+     interlineado de exactamente dos líneas base. */
   .parrafo {
-    margin: 0;
+    margin-bottom: 0;
     font-family: var(--serif);
     font-weight: 500;
-    font-size: clamp(1.7rem, 3.4vw, 3.4rem);
-    line-height: 1.1;
+    font-size: calc(1.4 * var(--L));
+    line-height: calc(2 * var(--L));
     letter-spacing: -0.01em;
   }
 
@@ -210,65 +245,54 @@ const grupos = [
   }
 
   .foto {
-    margin: 0;
+    margin-bottom: 0;
   }
 
-  /* El numerito encima de cada foto, pequeño, como en la referencia. */
+  /* El numerito, en una línea justa encima de la foto. */
   figcaption {
-    margin-bottom: 0.4rem;
+    height: var(--L);
     font-size: 0.7em;
+    line-height: var(--L);
     color: var(--suave);
     font-variant-numeric: tabular-nums;
   }
 
+  /* La foto mide campos enteros de alto (n campos y sus n-1 calles) y se
+     recorta para llenarlos. */
   .marco {
+    height: calc(var(--campos-m) * var(--paso) - var(--L));
     overflow: hidden;
     background: var(--vacio);
   }
 
-  .marco img {
+  .marco :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  /* En el móvil, las fotos a distintos anchos y alternando lado. */
-  .f-1,
-  .f-4 {
-    width: 62%;
-    justify-self: end;
-  }
-  .f-2,
-  .f-5 {
-    width: 78%;
-  }
-  .f-3 {
-    width: 100%;
-  }
-  .f-6 {
-    width: 50%;
-    justify-self: center;
-  }
-
-  /* ---------- Los datos, al final ---------- */
+  /* ---------- Los datos, al final ----------
+     Texto pequeño en una línea base por renglón; cada grupo en sus columnas. */
   .datos {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, max-content));
-    gap: 1.25rem 2.5rem;
-    margin-top: 2rem;
-    font-size: 0.9em;
-    line-height: 1.4;
+    font-size: 0.8em;
+    line-height: var(--L);
+    row-gap: var(--L);
   }
 
-  .datos > div:first-child {
+  .grupo {
+    grid-column: span 3;
+  }
+
+  .datos .grupo:first-child {
     grid-row: span 2;
   }
 
   h2 {
-    margin: 0 0 0.25rem;
+    margin: 0;
     font-family: var(--sans);
     font-size: 1em;
     font-weight: 500;
+    line-height: var(--L);
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
@@ -288,84 +312,46 @@ const grupos = [
     text-underline-offset: 3px;
   }
 
+  /* El botón mide dos líneas de alto. */
   .llamada {
     grid-column: 1 / -1;
-    margin: 0.5rem 0 0;
+    margin: 0;
   }
 
-  /* ---------- Ordenador: la rejilla ---------- */
+  .llamada .boton {
+    height: calc(2 * var(--L));
+    padding: 0 1.1rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ---------- Ordenador: 12 columnas, línea de 24 px ---------- */
   @media (min-width: 900px) {
     .lamina {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: clamp(1rem, 2vw, 2rem);
-      row-gap: clamp(4rem, 12vh, 9rem);
-      padding-top: clamp(1.5rem, 6vh, 4rem);
+      --L: 24px;
+      --columnas: 12;
+      padding-top: calc(3 * var(--L));
     }
-    .lamina > * {
-      width: auto;
-      justify-self: stretch;
+    .fila:not(.datos) > * {
+      grid-column: var(--col);
+      margin-top: calc(var(--baja) * var(--paso));
     }
-    /* 1: el primer párrafo a lo ancho y una foto pequeña a la derecha, algo
-       más abajo. */
-    .p-1 {
-      grid-column: 1 / 10;
-      align-self: start;
+    .parrafo {
+      font-size: calc(1.75 * var(--L));
     }
-    .f-1 {
-      grid-column: 10 / 13;
-      margin-top: 8rem;
+    .marco {
+      height: calc(var(--campos) * var(--paso) - var(--L));
     }
-    /* 2: una foto mediana a la izquierda y el segundo párrafo a su lado. */
-    .f-2 {
-      grid-column: 1 / 5;
+    .fila.datos {
+      margin-top: calc(3 * var(--paso));
     }
-    .p-2 {
-      grid-column: 6 / 13;
-      align-self: center;
-    }
-    /* 3: una foto apaisada en el centro y el tercer párrafo, corto, debajo
-       y desplazado. */
-    .f-3 {
-      grid-column: 4 / 10;
-    }
-    .p-3 {
-      grid-column: 3 / 12;
-    }
-    /* 4: dos fotos sueltas, a distinta altura, y el párrafo largo. */
-    .f-4 {
-      grid-column: 2 / 5;
-    }
-    .f-5 {
-      grid-column: 8 / 11;
-      margin-top: 10rem;
-    }
-    .p-4 {
-      grid-column: 1 / 11;
-    }
-    /* 5: el último párrafo y una foto cuadrada a la derecha. */
-    .p-5 {
-      grid-column: 1 / 8;
-      align-self: end;
-    }
-    .f-6 {
-      grid-column: 9 / 13;
-    }
-    .datos {
-      grid-column: 1 / 13;
-      grid-template-columns: repeat(3, max-content) 1fr;
-      align-items: start;
-      column-gap: clamp(2rem, 5vw, 5rem);
-      margin-top: 3rem;
-      font-size: 0.85em;
-    }
-    .datos > div:first-child {
+    .datos .grupo:first-child {
       grid-row: auto;
     }
     .llamada {
-      grid-column: auto;
+      grid-column: 10 / 13;
       justify-self: end;
       align-self: end;
-      margin: 0;
     }
   }
 
@@ -401,7 +387,7 @@ const grupos = [
   :global(html.contacto-anima) .foto.visto .marco {
     animation: descubrir 1.2s cubic-bezier(0.65, 0, 0.35, 1) backwards;
   }
-  :global(html.contacto-anima) .foto.visto img {
+  :global(html.contacto-anima) .foto.visto .marco :global(img) {
     animation: asentar 2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   :global(html.contacto-anima) .foto.visto figcaption {
