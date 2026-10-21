@@ -37,7 +37,7 @@ const p =
       </figure>
     )}
     <div class="texto-largo">
-      {p.intro.map((parrafo) => <p class="anima" data-ritmo="4">{parrafo}</p>)}
+      {p.intro.map((parrafo) => <p class="anima-parrafo">{parrafo}</p>)}
     </div>
   </div>
 
@@ -47,7 +47,7 @@ const p =
       <li>
         <span class="numero anima" data-ritmo="45" data-despues={i * 120}>{String(i + 1).padStart(2, '0')}</span>
         <h3 class="anima" data-ritmo="25" data-despues={i * 120 + 100}>{titulo}</h3>
-        <p class="anima" data-ritmo="5" data-despues={i * 120 + 250}>{texto}</p>
+        <p class="anima-parrafo" data-despues={i * 120 + 250}>{texto}</p>
       </li>
     ))}
   </ol>
@@ -63,14 +63,15 @@ const p =
 </script>
 
 <script>
-  // Entradas, como el título de Pintura y Escultura (pedido de Guzmán): cada
-  // texto entra letra a letra, cada letra subiendo un poco y pasando de
-  // desenfocada a nítida. El ritmo (ms entre letras) va en data-ritmo: lento
-  // en los títulos, rápido en los párrafos. data-despues retrasa un texto
-  // respecto a los de su grupo (las tarjetas, una tras otra). La foto y el
-  // botón, que no son texto, aparecen subiendo apenas. Cada cosa entra
-  // cuando llega a la pantalla, una sola vez; las que se ven al abrir, en
-  // orden de arriba abajo.
+  // Entradas, como el título de Pintura y Escultura (pedido de Guzmán): los
+  // títulos entran letra a letra, cada letra subiendo un poco y pasando de
+  // desenfocada a nítida; el ritmo (ms entre letras) va en data-ritmo. Los
+  // párrafos entran enteros, de una vez, subiendo y fundiéndose, sin
+  // desenfoque: letra a letra eran cientos de piezas animándose a la vez con
+  // desenfoque, demasiado pesado (Guzmán lo notó). data-despues retrasa una
+  // pieza respecto a las de su grupo (las tarjetas, una tras otra). La foto
+  // y el botón aparecen subiendo apenas. Cada cosa entra al llegar a la
+  // pantalla, una sola vez; las que se ven al abrir, en orden.
   if (document.documentElement.classList.contains('encargos-anima')) {
     for (const el of document.querySelectorAll<HTMLElement>('.anima')) {
       const texto = el.textContent!.trim();
@@ -101,7 +102,10 @@ const p =
         const ritmo = Number(el.dataset.ritmo ?? 10);
         el.querySelectorAll<HTMLElement>('.letra').forEach((l, i) => (l.style.animationDelay = `${base + i * ritmo}ms`));
         if (!el.dataset.despues) cola += Math.min(500, el.querySelectorAll('.letra').length * ritmo * 0.5);
-      } else el.style.animationDelay = `${base}ms`;
+      } else {
+        el.style.animationDelay = `${base}ms`;
+        if (el.classList.contains('anima-parrafo') && !el.dataset.despues) cola += 120;
+      }
       el.classList.add('visto');
     };
     const ver = new IntersectionObserver(
@@ -114,7 +118,7 @@ const p =
       },
       { rootMargin: '0px 0px -8% 0px' },
     );
-    const pendientes = [...document.querySelectorAll<HTMLElement>('.anima, .anima-bloque')];
+    const pendientes = [...document.querySelectorAll<HTMLElement>('.anima, .anima-bloque, .anima-parrafo')];
     pendientes.forEach((el) => ver.observe(el));
     // Si se salta de golpe por encima de algo (sin que llegue a verse), el
     // vigilante no se entera: al hacer scroll se repasa lo que haya quedado
@@ -138,7 +142,8 @@ const p =
 <style>
   /* ---------- Entradas (ver el script) ---------- */
   :global(html.encargos-anima) .anima:not(.visto),
-  :global(html.encargos-anima) .anima-bloque:not(.visto) {
+  :global(html.encargos-anima) .anima-bloque:not(.visto),
+  :global(html.encargos-anima) .anima-parrafo:not(.visto) {
     opacity: 0;
   }
 
@@ -160,6 +165,19 @@ const p =
       opacity: 0;
       transform: translateY(0.45em);
       filter: blur(6px);
+    }
+  }
+
+  /* Los párrafos, enteros: solo opacidad y movimiento, que el navegador
+     anima sin esfuerzo. */
+  .anima-parrafo.visto {
+    animation: parrafo 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  @keyframes parrafo {
+    from {
+      opacity: 0;
+      translate: 0 0.8em;
     }
   }
 
