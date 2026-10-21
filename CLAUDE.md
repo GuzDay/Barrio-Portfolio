@@ -84,13 +84,15 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   texto que mandó Pablo; las dos páginas salen de `src/vistas/Encargos.astro`.
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
-  Contacto no enseña título y va al estilo editorial de
-  gilhuybrecht.com/profile, en blanco y con la estética de la web: en
-  ordenador cabe en una pantalla, con el texto de Pablo en la serif a 3/4
-  (entra letra a letra, rápido) y, abajo a la derecha y en pequeño,
-  Disciplinas, A medida, Contacto y el botón "Contacta conmigo". Sin
-  etiquetas numeradas (se probaron y Guzmán las quitó). Probado y descartado por Guzmán: un carrusel 3D
-  de fotos que giraba solo (está en el historial);
+  Contacto no enseña título y sigue las láminas de Vivien's Creative
+  (referencias de Guzmán): "BARRIO" enorme abajo (Inter Tight 800) con una
+  foto vertical en medio que tapa las letras centrales ("B … RIO"); encima
+  de "RIO", el texto de Pablo en la serif (entra letra a letra) y sus datos
+  en pequeño con etiquetas en mayúsculas. En ordenador, una pantalla; en el
+  móvil, B · foto · RIO arriba y debajo el texto. Foto de prueba:
+  `src/assets/contacto/foto.jpg` (Julián Camarillo 04). Probado y descartado
+  por Guzmán: un carrusel 3D, y una versión editorial con etiquetas
+  numeradas (están en el historial);
   /acerca-de-mi/ redirige a /contacto/.
 - **Cada obra lleva ficha**: título, técnica, medidas, año y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
