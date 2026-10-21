@@ -106,6 +106,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   const azar = (a: number, b: number) => a + Math.random() * (b - a);
   const tarjetasLi = () => [...(galeria?.querySelectorAll<HTMLElement>('li') ?? [])];
   const letras = () => [...document.querySelectorAll<HTMLElement>('.titulo-seccion .letra')];
+  const filtros = () => [...document.querySelectorAll<HTMLElement>('.filtro button')];
 
   // Llegada: cada tarjeta entra desde fuera de la pantalla por la izquierda,
   // un poco girada, como lanzada, y frena de forma larga y progresiva (llega
@@ -124,6 +125,18 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
           { transform: 'none', opacity: 1, filter: 'blur(0)' },
         ],
         { duration: 1100, delay: 80 + i * 45, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' },
+      );
+    });
+    // "Todas" y "Disponibles", algo más sencillo y justo después: cada uno
+    // aparece subiendo apenas, sin desenfoque.
+    filtros().forEach((boton, i) => {
+      boton.getAnimations().forEach((a) => a.cancel());
+      boton.animate(
+        [
+          { transform: 'translateY(0.4em)', opacity: 0 },
+          { transform: 'none', opacity: 1 },
+        ],
+        { duration: 800, delay: 380 + i * 90, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' },
       );
     });
     tarjetasLi().forEach((li, i) => {
@@ -176,6 +189,16 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
           { transform: 'translateY(-0.3em)', opacity: 0, filter: 'blur(4px)' },
         ],
         { duration: 420, delay: i * 30, easing: 'cubic-bezier(0.55, 0, 0.75, 0.2)', fill: 'forwards' },
+      ),
+    );
+    // "Todas" y "Disponibles" se desvanecen subiendo apenas, a la vez.
+    filtros().forEach((boton) =>
+      boton.animate(
+        [
+          { transform: 'none', opacity: 1 },
+          { transform: 'translateY(-0.25em)', opacity: 0 },
+        ],
+        { duration: 320, easing: 'cubic-bezier(0.55, 0, 0.75, 0.2)', fill: 'forwards' },
       ),
     );
     visibles.forEach(({ li }, i) => animar(li, i * PASO));
@@ -352,6 +375,11 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
 
   .galeria.por-llegar li {
     visibility: hidden;
+  }
+
+  /* "Todas" y "Disponibles" también esperan escondidos a entrar. */
+  :global(main:has(.galeria.por-llegar)) .filtro button {
+    opacity: 0;
   }
 
   .galeria[data-mostrando='disponibles'] li[data-vendida] {
