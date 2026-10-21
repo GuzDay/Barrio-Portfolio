@@ -1,28 +1,37 @@
 ---
-// Encargos: no es una galería, es para vender. Introducción, los pasos del
-// proceso y un botón de WhatsApp con el mensaje ya escrito.
+// Encargos y Colabora conmigo: no son galerías, son para vender.
+// Introducción, los pasos del proceso y un botón de WhatsApp con el mensaje
+// ya escrito. Las dos páginas son iguales (Colabora conmigo es una réplica de
+// Encargos, pedido de Guzmán, 21-10-2026); solo cambian los textos.
+// Encargos es para particulares; Colabora conmigo, para negocios y espacios
+// abiertos al público.
 import Base from '../layouts/Base.astro';
-import { ambas, urlEncargos, type Idioma } from '../lib/rutas';
+import { ambas, urlColabora, urlEncargos, type Idioma } from '../lib/rutas';
 import { urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
 interface Props {
   idioma: Idioma;
+  pagina?: 'encargos' | 'colabora';
 }
 
-const { idioma } = Astro.props;
+const { idioma, pagina = 'encargos' } = Astro.props;
 const t = textos[idioma];
+const p =
+  pagina === 'colabora'
+    ? { nombre: t.colabora, url: urlColabora, intro: t.colaboraIntro, pasos: t.colaboraPasos, mensaje: t.mensajeColabora }
+    : { nombre: t.encargos, url: urlEncargos, intro: t.encargosIntro, pasos: t.encargosPasos, mensaje: t.mensajeEncargo };
 ---
 
-<Base idioma={idioma} alternativas={ambas(urlEncargos)} titulo={t.encargos} descripcion={t.encargosIntro[0]} activa="encargos">
-  <h1>{t.encargos}</h1>
+<Base idioma={idioma} alternativas={ambas(p.url)} titulo={p.nombre} descripcion={p.intro[0]} activa={pagina}>
+  <h1>{p.nombre}</h1>
   <div class="texto-largo">
-    {t.encargosIntro.map((parrafo) => <p>{parrafo}</p>)}
+    {p.intro.map((parrafo) => <p>{parrafo}</p>)}
   </div>
 
   <h2>{t.encargosComo}</h2>
   <ol class="pasos">
-    {t.encargosPasos.map(({ titulo, texto }, i) => (
+    {p.pasos.map(({ titulo, texto }, i) => (
       <li>
         <span class="numero">{i + 1}</span>
         <h3>{titulo}</h3>
@@ -31,7 +40,7 @@ const t = textos[idioma];
     ))}
   </ol>
 
-  <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeEncargo)}>{t.escribirWhatsApp}</a></p>
+  <p class="llamada"><a class="boton" href={urlWhatsApp(p.mensaje)}>{t.escribirWhatsApp}</a></p>
 </Base>
 
 <style>

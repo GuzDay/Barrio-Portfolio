@@ -1,8 +1,9 @@
 // Todos los textos fijos de la web, en castellano y en inglés.
 //
 // La biografía y la introducción de Encargos están copiadas tal cual de la web
-// actual de Pablo (16-10-2026). Las traducciones al inglés y los pasos del
-// proceso de encargos son provisionales: hay que revisarlos con él.
+// actual de Pablo (16-10-2026), y la de Colabora conmigo, del texto que mandó
+// él (21-10-2026). Las traducciones al inglés y los pasos de los dos procesos
+// son provisionales: hay que revisarlos con él.
 import type { Idioma } from './rutas';
 
 export const textos = {
@@ -13,6 +14,7 @@ export const textos = {
     cerrar: 'Cerrar',
     idioma: 'Idioma',
     encargos: 'Encargos',
+    colabora: 'Colabora conmigo',
     acercaDe: 'Acerca de mí',
     contacto: 'Contacto',
     todas: 'Todas',
@@ -32,6 +34,7 @@ export const textos = {
     mensajeObra: (titulo: string, url: string) => `Hola, Pablo. Me interesa la obra «${titulo}»: ${url}`,
     escribirWhatsApp: 'Escríbeme por WhatsApp',
     mensajeEncargo: 'Hola, Pablo. Me gustaría hablar contigo sobre un encargo.',
+    mensajeColabora: 'Hola, Pablo. Me gustaría hablar contigo sobre un proyecto de arte para mi espacio.',
     mensajeContacto: 'Hola, Pablo.',
     correo: 'Correo',
     telefono: 'Teléfono',
@@ -47,6 +50,16 @@ export const textos = {
       { titulo: 'Propuesta', texto: 'Te preparo una propuesta con medidas, materiales, plazo y presupuesto.' },
       { titulo: 'Creación', texto: 'Pinto o esculpo la obra y te voy enseñando cómo avanza.' },
       { titulo: 'Entrega', texto: 'La obra llega a tu casa, lista para colgar o colocar.' },
+    ],
+    colaboraIntro: [
+      'El arte tiene el poder de transformar un espacio y cambiar por completo la forma en que se percibe. Más allá de adquirir una pieza suelta, te propongo un servicio de arte por encargo para vestir y revalorizar tus espacios de cara al público.',
+      'Creo cuadros y esculturas a medida que aportan una identidad única a cada proyecto. Si buscas un enfoque profesional y quieres elevar el valor de lo que haces, cuéntame tu idea o ponme a prueba con el reto que tienes en mente y lo ponemos en marcha.',
+    ],
+    colaboraPasos: [
+      { titulo: 'Tu proyecto', texto: 'Me cuentas cómo es tu espacio, quién lo visita y qué identidad quieres transmitir.' },
+      { titulo: 'Propuesta', texto: 'Te propongo las piezas, con medidas, materiales, plazos y presupuesto.' },
+      { titulo: 'Creación', texto: 'Pinto y esculpo las obras, y te enseño cómo avanzan.' },
+      { titulo: 'Instalación', texto: 'Las obras llegan a tu espacio, listas para colgar o colocar.' },
     ],
     biografia: [
       'Quizás como respuesta al nutrido alimento artístico que recibí desde niño;',
@@ -64,6 +77,7 @@ export const textos = {
     cerrar: 'Close',
     idioma: 'Language',
     encargos: 'Commissions',
+    colabora: 'Work with me',
     acercaDe: 'About',
     contacto: 'Contact',
     todas: 'All',
@@ -83,6 +97,7 @@ export const textos = {
     mensajeObra: (titulo: string, url: string) => `Hi Pablo, I'm interested in "${titulo}": ${url}`,
     escribirWhatsApp: 'Message me on WhatsApp',
     mensajeEncargo: "Hi Pablo, I'd like to talk to you about a commission.",
+    mensajeColabora: "Hi Pablo, I'd like to talk to you about an art project for my space.",
     mensajeContacto: 'Hi Pablo,',
     correo: 'Email',
     telefono: 'Phone',
@@ -98,6 +113,16 @@ export const textos = {
       { titulo: 'Proposal', texto: 'I prepare a proposal with size, materials, timing and price.' },
       { titulo: 'Creation', texto: 'I paint or sculpt the work and keep you posted as it progresses.' },
       { titulo: 'Delivery', texto: 'The work arrives at your home, ready to hang or place.' },
+    ],
+    colaboraIntro: [
+      'Art has the power to transform a space and completely change the way it is perceived. Beyond buying a single piece, I offer a commissioned art service to dress and add value to the spaces you open to the public.',
+      "I create bespoke paintings and sculptures that give each project a unique identity. If you're after a professional approach and want to raise the value of what you do, tell me your idea or put me to the test with the challenge you have in mind, and we'll get it started.",
+    ],
+    colaboraPasos: [
+      { titulo: 'Your project', texto: 'Tell me about your space, who visits it and the identity you want it to convey.' },
+      { titulo: 'Proposal', texto: 'I propose the pieces, with sizes, materials, timing and price.' },
+      { titulo: 'Creation', texto: 'I paint and sculpt the works and show you how they progress.' },
+      { titulo: 'Installation', texto: 'The works arrive at your space, ready to hang or place.' },
     ],
     biografia: [
       'Perhaps in response to the rich artistic nourishment I received as a child;',

@@ -15,6 +15,7 @@
 // propia, la fusión se haría con esa capa y no con la página.
 import {
   secciones,
+  urlColabora,
   urlContacto,
   urlEncargos,
   urlInicio,
@@ -38,6 +39,7 @@ const menu = [
   { clave: 'cuadros', texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
   { clave: 'esculturas', texto: secciones.esculturas.nombre[idioma], url: urlSeccion('esculturas', idioma) },
   { clave: 'encargos', texto: t.encargos, url: urlEncargos(idioma) },
+  { clave: 'colabora', texto: t.colabora, url: urlColabora(idioma) },
   { clave: 'contacto', texto: t.contacto, url: urlContacto(idioma) },
 ];
 ---
@@ -329,7 +331,7 @@ const menu = [
 
   /* Al pasar el ratón, la cajita se ensancha 4 px por cada lado: rápida al
      principio y frenando despacio al final, para que responda al instante
-     aunque el cursor pase deprisa por las cuatro (pedido de Guzmán). */
+     aunque el cursor pase deprisa por todas (pedido de Guzmán). */
   .menu .caja {
     font-family: var(--serif);
     font-weight: 300;
@@ -497,7 +499,7 @@ const menu = [
     .menu.abierto {
       display: flex;
     }
-    /* Las cuatro cajitas con el mismo ancho (el de la más larga) y el texto
+    /* Las cajitas con el mismo ancho (el de la más larga) y el texto
        centrado: una columna limpia. */
     .menu ul {
       flex-direction: column;
@@ -544,8 +546,11 @@ const menu = [
     .menu.abierto li:nth-child(4) .caja {
       animation-delay: 0.12s;
     }
+    .menu.abierto li:nth-child(5) .caja {
+      animation-delay: 0.16s;
+    }
     .menu.abierto .cerrar {
-      animation-delay: 0.18s;
+      animation-delay: 0.22s;
     }
     /* Al elegir una sección: la salida (ver salirDelMenu). Las cajitas usan
        los mismos retrasos escalonados que al entrar; la "×" se va la
@@ -613,9 +618,12 @@ const menu = [
   :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(4) .caja {
     animation-delay: 0.46s;
   }
+  :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(5) .caja {
+    animation-delay: 0.54s;
+  }
   :global(html.entrada-portada) .portada .idiomas,
   :global(html.entrada-portada) .portada .abrir {
-    animation-delay: 0.54s;
+    animation-delay: 0.62s;
   }
 
   @keyframes entrada-suave {

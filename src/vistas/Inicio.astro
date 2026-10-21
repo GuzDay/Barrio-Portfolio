@@ -4,7 +4,6 @@
 import Base from '../layouts/Base.astro';
 import LienzoPintable from '../components/LienzoPintable.astro';
 import foto from '../assets/inicio/portada.jpg';
-import fotoVertical from '../assets/inicio/portada-vertical.jpg';
 import { ambas, urlInicio, type Idioma } from '../lib/rutas';
 import { sitio } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -18,7 +17,9 @@ const t = textos[idioma];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`} portada>
-  <LienzoPintable foto={foto} fotoVertical={fotoVertical} />
+  {/* Foto vertical («Barrio Julián Camarillo-12», 21-10-2026):
+      la misma en ordenador y en móvil (pedido de Guzmán). */}
+  <LienzoPintable foto={foto} />
   <h1 class="oculto">{sitio.nombre} — {t.profesion}</h1>
 </Base>
 
