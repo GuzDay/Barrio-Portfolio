@@ -19,12 +19,12 @@
      - Newsreader, para títulos, cabecera y pie: la gratuita más parecida a
        Teodor, la que le gustó a Guzmán de gionatannese.com. Teodor es de pago
        (Displaay); si un día se compra, se cambia aquí.
-     - DM Mono, para el resto: una monoespaciada fina y editorial (pedido de
-       Guzmán, 21-10-2026: "una mono espaciada" en toda la web). Antes era
-       Inter Tight. La variable se sigue llamando --sans para no tocar cada
-       sitio donde se usa. */
+     - Inter Tight, para el resto: la gratuita más parecida a Forma DJR (de
+       pago), una grotesca tipo Helvetica, compacta. Comparadas una a una.
+       (El 21-10-2026 se probó una monoespaciada, DM Mono, y Guzmán volvió
+       a esta.) */
   --serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
-  --sans: 'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --sans: 'Inter Tight Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   /* Todo lo que va en Newsreader es un "tamaño" más grande que lo demás:
      el salto de 15 a 16 px, aplicado en proporción (pedido de Guzmán). Para
      agrandarla o achicarla en toda la web, se toca solo este número. */
@@ -145,10 +145,10 @@ body {
      los demás tamaños van en "em", proporcionales a este: cambiando solo
      esta línea, toda la letra crece o encoge a la vez. */
   font-size: 0.9375rem;
-  /* En Light (300): Guzmán la quería un peso más fina que la Regular. Lo
-     que debe destacar (botón, estado en la ficha) va en 400. DM Mono solo
-     tiene 300, 400 y 500. */
-  font-weight: 300;
+  /* En ExtraLight (200): Guzmán la quería primero un peso más fina que la
+     Regular (en 300) y luego otro más (21-10-2026). Lo que debe destacar
+     (botón, estado en la ficha) va un peso por encima, en 300. */
+  font-weight: 200;
   line-height: 1.5;
 }
 
@@ -216,7 +216,7 @@ h1 {
   background: var(--acento);
   color: var(--fondo);
   text-decoration: none;
-  font-weight: 400;
+  font-weight: 300;
   border-radius: 2px;
 }
 
