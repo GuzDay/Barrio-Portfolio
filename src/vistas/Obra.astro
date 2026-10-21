@@ -347,8 +347,17 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   }
 
   @media (max-width: 899px) {
-    .obra {
-      --alto: min(72svh, 600px);
+    /* En el móvil la página tiene scroll, así que la foto no se limita a lo
+       alto de la pantalla: ocupa todo el ancho, con el mismo margen a los
+       dos lados que "Cerrar" y "Siguiente". Antes, en un iPhone (con las
+       barras de Safari la pantalla útil es más baja) salía más estrecha y
+       quedaba un margen derecho mayor que el izquierdo. En tabletas, como
+       mucho 34rem, con "Cerrar" y las flechas alineados con ella. */
+    .columna-fotos {
+      width: min(100%, 34rem);
+    }
+    .carrusel {
+      width: 100%;
     }
     .flecha {
       width: 2.25rem;
