@@ -394,7 +394,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   /* En ordenador (pedido de Guzmán): el carrusel 3:4 centrado en la
      pantalla, en la columna del medio de tres iguales a los lados; la ficha
      en la columna de la derecha, separada de la foto, y empezando algo por
-     debajo del borde de arriba de la foto (un 12 % de su alto). */
+     debajo del borde de arriba de la foto (un 18 % de su alto; antes 12 %, Guzmán la quiso algo más abajo). */
   @media (min-width: 900px) {
     /* Sin scroll: la página mide justo la pantalla y la foto va centrada en
        vertical, con el mismo margen arriba que abajo (--hueco-v). "Anterior /
@@ -436,7 +436,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     .ficha {
       grid-column: 3;
       align-self: start;
-      margin-top: calc(var(--hueco-v) + var(--alto) * 0.12);
+      margin-top: calc(var(--hueco-v) + var(--alto) * 0.18);
       padding-left: clamp(2rem, 6vw, 6rem);
       max-width: 26rem;
     }
