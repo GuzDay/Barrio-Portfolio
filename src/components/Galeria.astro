@@ -105,6 +105,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const azar = (a: number, b: number) => a + Math.random() * (b - a);
   const tarjetasLi = () => [...(galeria?.querySelectorAll<HTMLElement>('li') ?? [])];
+  const letras = () => [...document.querySelectorAll<HTMLElement>('.titulo-seccion .letra')];
 
   // Llegada: cada tarjeta entra desde fuera de la pantalla por la izquierda,
   // un poco girada, como lanzada, y frena de forma larga y progresiva (llega
@@ -112,6 +113,19 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   // vaivén apenas perceptible. Aparece fundiéndose. Una tras otra.
   function llegar() {
     if (!galeria || sinMovimiento) return;
+    // El título de la sección, a la vez: cada letra sube un poco desde abajo,
+    // pasando de desenfocada a nítida, una tras otra (pedido de Guzmán: algo
+    // sutil y elegante).
+    letras().forEach((letra, i) => {
+      letra.getAnimations().forEach((a) => a.cancel());
+      letra.animate(
+        [
+          { transform: 'translateY(0.45em)', opacity: 0, filter: 'blur(6px)' },
+          { transform: 'none', opacity: 1, filter: 'blur(0)' },
+        ],
+        { duration: 1100, delay: 80 + i * 45, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' },
+      );
+    });
     tarjetasLi().forEach((li, i) => {
       li.getAnimations().forEach((a) => a.cancel());
       li.animate(
@@ -153,10 +167,24 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
         ],
         { duration: DURACION, delay, easing: 'cubic-bezier(0.55, 0.05, 0.68, 0.19)', fill: 'forwards' },
       );
+    // El título se va al revés que llegó: cada letra sube y se desvanece
+    // desenfocándose, una tras otra.
+    letras().forEach((letra, i) =>
+      letra.animate(
+        [
+          { transform: 'none', opacity: 1, filter: 'blur(0)' },
+          { transform: 'translateY(-0.3em)', opacity: 0, filter: 'blur(4px)' },
+        ],
+        { duration: 420, delay: i * 30, easing: 'cubic-bezier(0.55, 0, 0.75, 0.2)', fill: 'forwards' },
+      ),
+    );
     visibles.forEach(({ li }, i) => animar(li, i * PASO));
     resto.forEach((li) => animar(li, 0));
     // Se cambia de página cuando la última ya casi ha desaparecido.
-    return Math.round((DURACION + Math.max(visibles.length - 1, 0) * PASO) * 0.9);
+    // (y el título también).
+    const tarjetas = (DURACION + Math.max(visibles.length - 1, 0) * PASO) * 0.9;
+    const titulo = (420 + Math.max(letras().length - 1, 0) * 30) * 0.9;
+    return Math.round(Math.max(tarjetas, titulo));
   }
 
   // ---------- Transición a la página de una obra ----------

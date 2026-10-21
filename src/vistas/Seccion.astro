@@ -16,6 +16,21 @@ const obras = await obrasDe(seccion);
 ---
 
 <Base idioma={idioma} alternativas={ambas((i) => urlSeccion(seccion, i))} titulo={nombre} activa={seccion}>
-  <h1>{nombre}</h1>
+  {/* Letra a letra, para que entren y salgan una tras otra (ver "llegar" y
+      "salir" en Galeria.astro). Quien usa lector de pantalla oye la palabra. */}
+  <h1 class="titulo-seccion" aria-label={nombre}>
+    {[...nombre].map((letra) => <span class="letra" aria-hidden="true">{letra}</span>)}
+  </h1>
   <Galeria idioma={idioma} seccion={seccion} obras={obras} />
 </Base>
+
+<style>
+  .letra {
+    display: inline-block;
+  }
+
+  /* Escondidas antes de pintar, mientras las tarjetas esperan a entrar. */
+  :global(main:has(.galeria.por-llegar)) .letra {
+    opacity: 0;
+  }
+</style>
