@@ -43,6 +43,22 @@ const menu = [
 ---
 
 <header class:list={['cabecera', { portada }]}>
+  {portada && (
+    <script is:inline>
+      // Portada: la cabecera solo hace su entrada (ver "Entrada de la
+      // portada" en el CSS) al abrir la web o recargar, no al llegar desde
+      // otra página de la web (pedido de Guzmán). Se decide antes de pintar.
+      (function () {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+        var desdeDentro = false;
+        try {
+          desdeDentro = new URL(document.referrer).origin === location.origin;
+        } catch (e) {}
+        if ((nav && nav.type === 'reload') || !desdeDentro) document.documentElement.classList.add('entrada-portada');
+      })();
+    </script>
+  )}
   <a class="marca" href={urlInicio(idioma)} set:html={firmaEnLinea} />
 
   <nav id="menu" class="menu" aria-label={t.menu}>
@@ -89,23 +105,6 @@ const menu = [
     })();
   </script>
 
-  {portada && (
-    <script is:inline>
-      // Apertura de la portada: los puntos de las cuatro secciones salen
-      // todos del centro del menú. Aquí, antes de pintar, se mide cuánto
-      // tiene que viajar cada uno hasta su sitio (ver "apertura-mover").
-      (function () {
-        var ul = document.querySelector('.cabecera .menu ul');
-        if (!ul) return;
-        var g = ul.getBoundingClientRect();
-        var centro = g.left + g.width / 2;
-        ul.querySelectorAll('.caja').forEach(function (c) {
-          var r = c.getBoundingClientRect();
-          c.style.setProperty('--desde', centro - (r.left + r.width / 2) + 'px');
-        });
-      })();
-    </script>
-  )}
 
   <div class="idiomas caja" aria-label={t.idioma}>
     <a href={alternativas.es} lang="es" hreflang="es" data-idioma="es" aria-current={idioma === 'es' ? 'true' : undefined}>ES</a>
@@ -584,111 +583,46 @@ const menu = [
   /* Solo movimiento, sin fundido: con opacidad, mientras la cajita es
      semitransparente se ve el fondo sin su desenfoque y "se oscurece" al
      terminar. Así está igual desde el primer instante. */
-  /* ---------- Apertura de la portada ----------
-     Al llegar a la portada (pedido de Guzmán, 16-10-2026):
-     - Las cajitas (secciones, idioma y, en el móvil, el botón del menú)
-       aparecen como puntos, todas a la vez, que se abren en la cajita en un
-       solo movimiento continuo; luego aparece el texto. Los cuatro puntos
-       de las secciones salen juntos del centro del menú y viajan a su sitio
-       mientras se abren (mismo tiempo que el idioma, que se abre en el suyo).
-     - La firma, igual: aparece como un punto en su centro y se abre en
-       círculo hasta verse entera.
-     Animaciones solapadas: "punto" (scale), "mover" (translate), "abrir"
-     (recorte) y "texto" (color). */
-  .portada .menu:not(.abierto) .caja,
-  .portada .idiomas,
-  .portada .abrir {
-    /* Un solo movimiento continuo: el punto crece (sin rebote) y, antes de
-       terminar, empieza a abrirse en cajita (y a viajar, las del menú) con
-       una curva que arranca y frena despacio; el texto aparece al final. */
-    animation:
-      apertura-texto 0.4s ease 0.7s backwards,
-      apertura-mover 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards,
-      apertura-abrir 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards,
-      apertura-punto 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+  /* ---------- Entrada de la portada ----------
+     Al abrir la web o recargar en la portada (no al llegar desde otra
+     página: lo decide el script del principio), las piezas de la cabecera
+     aparecen como el título de Pintura y Escultura (pedido de Guzmán,
+     21-10-2026): una tras otra, cada una sube un poco y pasa de
+     desenfocada a nítida. Sustituye a la apertura en puntos que se abrían
+     en cajitas. Con "translate" (y no "transform"), para no pisar los
+     movimientos propios de cada pieza. */
+  :global(html.entrada-portada) .portada .marca,
+  :global(html.entrada-portada) .portada .menu:not(.abierto) .caja,
+  :global(html.entrada-portada) .portada .idiomas,
+  :global(html.entrada-portada) .portada .abrir {
+    animation: entrada-suave 1.1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
 
-  .portada .marca {
-    animation: apertura-abrir-firma 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.28s backwards;
+  :global(html.entrada-portada) .portada .marca {
+    animation-delay: 0.1s;
+  }
+  :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(1) .caja {
+    animation-delay: 0.22s;
+  }
+  :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(2) .caja {
+    animation-delay: 0.3s;
+  }
+  :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(3) .caja {
+    animation-delay: 0.38s;
+  }
+  :global(html.entrada-portada) .portada .menu:not(.abierto) li:nth-child(4) .caja {
+    animation-delay: 0.46s;
+  }
+  :global(html.entrada-portada) .portada .idiomas,
+  :global(html.entrada-portada) .portada .abrir {
+    animation-delay: 0.54s;
   }
 
-  /* El punto de la firma es un círculo de verdad (la firma son trazos finos
-     y en su centro puede no haber tinta): aparece como los otros y se funde
-     mientras la firma se abre. */
-  .portada .marca::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 8px;
-    height: 8px;
-    margin: -4px 0 0 -4px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0;
-    animation:
-      apertura-punto-firma 0.75s linear 0.1s backwards,
-      apertura-punto 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
-  }
-
-  @keyframes apertura-punto-firma {
-    0%,
-    40% {
-      opacity: 1;
-    }
-    to {
+  @keyframes entrada-suave {
+    from {
       opacity: 0;
-    }
-  }
-
-  @keyframes apertura-punto {
-    from {
-      scale: 0;
-    }
-  }
-
-  /* Del centro del menú a su sitio (--desde lo mide el script de arriba; el
-     idioma y el botón del móvil no lo tienen y no se mueven). */
-  @keyframes apertura-mover {
-    from {
-      translate: var(--desde, 0px) 0;
-    }
-  }
-
-  /* La firma: de un punto de 8 px en su centro a un círculo que la cubre. */
-  @keyframes apertura-abrir-firma {
-    from {
-      clip-path: circle(4px at 50% 50%);
-    }
-    to {
-      clip-path: circle(75% at 50% 50%);
-    }
-  }
-
-  /* El punto: 8 px con esquinas de 4 px (un círculo); se abre hasta la
-     cajita entera. */
-  @keyframes apertura-abrir {
-    from {
-      clip-path: inset(calc(50% - 4px) calc(50% - 4px) round 4px);
-    }
-    to {
-      clip-path: inset(calc(0% - 0px) calc(0% - 0px) round 4px);
-    }
-  }
-
-  @keyframes apertura-texto {
-    from {
-      color: transparent;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .portada .menu:not(.abierto) .caja,
-    .portada .idiomas,
-    .portada .abrir,
-    .portada .marca,
-    .portada .marca::before {
-      animation: none;
+      translate: 0 0.45em;
+      filter: blur(6px);
     }
   }
 

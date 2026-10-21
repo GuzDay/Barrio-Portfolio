@@ -44,6 +44,19 @@ const vertical = fotoVertical
   <canvas></canvas>
 </div>
 <script is:inline>
+  // La foto entra con un poco de zoom (ver "acercar" abajo): hasta que esté
+  // lista para verse, espera ya ampliada, para que no dé un salto. Red de
+  // seguridad: si algo falla, a los 4 s se queda normal.
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var capa = document.currentScript.previousElementSibling;
+    capa.classList.add('por-acercar');
+    setTimeout(function () {
+      capa.classList.remove('por-acercar');
+    }, 4000);
+  })();
+</script>
+<script is:inline>
   // La portada no reserva el hueco de la barra de desplazamiento (ver
   // global.css): nunca la tiene, y el hueco quedaría como una franja vacía al
   // lado de la foto. Para que la cabecera y el pie queden igual que en las
@@ -188,6 +201,25 @@ const vertical = fotoVertical
     requestAnimationFrame(paso);
   }
 
+  // Al llegar, la foto aparece con un poco de zoom y vuelve despacio a su
+  // tamaño (pedido de Guzmán: sutil y elegante). Siempre, se llegue como se
+  // llegue. Empieza cuando la foto ya se puede pintar, y se aplica a la foto
+  // y al lienzo de color a la vez (no a la capa, que se mide para pintar).
+  if (capa.classList.contains('por-acercar')) {
+    const cargada = gris.complete ? Promise.resolve() : new Promise((ok) => gris.addEventListener('load', ok, { once: true }));
+    cargada
+      .then(() => gris.decode().catch(() => {}))
+      .then(() => {
+        for (const pieza of [gris, lienzo]) {
+          pieza.animate([{ transform: 'scale(1.06)' }, { transform: 'none' }], {
+            duration: 2400,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          });
+        }
+        capa.classList.remove('por-acercar');
+      });
+  }
+
   if (gris.complete && gris.naturalWidth) preparar();
   // También cada vez que cambia la foto (al girar el móvil se pasa de la
   // vertical a la horizontal): la versión en color tiene que ser la misma.
@@ -249,6 +281,11 @@ const vertical = fotoVertical
   img {
     object-fit: cover;
     filter: grayscale(1);
+  }
+
+  .lienzo.por-acercar img,
+  .lienzo.por-acercar canvas {
+    transform: scale(1.06);
   }
 
   /* Degradado sutil abajo, para que el copyright (en blanco) se lea sobre

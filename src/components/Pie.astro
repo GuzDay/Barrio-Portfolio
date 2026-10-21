@@ -23,15 +23,22 @@ const { blanco } = Astro.props;
     color: var(--suave);
   }
 
-  /* En la portada, aparece con un fundido al final de la apertura. */
+  /* En la portada aparece siempre, subiendo apenas y fundiéndose (como
+     "Todas / Disponibles"). Si la cabecera hace su entrada (al abrir la web
+     o recargar), espera a que acabe; si se llega desde otra página, antes. */
   .pie.blanco {
     color: #fff;
-    animation: pie-aparece 0.8s ease 0.9s backwards;
+    animation: pie-aparece 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.45s backwards;
+  }
+
+  :global(html.entrada-portada) .pie.blanco {
+    animation-delay: 0.95s;
   }
 
   @keyframes pie-aparece {
     from {
       opacity: 0;
+      translate: 0 0.4em;
     }
   }
 
