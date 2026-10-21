@@ -47,10 +47,10 @@ export const textos = {
     ],
     encargosComo: 'Cómo funciona',
     encargosPasos: [
-      { titulo: 'Hablamos', texto: 'Me cuentas qué buscas, para qué espacio es y qué te gustaría sentir al mirarlo.' },
-      { titulo: 'Propuesta', texto: 'Te preparo una propuesta con medidas, materiales, plazo y presupuesto.' },
-      { titulo: 'Creación', texto: 'Pinto o esculpo la obra y te voy enseñando cómo avanza.' },
-      { titulo: 'Entrega', texto: 'La obra llega a tu casa, lista para colgar o colocar.' },
+      { titulo: 'Primera conversación', texto: 'Analizamos el espacio, su uso y la intención de la obra para definir el punto de partida.' },
+      { titulo: 'Propuesta', texto: 'Recibes una propuesta detallada: concepto, formato, materiales, plazos y presupuesto.' },
+      { titulo: 'Producción', texto: 'Desarrollo la obra en el taller y te mantengo al tanto de cada fase del proceso.' },
+      { titulo: 'Entrega', texto: 'La obra llega a su destino protegida y lista para colgar o colocar.' },
     ],
     colaboraIntro: [
       'El arte tiene el poder de transformar un espacio y cambiar por completo la forma en que se percibe. Más allá de adquirir una pieza suelta, te propongo un servicio de arte por encargo para vestir y revalorizar tus espacios de cara al público.',
@@ -111,10 +111,10 @@ export const textos = {
     ],
     encargosComo: 'How it works',
     encargosPasos: [
-      { titulo: 'We talk', texto: "Tell me what you're looking for, the space it's for and what you'd like to feel when you look at it." },
-      { titulo: 'Proposal', texto: 'I prepare a proposal with size, materials, timing and price.' },
-      { titulo: 'Creation', texto: 'I paint or sculpt the work and keep you posted as it progresses.' },
-      { titulo: 'Delivery', texto: 'The work arrives at your home, ready to hang or place.' },
+      { titulo: 'First conversation', texto: 'We look at the space, how it is used and the intent behind the work to set the starting point.' },
+      { titulo: 'Proposal', texto: 'You receive a detailed proposal: concept, format, materials, timeline and budget.' },
+      { titulo: 'Production', texto: 'I develop the work in the studio and keep you informed at every stage.' },
+      { titulo: 'Delivery', texto: 'The work reaches its destination protected and ready to hang or place.' },
     ],
     colaboraIntro: [
       'Art has the power to transform a space and completely change the way it is perceived. Beyond buying a single piece, I offer a commissioned art service to dress and add value to the spaces you open to the public.',

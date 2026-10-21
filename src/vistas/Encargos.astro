@@ -33,7 +33,7 @@ const p =
   <ol class="pasos">
     {p.pasos.map(({ titulo, texto }, i) => (
       <li>
-        <span class="numero">{i + 1}</span>
+        <span class="numero">{String(i + 1).padStart(2, '0')}</span>
         <h3>{titulo}</h3>
         <p>{texto}</p>
       </li>
@@ -48,12 +48,16 @@ const p =
     margin: 3rem 0 1.5rem;
   }
 
+  /* Los pasos, en tarjetas como las cajitas del menú (gris claro, esquinas
+     de 4 px), todas del mismo alto: el número arriba en la serif y, más
+     abajo y a la misma altura en todas, el título y el texto. Pedido de
+     Guzmán, 21-10-2026. */
   .pasos {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 2rem;
+    gap: var(--hueco);
   }
 
   @media (min-width: 720px) {
@@ -68,15 +72,31 @@ const p =
     }
   }
 
+  .pasos li {
+    display: flex;
+    flex-direction: column;
+    padding: 1.1rem 1.2rem 1.3rem;
+    border-radius: 4px;
+    background: rgb(237 237 237 / 0.6);
+  }
+
   .numero {
-    display: block;
     font-family: var(--serif);
-    font-size: calc(2em * var(--serif-escala));
+    font-size: calc(0.9em * var(--serif-escala));
     color: var(--suave);
   }
 
   h3 {
-    margin: 0.25rem 0 0.5rem;
+    margin: 2rem 0 0.5rem;
+  }
+
+  @media (min-width: 720px) {
+    .pasos li {
+      min-height: 14rem;
+    }
+    h3 {
+      margin-top: 4.5rem;
+    }
   }
 
   .pasos p {
