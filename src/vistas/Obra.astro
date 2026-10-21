@@ -25,6 +25,10 @@ const t = textos[idioma];
 const obras = await obrasDe(seccion);
 const pos = obras.findIndex((o) => o.id === id);
 const obra = obras[pos]!;
+// La obra anterior y la siguiente de la sección, para las flechas de los
+// lados de la pantalla (en ordenador).
+const anterior = obras[pos - 1];
+const siguiente = obras[pos + 1];
 const f = ficha(obra, idioma);
 const nombreSeccion = secciones[seccion].nombre[idioma];
 const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
@@ -38,6 +42,13 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   activa={seccion}
   sinCabecera
 >
+  {/* Pasar de obra: flechas a los lados de la pantalla, en ordenador
+      (pedido de Guzmán, 21-10-2026). */}
+  <nav class="vecinas" aria-label={nombreSeccion}>
+    {anterior && <a class="vecina anterior-obra" href={urlObra(seccion, anterior.id, idioma)} aria-label={`${t.anterior}: ${ficha(anterior, idioma).titulo}`}><svg viewBox="0 0 12 22" aria-hidden="true"><path d="M11 1 1 11l10 10" /></svg></a>}
+    {siguiente && <a class="vecina siguiente-obra" href={urlObra(seccion, siguiente.id, idioma)} aria-label={`${t.siguiente}: ${ficha(siguiente, idioma).titulo}`}><svg viewBox="0 0 12 22" aria-hidden="true"><path d="m1 1 10 10L1 21" /></svg></a>}
+  </nav>
+
   <article class="obra">
     <div class="columna-fotos">
       <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
@@ -59,10 +70,10 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       {f.fotos.length > 1 && (
         <>
           <button class="flecha anterior" type="button" aria-label={t.fotoAnterior} disabled>
-            <span aria-hidden="true">‹</span>
+            <svg viewBox="0 0 12 22" aria-hidden="true"><path d="M11 1 1 11l10 10" /></svg>
           </button>
           <button class="flecha siguiente" type="button" aria-label={t.fotoSiguiente}>
-            <span aria-hidden="true">›</span>
+            <svg viewBox="0 0 12 22" aria-hidden="true"><path d="m1 1 10 10L1 21" /></svg>
           </button>
         </>
       )}
@@ -294,8 +305,9 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     scroll-snap-type: none;
   }
 
-  /* Flechas a media altura, sin recuadro: en blanco con fusión "exclusión"
-     (como la firma), así se ven sobre cualquier color de la foto. */
+  /* Flechas a media altura, sin recuadro: un trazo fino (pedido de Guzmán:
+     más sencillas), en blanco con fusión "exclusión" (como la firma), así
+     se ven sobre cualquier color de la foto. */
   .flecha {
     position: absolute;
     top: 50%;
@@ -304,12 +316,11 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     height: 3.5rem;
     display: grid;
     place-items: center;
-    padding: 0 0 4px;
+    padding: 0;
     border: 0;
     background: none;
     color: #fff;
     mix-blend-mode: exclusion;
-    font: 200 3rem/1 var(--serif);
     cursor: pointer;
     transition:
       opacity 0.25s ease,
@@ -318,6 +329,57 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
   .flecha:hover {
     scale: 1.15;
+  }
+
+  .flecha svg,
+  .vecina svg {
+    width: 12px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Las flechas para pasar de obra: muy a los lados de la pantalla, a
+     media altura, del mismo trazo pero en gris, que se oscurece al pasar
+     el ratón. Solo en ordenador. */
+  .vecinas {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .vecinas {
+      display: block;
+    }
+    .vecina {
+      position: fixed;
+      top: 50%;
+      translate: 0 -50%;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 5rem;
+      color: var(--suave);
+      transition:
+        color 0.25s ease,
+        scale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .vecina:hover {
+      color: var(--texto);
+      scale: 1.15;
+    }
+    .vecina svg {
+      width: 14px;
+      height: 26px;
+    }
+    .anterior-obra {
+      left: clamp(0.5rem, 1.5vw, 1.5rem);
+    }
+    .siguiente-obra {
+      right: clamp(0.5rem, 1.5vw, 1.5rem);
+    }
   }
 
   .flecha:disabled {
@@ -349,7 +411,6 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     .flecha {
       width: 2.25rem;
       height: 3rem;
-      font-size: 2.5rem;
     }
     .anterior {
       left: 0;

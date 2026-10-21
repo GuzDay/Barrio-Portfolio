@@ -40,7 +40,7 @@ consulta que hay**: ver más abajo.
 - **Todas las cabeceras deben ser idénticas** en todas las páginas, ordenador
   y móvil (lo ha pedido Guzmán expresamente). Solo cambia el color en la
   portada. **Excepción: la página de cada obra no lleva cabecera** (pedido de
-  Guzmán, 20-10-2026) ni pie; encima de la foto, en la esquina derecha, va "Cerrar"; sin "Anterior / Siguiente" de momento (quitados el 21-10-2026), que vuelve a la sección, igual que Esc (21-10-2026), y en ordenador la página ocupa justo la pantalla, sin scroll, con la foto centrada en vertical. Tras tocar la cabecera, medir portada y
+  Guzmán, 20-10-2026) ni pie; encima de la foto, en la esquina derecha, va "Cerrar"; y, en ordenador, flechas finas muy a los lados de la pantalla para pasar a la obra anterior o siguiente (21-10-2026; en el móvil no hay), que vuelve a la sección, igual que Esc (21-10-2026), y en ordenador la página ocupa justo la pantalla, sin scroll, con la foto centrada en vertical. Tras tocar la cabecera, medir portada y
   secciones y comparar.
 - **Cabecera fija estilo gionatannese.com** (16-10-2026): firma en blanco con
   `mix-blend-mode: exclusion` (cambia de color sobre las fotos; va suelta,
