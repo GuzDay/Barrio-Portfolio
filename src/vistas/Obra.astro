@@ -1,8 +1,8 @@
 ---
 // Página de una obra, sin cabecera ni pie (pedido de Guzmán): sus fotos en
 // un carrusel vertical 3:4 que se arrastra a los lados, con flechas a media
-// altura y la obra anterior / siguiente debajo; arriba a la izquierda,
-// "Cerrar", que vuelve a la sección; al lado, la ficha con el botón para preguntar
+// altura y debajo, la obra anterior, "Cerrar" (vuelve a la sección) y la
+// siguiente; al lado, la ficha con el botón para preguntar
 // por WhatsApp. En ordenador ocupa justo la pantalla, sin scroll, con la
 // foto centrada en vertical.
 import { Image } from 'astro:assets';
@@ -40,7 +40,6 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   activa={seccion}
   sinCabecera
 >
-  <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
   <article class="obra">
     <div class="columna-fotos">
     <div class="carrusel" data-varias={f.fotos.length > 1 ? '' : undefined}>
@@ -71,7 +70,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     </div>
       <nav class="vecinas">
         {anterior ? <a href={urlObra(seccion, anterior.id, idioma)}>← {t.anterior}</a> : <span />}
-        {siguiente && <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a>}
+        <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
+        {siguiente ? <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a> : <span />}
       </nav>
     </div>
     <div class="ficha">
@@ -215,28 +215,25 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </script>
 
 <style>
+  /* Anterior a la izquierda, Cerrar en el centro y Siguiente a la derecha
+     (pedido de Guzmán). Las columnas de los lados miden lo mismo, así
+     "Cerrar" queda centrado aunque falte la anterior o la siguiente. */
   .vecinas {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     margin: 1rem 0 0;
     font-size: 0.9em;
   }
 
-  /* "Cerrar": arriba a la izquierda, alineado con el margen de la web. En
-     el móvil va encima de la foto; en ordenador, fijo en la esquina. */
-  .cerrar {
-    display: inline-block;
-    margin-bottom: 1rem;
-    font-size: 0.9em;
+  .vecinas > :last-child {
+    justify-self: end;
   }
 
-  .cerrar,
   .vecinas a {
     color: var(--suave);
     text-decoration: none;
   }
 
-  .cerrar:hover,
   .vecinas a:hover {
     color: var(--texto);
   }
@@ -426,13 +423,6 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       top: 100%;
       left: 0;
       right: 0;
-    }
-    .cerrar {
-      position: fixed;
-      top: 1.5rem;
-      left: var(--lateral);
-      margin: 0;
-      z-index: 1;
     }
     .ficha {
       grid-column: 3;
