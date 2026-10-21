@@ -1,20 +1,19 @@
 ---
-// Contacto (rehecha a petición de Guzmán, 21-10-2026), siguiendo las láminas
-// de Vivien's Creative: una sola pantalla en ordenador, con "BARRIO" en letra
-// enorme abajo y una foto vertical en medio que tapa las letras centrales
-// (se lee "B … RIO"); a la derecha, encima de "RIO", el texto de Pablo en la
-// serif y sus datos en pequeño, en dos columnas con etiquetas en mayúsculas.
-// En el móvil, arriba la misma composición en pequeño (B · foto · RIO) y
-// debajo el texto y los datos. El título "Contacto" no se ve, pero sigue ahí
-// para buscadores y lectores de pantalla.
-//
-// Las medidas salen de la tipografía (Inter Tight 800, medida en el
-// navegador): "B" mide 0,636 em de ancho y "RIO" 1,652 em. Con eso, el tamaño
-// de letra se calcula para que B + foto + RIO llenen justo el ancho.
-import { Image } from 'astro:assets';
+// Contacto (rehecha a petición de Guzmán, 21-10-2026), siguiendo la lámina de
+// fotos de Vivien's Creative: mucho aire, fotos de distintos tamaños sueltas
+// por una rejilla, cada una con su numerito encima, y el texto de Pablo
+// partido en párrafos que acompañan a las fotos, en Newsreader grande y un
+// peso más gruesa. Al bajar, cada párrafo entra letra a letra y cada foto se
+// descubre. Al final, sus datos y el botón de WhatsApp. El título "Contacto"
+// no se ve, pero sigue ahí para buscadores y lectores de pantalla.
+import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import foto from '../assets/contacto/foto.jpg';
-import { marco34 } from '../lib/fotos';
+import f01 from '../assets/contacto/01.jpg';
+import f02 from '../assets/contacto/02.jpg';
+import f03 from '../assets/contacto/03.jpg';
+import f04 from '../assets/contacto/04.jpg';
+import f05 from '../assets/contacto/05.jpg';
+import f07 from '../assets/contacto/07.jpg';
 import { ambas, secciones, urlColabora, urlContacto, urlEncargos, urlSeccion, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -25,6 +24,51 @@ interface Props {
 
 const { idioma } = Astro.props;
 const t = textos[idioma];
+
+// Una foto recortada a la proporción que le toca (ancho / alto), con sus
+// versiones para cada pantalla. Fotos de prueba: sesión de Julián Camarillo.
+async function foto(src: ImageMetadata, proporcion: number) {
+  const ancho = Math.min(src.width, Math.floor(src.height * proporcion));
+  const alto = Math.round(ancho / proporcion);
+  const anchos = [400, 700, 1000, 1400].filter((w) => w < ancho).concat(ancho);
+  const versiones = await Promise.all(
+    anchos.map((w) => getImage({ src, width: w, height: Math.round(w / proporcion), fit: 'cover', format: 'webp' })),
+  );
+  return {
+    src: versiones.at(-1)!.src,
+    srcset: versiones.map((v, i) => `${v.src} ${anchos[i]}w`).join(', '),
+    ancho,
+    alto,
+  };
+}
+
+// El texto, partido en palabras y letras para que entren una tras otra al
+// llegar a cada párrafo. Cada letra lleva su número dentro del párrafo.
+const parrafos = t.biografia.map((p) => {
+  let n = 0;
+  return p.split(' ').map((palabra) => [...palabra].map((letra) => ({ letra, i: n++ })));
+});
+
+// La lámina: en qué orden van párrafos y fotos; dónde se colocan en la
+// rejilla de 12 columnas del ordenador, en el CSS (en el móvil, todo en una
+// columna, con las fotos a distintos anchos).
+const p = (indice: number, clase: string) => ({ tipo: 'texto' as const, indice, clase });
+const fo = async (src: ImageMetadata, proporcion: number, clase: string) => ({ tipo: 'foto' as const, clase, ...(await foto(src, proporcion)) });
+const piezas = [
+  p(0, 'p-1'),
+  await fo(f01, 3 / 4, 'f-1'),
+  await fo(f04, 3 / 4, 'f-2'),
+  p(1, 'p-2'),
+  await fo(f02, 4 / 3, 'f-3'),
+  p(2, 'p-3'),
+  await fo(f05, 3 / 4, 'f-4'),
+  await fo(f03, 3 / 4, 'f-5'),
+  p(3, 'p-4'),
+  await fo(f07, 1, 'f-6'),
+  p(4, 'p-5'),
+];
+let numero = 0;
+
 const grupos = [
   {
     titulo: t.contacto,
@@ -49,58 +93,82 @@ const grupos = [
     ],
   },
 ];
-
-// El texto, partido en palabras y letras para que entren una tras otra. Cada
-// letra lleva su número (--i), del que sale su retraso. Las palabras van
-// enteras en una caja, para que no se corten al final de la línea.
-let n = 0;
-const parrafos = t.biografia.map((p) => p.split(' ').map((palabra) => [...palabra].map((letra) => ({ letra, i: n++ }))));
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
+  <script is:inline>
+    // Las piezas esperan escondidas a que se llegue a ellas (ver abajo). Solo
+    // si el navegador sabe avisar de eso y no se ha pedido menos movimiento;
+    // si no, se ve todo quieto desde el principio.
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+      document.documentElement.classList.add('contacto-anima');
+  </script>
+
   <h1 class="oculto">{t.contacto}</h1>
+  {/* Para lectores de pantalla, el texto de corrido; el animado, oculto para ellos. */}
+  <div class="oculto">{t.biografia.map((parrafo) => <p>{parrafo}</p>)}</div>
 
   <div class="lamina">
-    <span class="letras izquierda" aria-hidden="true"><span>B</span></span>
-
-    <figure class="foto">
-      <Image src={foto} alt="" {...marco34(foto, [400, 600, 800, 1100, 1500])} sizes="(min-width: 900px) 40vw, 48vw" loading="eager" />
-    </figure>
-
-    <div class="derecha">
-      <div class="biografia">
-        {/* Para lectores de pantalla, el texto de corrido; el animado, oculto para ellos. */}
-        <div class="oculto">{t.biografia.map((p) => <p>{p}</p>)}</div>
-        <div aria-hidden="true">
-          {parrafos.map((palabras) => (
-            <p>
-              {palabras.map((letras, k) => (
-                <>
-                  <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
-                  {k < palabras.length - 1 && ' '}
-                </>
-              ))}
-            </p>
+    {piezas.map((pieza) =>
+      pieza.tipo === 'texto' ? (
+        <p class:list={['parrafo', 'aparece', pieza.clase]} aria-hidden="true">
+          {parrafos[pieza.indice].map((letras, k) => (
+            <>
+              <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
+              {k < parrafos[pieza.indice].length - 1 && ' '}
+            </>
           ))}
-        </div>
-      </div>
-
-      <div class="datos" style={`--despues: ${n}`}>
-        {grupos.map(({ titulo, enlaces }) => (
-          <div>
-            <h2>{titulo}</h2>
-            <ul>
-              {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
-            </ul>
+        </p>
+      ) : (
+        <figure class:list={['foto', 'aparece', pieza.clase]}>
+          <figcaption>{String(++numero).padStart(2, '0')}</figcaption>
+          <div class="marco" style={`aspect-ratio: ${pieza.ancho} / ${pieza.alto}`}>
+            <img
+              src={pieza.src}
+              srcset={pieza.srcset}
+              sizes="(min-width: 900px) 33vw, 70vw"
+              width={pieza.ancho}
+              height={pieza.alto}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-        ))}
-        <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a></p>
-      </div>
+        </figure>
+      ),
+    )}
 
-      <span class="letras" aria-hidden="true"><span>R</span><span>I</span><span>O</span></span>
+    <div class="datos aparece">
+      {grupos.map(({ titulo, enlaces }) => (
+        <div>
+          <h2>{titulo}</h2>
+          <ul>
+            {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+          </ul>
+        </div>
+      ))}
+      <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a></p>
     </div>
   </div>
 </Base>
+
+<script>
+  // Al llegar a cada pieza (un poco antes de que asome del todo), se marca
+  // como vista y hace su entrada (ver el CSS). Solo una vez.
+  if (document.documentElement.classList.contains('contacto-anima')) {
+    const ver = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('visto');
+          ver.unobserve(e.target);
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+    document.querySelectorAll('.aparece').forEach((el) => ver.observe(el));
+  }
+</script>
 
 <style>
   .oculto {
@@ -112,127 +180,24 @@ const parrafos = t.biografia.map((p) => p.split(' ').map((palabra) => [...palabr
     white-space: nowrap;
   }
 
-  /* ---------- Composición ----------
-     Tres columnas: "B", la foto y la columna de la derecha (texto, datos y
-     "RIO"). --foto es el ancho de la foto y --letra el tamaño de las letras
-     grandes, que sale de lo que queda: ancho - foto - huecos, repartido
-     entre "B" (0,636 em) y "RIO" (1,652 em). */
+  /* ---------- La lámina ----------
+     Una columna en el móvil; en ordenador, una rejilla de 12 columnas con
+     mucho aire entre filas, donde cada pieza tiene su sitio (ver abajo). */
   .lamina {
-    --hueco: clamp(0.5rem, 1.2vw, 1.25rem);
-    --letra: calc((100cqw - var(--foto) - 2 * var(--hueco)) / 2.288);
     display: grid;
-    grid-template-columns: calc(var(--letra) * 0.636) var(--foto) 1fr;
-    column-gap: var(--hueco);
-    margin-top: 1rem;
+    gap: 3.5rem;
+    padding: 2rem 0 2rem;
   }
 
-  :global(main:has(.lamina)) {
-    container-type: inline-size;
-  }
-
-  .foto {
+  /* El texto de Pablo: Newsreader grande y un peso más gruesa que el resto
+     de la web (500 en vez de 400). */
+  .parrafo {
     margin: 0;
-    align-self: end;
-    overflow: hidden;
-    background: var(--vacio);
-  }
-
-  .foto :global(img) {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-  }
-
-  /* Las letras grandes: Inter Tight muy negra, sin aire por debajo, con la
-     base de las letras en la base de la foto. Se recortan por abajo para
-     que, al entrar, suban desde ahí. */
-  .letras {
-    display: flex;
-    align-self: end;
-    overflow: hidden;
-    font-family: var(--sans);
-    font-weight: 800;
-    font-size: var(--letra);
-    line-height: 0.74;
-    padding-top: 0.02em;
-    color: var(--texto);
-  }
-
-  .letras span {
-    display: block;
-    animation: letra-grande 1.1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-
-  .letras span:nth-child(2) {
-    animation-delay: 0.08s;
-  }
-
-  .letras span:nth-child(3) {
-    animation-delay: 0.16s;
-  }
-
-  /* La "B" se alinea por su tinta con el margen de la página (la letra trae
-     un poco de aire a la izquierda). */
-  .izquierda {
-    margin-left: -0.041em;
-  }
-
-  @keyframes letra-grande {
-    from {
-      transform: translateY(105%);
-    }
-  }
-
-  .derecha {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .derecha .letras {
-    margin-top: 2rem;
-    align-self: start;
-  }
-
-  /* La foto aparece descubriéndose de abajo arriba mientras se asienta un
-     zoom suave, como la portada. */
-  .foto {
-    animation: foto-entra 1.3s cubic-bezier(0.65, 0, 0.35, 1) backwards;
-  }
-
-  .foto :global(img) {
-    animation: foto-zoom 2.2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-
-  @keyframes foto-entra {
-    from {
-      clip-path: inset(100% 0 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  @keyframes foto-zoom {
-    from {
-      transform: scale(1.12);
-    }
-  }
-
-  /* ---------- Texto y datos ---------- */
-  .biografia {
     font-family: var(--serif);
-    font-size: calc(1.15em * var(--serif-escala));
-    font-weight: 400;
-    line-height: 1.25;
-  }
-
-  .biografia p {
-    margin: 0 0 0.7em;
-  }
-
-  .biografia p:last-child {
-    margin-bottom: 0;
+    font-weight: 500;
+    font-size: clamp(1.7rem, 3.4vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
   }
 
   .palabra {
@@ -240,49 +205,67 @@ const parrafos = t.biografia.map((p) => p.split(' ').map((palabra) => [...palabr
     white-space: nowrap;
   }
 
-  /* Letra a letra, rápido (como el título de Pintura y Escultura). */
   .letra {
     display: inline-block;
-    animation: letra 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(0.4s + var(--i) * 2.2ms);
   }
 
-  @keyframes letra {
-    from {
-      opacity: 0;
-      transform: translateY(0.35em);
-      filter: blur(4px);
-    }
+  .foto {
+    margin: 0;
   }
 
-  /* Los datos, pequeños, en dos columnas, con etiquetas en mayúsculas (como
-     en la referencia). Aparecen cuando el texto va por el final. */
+  /* El numerito encima de cada foto, pequeño, como en la referencia. */
+  figcaption {
+    margin-bottom: 0.4rem;
+    font-size: 0.7em;
+    color: var(--suave);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .marco {
+    overflow: hidden;
+    background: var(--vacio);
+  }
+
+  .marco img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* En el móvil, las fotos a distintos anchos y alternando lado. */
+  .f-1,
+  .f-4 {
+    width: 62%;
+    justify-self: end;
+  }
+  .f-2,
+  .f-5 {
+    width: 78%;
+  }
+  .f-3 {
+    width: 100%;
+  }
+  .f-6 {
+    width: 50%;
+    justify-self: center;
+  }
+
+  /* ---------- Los datos, al final ---------- */
   .datos {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, max-content));
-    gap: 0.9rem clamp(1.5rem, 3vw, 3rem);
-    margin-top: 1.75rem;
-    font-size: 0.8em;
-    line-height: 1.35;
-    animation: datos 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(var(--despues) * 2.2ms);
+    gap: 1.25rem 2.5rem;
+    margin-top: 2rem;
+    font-size: 0.9em;
+    line-height: 1.4;
   }
 
-  /* El contacto ocupa la primera columna entera; disciplinas y "a medida",
-     la segunda, una debajo de otra. */
   .datos > div:first-child {
     grid-row: span 2;
   }
 
-  @keyframes datos {
-    from {
-      opacity: 0;
-      translate: 0 0.4em;
-    }
-  }
-
   h2 {
-    margin: 0 0 0.2rem;
+    margin: 0 0 0.25rem;
     font-family: var(--sans);
     font-size: 1em;
     font-weight: 600;
@@ -307,93 +290,154 @@ const parrafos = t.biografia.map((p) => p.split(' ').map((palabra) => [...palabr
 
   .llamada {
     grid-column: 1 / -1;
-    margin: 0.3rem 0 0;
+    margin: 0.5rem 0 0;
   }
 
-  .llamada .boton {
-    padding: 0.6rem 1rem;
-    font-size: 1.05em;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .letras span,
-    .foto,
-    .foto :global(img),
-    .letra,
-    .datos {
-      animation: none;
-    }
-  }
-
-  /* ---------- Móvil ----------
-     Arriba, B · foto · RIO en pequeño; debajo, el texto y los datos. */
-  @media (max-width: 899px) {
-    .lamina {
-      --foto: 48cqw;
-      grid-template-columns: calc(var(--letra) * 0.636) var(--foto) calc(var(--letra) * 1.652);
-      justify-content: center;
-    }
-    .derecha {
-      display: contents;
-    }
-    .derecha .letras {
-      grid-row: 1;
-      grid-column: 3;
-      margin-top: 0;
-      align-self: end;
-    }
-    .biografia,
-    .datos {
-      grid-column: 1 / -1;
-    }
-    .biografia {
-      margin-top: 2.5rem;
-    }
-    .datos {
-      margin-top: 2.5rem;
-    }
-  }
-
-  /* ---------- Ordenador ----------
-     Una pantalla: la lámina ocupa el alto que queda entre la cabecera y el
-     pie (--alto) y la foto, ese alto entero. Las letras llenan el ancho
-     (B + foto 3:4 + RIO), pero sin pasar del 40 % del alto, para que el
-     texto de la derecha quepa; si se limitan, la foto toma el ancho que
-     sobra (recortándose un poco), y la columna del texto nunca baja de un
-     ancho legible. En pantallas muy bajas la página crece un poco antes que
-     montar unas cosas encima de otras. */
+  /* ---------- Ordenador: la rejilla ---------- */
   @media (min-width: 900px) {
     .lamina {
-      --alto: calc(100svh - 215px);
-      --foto: calc(var(--alto) * 0.75);
-      --letra: min(calc((100cqw - var(--foto) - 2 * var(--hueco)) / 2.288), calc(var(--alto) * 0.4));
-      grid-template-columns: calc(var(--letra) * 0.636) minmax(0, 1fr) max(calc(var(--letra) * 1.652), 22rem);
-      min-height: var(--alto);
-      margin-top: 0.5rem;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(1rem, 2vw, 2rem);
+      row-gap: clamp(4rem, 12vh, 9rem);
+      padding-top: clamp(1.5rem, 6vh, 4rem);
     }
-    :global(main:has(.lamina)) {
-      padding-bottom: 0;
+    .lamina > * {
+      width: auto;
+      justify-self: stretch;
     }
-    .foto {
-      align-self: stretch;
-      position: relative;
+    /* 1: el primer párrafo a lo ancho y una foto pequeña a la derecha, algo
+       más abajo. */
+    .p-1 {
+      grid-column: 1 / 10;
+      align-self: start;
     }
-    .foto :global(img) {
-      position: absolute;
-      inset: 0;
-      height: 100%;
-      aspect-ratio: auto;
+    .f-1 {
+      grid-column: 10 / 13;
+      margin-top: 8rem;
     }
-    .derecha .letras {
-      margin-top: auto;
-      padding-top: clamp(1rem, 3svh, 2rem);
+    /* 2: una foto mediana a la izquierda y el segundo párrafo a su lado. */
+    .f-2 {
+      grid-column: 1 / 5;
     }
-    .biografia {
-      font-size: clamp(12.5px, min(1.15cqw, 1.95svh), 17px);
+    .p-2 {
+      grid-column: 6 / 13;
+      align-self: center;
+    }
+    /* 3: una foto apaisada en el centro y el tercer párrafo, corto, debajo
+       y desplazado. */
+    .f-3 {
+      grid-column: 4 / 10;
+    }
+    .p-3 {
+      grid-column: 3 / 12;
+    }
+    /* 4: dos fotos sueltas, a distinta altura, y el párrafo largo. */
+    .f-4 {
+      grid-column: 2 / 5;
+    }
+    .f-5 {
+      grid-column: 8 / 11;
+      margin-top: 10rem;
+    }
+    .p-4 {
+      grid-column: 1 / 11;
+    }
+    /* 5: el último párrafo y una foto cuadrada a la derecha. */
+    .p-5 {
+      grid-column: 1 / 8;
+      align-self: end;
+    }
+    .f-6 {
+      grid-column: 9 / 13;
     }
     .datos {
-      font-size: clamp(10.5px, min(0.85cqw, 1.4svh), 12.5px);
-      margin-top: clamp(0.8rem, 2.5svh, 2rem);
+      grid-column: 1 / 13;
+      grid-template-columns: repeat(3, max-content) 1fr;
+      align-items: start;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      margin-top: 3rem;
+      font-size: 0.85em;
+    }
+    .datos > div:first-child {
+      grid-row: auto;
+    }
+    .llamada {
+      grid-column: auto;
+      justify-self: end;
+      align-self: end;
+      margin: 0;
+    }
+  }
+
+  /* ---------- Entradas al hacer scroll ----------
+     Solo si el navegador puede (ver el script del principio). */
+  :global(html.contacto-anima) .aparece:not(.visto) .letra,
+  :global(html.contacto-anima) .datos.aparece:not(.visto) {
+    opacity: 0;
+  }
+
+  /* Párrafos: letra a letra, rápido (como el título de Pintura y Escultura). */
+  :global(html.contacto-anima) .parrafo.visto .letra {
+    animation: letra 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--i) * 6ms);
+  }
+
+  @keyframes letra {
+    from {
+      opacity: 0;
+      transform: translateY(0.3em);
+      filter: blur(6px);
+    }
+  }
+
+  /* Fotos: se descubren de abajo arriba mientras se asienta un zoom suave;
+     el numerito, un poco antes. */
+  :global(html.contacto-anima) .foto:not(.visto) .marco {
+    clip-path: inset(100% 0 0 0);
+  }
+  :global(html.contacto-anima) .foto:not(.visto) figcaption {
+    opacity: 0;
+  }
+  :global(html.contacto-anima) .foto.visto .marco {
+    animation: descubrir 1.2s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+  }
+  :global(html.contacto-anima) .foto.visto img {
+    animation: asentar 2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  :global(html.contacto-anima) .foto.visto figcaption {
+    animation: fundir 0.6s ease backwards;
+  }
+
+  @keyframes descubrir {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes asentar {
+    from {
+      transform: scale(1.12);
+    }
+  }
+
+  @keyframes fundir {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Los datos, subiendo apenas (como "Todas / Disponibles"). */
+  :global(html.contacto-anima) .datos.visto {
+    animation: datos 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  @keyframes datos {
+    from {
+      opacity: 0;
+      translate: 0 0.6em;
     }
   }
 </style>

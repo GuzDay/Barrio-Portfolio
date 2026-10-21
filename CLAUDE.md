@@ -84,15 +84,15 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   texto que mandó Pablo; las dos páginas salen de `src/vistas/Encargos.astro`.
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
-  Contacto no enseña título y sigue las láminas de Vivien's Creative
-  (referencias de Guzmán): "BARRIO" enorme abajo (Inter Tight 800) con una
-  foto vertical en medio que tapa las letras centrales ("B … RIO"); encima
-  de "RIO", el texto de Pablo en la serif (entra letra a letra) y sus datos
-  en pequeño con etiquetas en mayúsculas. En ordenador, una pantalla; en el
-  móvil, B · foto · RIO arriba y debajo el texto. Foto de prueba:
-  `src/assets/contacto/foto.jpg` (Julián Camarillo 04). Probado y descartado
-  por Guzmán: un carrusel 3D, y una versión editorial con etiquetas
-  numeradas (están en el historial);
+  Contacto no enseña título y sigue la lámina de fotos de Vivien's Creative
+  (referencia de Guzmán): mucho aire, fotos de distintos tamaños con su
+  numerito encima (01, 02…) y el texto de Pablo partido en párrafos que las
+  acompañan, en Newsreader 500 y grande; al bajar, cada párrafo entra letra
+  a letra y cada foto se descubre. Al final, los datos en pequeño y el botón
+  "Contacta conmigo". Fotos de prueba: sesión de Julián Camarillo, en
+  `src/assets/contacto/`. Probado y descartado por Guzmán: un carrusel 3D,
+  una versión con etiquetas numeradas y una con "B … RIO" en letra enorme
+  (están en el historial);
   /acerca-de-mi/ redirige a /contacto/.
 - **Cada obra lleva ficha**: título, técnica, medidas, año y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
