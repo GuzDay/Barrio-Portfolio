@@ -1,19 +1,15 @@
 ---
-// Contacto (rehecha a petición de Guzmán, 21-10-2026): arriba y centrado, un
-// carrusel en 3D con fotos de Pablo trabajando, que gira solo; debajo, su
-// texto sobre sí mismo, sin título; y al final, sencillos, sus datos y el
-// botón de WhatsApp. El título "Contacto" no se ve, pero sigue ahí para
-// buscadores y lectores de pantalla.
+// Contacto (rehecha a petición de Guzmán, 21-10-2026), al estilo editorial de
+// gilhuybrecht.com/profile pero en blanco, con letra más contenida y la
+// estética de la web: secciones numeradas, cada una con su etiqueta en una
+// cajita como las del menú; el texto de Pablo en la serif, grande y cómodo de
+// leer; y al final la información en columnas con el botón de WhatsApp. Cada
+// bloque aparece suavemente al llegar a él. El título "Contacto" no se ve,
+// pero sigue ahí para buscadores y lectores de pantalla.
 import Base from '../layouts/Base.astro';
-import Carrusel3D from '../components/Carrusel3D.astro';
-import { ambas, urlContacto, type Idioma } from '../lib/rutas';
+import { ambas, secciones, urlColabora, urlContacto, urlEncargos, urlSeccion, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
-
-// Fotos de prueba, de momento (las que pasó Guzmán el 21-10-2026).
-const fotos = Object.values(
-  import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }),
-).map((m) => m.default);
 
 interface Props {
   idioma: Idioma;
@@ -21,26 +17,80 @@ interface Props {
 
 const { idioma } = Astro.props;
 const t = textos[idioma];
+const columnas = [
+  {
+    titulo: t.disciplinas,
+    enlaces: [
+      { texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
+      { texto: secciones.esculturas.nombre[idioma], url: urlSeccion('esculturas', idioma) },
+    ],
+  },
+  {
+    titulo: t.aMedida,
+    enlaces: [
+      { texto: t.encargos, url: urlEncargos(idioma) },
+      { texto: t.colabora, url: urlColabora(idioma) },
+    ],
+  },
+  {
+    titulo: t.contacto,
+    enlaces: [
+      { texto: sitio.telefonoVisible, url: `tel:+${sitio.whatsapp}` },
+      { texto: sitio.correo, url: `mailto:${sitio.correo}` },
+      { texto: `@${sitio.instagram}`, url: urlInstagram },
+    ],
+  },
+];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
   <h1 class="oculto">{t.contacto}</h1>
 
-  <Carrusel3D fotos={fotos} />
+  <section class="bloque">
+    <h2 class="etiqueta">1. {t.sobreMi}</h2>
+    <div class="cuerpo biografia">
+      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+    </div>
+  </section>
 
-  <div class="texto-largo sobre-mi">
-    {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
-  </div>
-
-  <div class="datos">
-    <ul>
-      <li><a href={`tel:+${sitio.whatsapp}`}>{sitio.telefonoVisible}</a></li>
-      <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>
-      <li><a href={urlInstagram}>@{sitio.instagram}</a></li>
-    </ul>
-    <a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a>
-  </div>
+  <section class="bloque">
+    <h2 class="etiqueta">2. {t.info}</h2>
+    <div class="cuerpo">
+      <div class="columnas">
+        {columnas.map(({ titulo, enlaces }) => (
+          <div>
+            <h3>{titulo}</h3>
+            <ul>
+              {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a></p>
+    </div>
+  </section>
 </Base>
+
+<script>
+  // Cada bloque aparece al llegar a él: sube un poco y pasa de desenfocado a
+  // nítido, como el título de Pintura y Escultura pero más suave. Los que ya
+  // se ven al entrar, a la vez que carga la página.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const bloques = [...document.querySelectorAll<HTMLElement>('.bloque')];
+    bloques.forEach((b) => b.classList.add('por-ver'));
+    const ver = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.remove('por-ver');
+          ver.unobserve(e.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    bloques.forEach((b) => ver.observe(b));
+  }
+</script>
 
 <style>
   .oculto {
@@ -52,47 +102,104 @@ const t = textos[idioma];
     white-space: nowrap;
   }
 
-  .sobre-mi {
-    margin: 0 auto;
+  /* Cada sección: la etiqueta arriba (en ordenador, a la izquierda) y el
+     contenido. Mucho aire entre secciones, como en la referencia. */
+  .bloque {
+    display: grid;
+    gap: 1.25rem;
+    margin: 2rem 0 0;
+    transition:
+      opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+      translate 1s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .datos {
-    margin: 4rem auto 0;
-    text-align: center;
+  .bloque + .bloque {
+    margin-top: clamp(4rem, 10vw, 8rem);
   }
 
-  /* Teléfono, correo e Instagram en una línea, separados por puntos (en el
-     móvil, uno debajo de otro). */
-  .datos ul {
-    list-style: none;
-    margin: 0 0 1.5rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4rem 0;
+  .bloque.por-ver {
+    opacity: 0;
+    translate: 0 1.5rem;
+    filter: blur(6px);
+  }
+
+  /* La etiqueta, en una cajita como las del menú. */
+  .etiqueta {
+    justify-self: start;
+    align-self: start;
+    margin: 0;
+    padding: 7.4px 12px 4.6px;
+    border-radius: 4px;
+    background: rgb(237 237 237 / 0.5);
+    font-family: var(--serif);
+    font-size: calc(1em * var(--serif-escala));
+    font-weight: 300;
+    line-height: 1.1;
+  }
+
+  /* El texto de Pablo, en la serif, grande pero sin llegar al de la
+     referencia: se lee de corrido. */
+  .biografia {
+    font-family: var(--serif);
+    font-size: clamp(calc(1.3em * var(--serif-escala)), 2.1vw, calc(1.75em * var(--serif-escala)));
+    font-weight: 300;
+    line-height: 1.3;
+    max-width: 40rem;
+  }
+
+  .biografia p {
+    margin: 0 0 0.9em;
+  }
+
+  .columnas {
+    display: grid;
+    gap: 2rem;
+  }
+
+  h3 {
+    margin: 0 0 0.6rem;
+    font-family: var(--sans);
+    font-size: 0.9em;
+    font-weight: 400;
     color: var(--suave);
   }
 
-  .datos li + li::before {
-    content: '·';
-    margin: 0 0.75rem;
+  .columnas ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
   }
 
-  .datos a:not(.boton) {
+  .columnas a {
     text-decoration: none;
   }
 
-  .datos a:not(.boton):hover {
-    color: var(--texto);
+  .columnas a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  @media (max-width: 560px) {
-    .datos ul {
-      flex-direction: column;
+  .llamada {
+    margin: 3rem 0 0;
+  }
+
+  @media (min-width: 640px) {
+    .columnas {
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      column-gap: clamp(2.5rem, 6vw, 6rem);
     }
-    .datos li + li::before {
-      content: none;
+  }
+
+  /* En ordenador, la etiqueta en su columna a la izquierda y el contenido a
+     la derecha. */
+  @media (min-width: 900px) {
+    .bloque {
+      grid-template-columns: minmax(9rem, 1fr) 3fr;
+      gap: 2rem;
     }
   }
 </style>

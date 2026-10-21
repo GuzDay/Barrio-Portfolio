@@ -84,10 +84,12 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   texto que mandó Pablo; las dos páginas salen de `src/vistas/Encargos.astro`.
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
-  Contacto no enseña título: arriba un carrusel 3D que gira solo
-  (`src/components/Carrusel3D.astro`, fotos de prueba en
-  `src/assets/contacto/`), debajo el texto de Pablo sin título, y al final
-  los datos y el botón "Contacta conmigo";
+  Contacto no enseña título y va al estilo editorial de
+  gilhuybrecht.com/profile, en blanco y con la estética de la web: "1. Sobre
+  mí" (el texto de Pablo en la serif) y "2. Info" (columnas Disciplinas, A
+  medida, Contacto, y el botón "Contacta conmigo"), con las etiquetas en
+  cajitas como las del menú. Probado y descartado por Guzmán: un carrusel 3D
+  de fotos que giraba solo (está en el historial);
   /acerca-de-mi/ redirige a /contacto/.
 - **Cada obra lleva ficha**: título, técnica, medidas, año y un texto
   breve. Esto es lo contrario que en la web de Blanca, donde no se quería
