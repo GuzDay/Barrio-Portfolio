@@ -7,7 +7,6 @@
 // abiertos al público.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import fotoEncargos from '../assets/encargos/cabecera.jpg';
 import fotoEncargosAncha from '../assets/encargos/horizontal.jpg';
 import { ambas, urlColabora, urlEncargos, type Idioma } from '../lib/rutas';
 import { urlWhatsApp } from '../lib/sitio';
@@ -27,18 +26,14 @@ const p =
 ---
 
 <Base idioma={idioma} alternativas={ambas(p.url)} titulo={p.nombre} descripcion={p.intro[0]} activa={pagina}>
-  {/* Encargos lleva foto (pedido de Guzmán, 21-10-2026): en el móvil, una
-      vertical 3:4 entre el título y el texto; en ordenador, otra apaisada
-      4:3 a la derecha de los dos. Cada pantalla solo descarga la suya (la
-      otra está oculta y es "lazy"). Colabora conmigo, sin foto. */}
+  {/* Encargos lleva una foto apaisada 4:3 (pedido de Guzmán, 21-10-2026):
+      en el móvil entre el título y el texto; en ordenador, a la derecha de
+      los dos. Colabora conmigo, sin foto. */}
   <div class:list={['cabeza', { 'con-foto': pagina === 'encargos' }]}>
     <h1 class="anima" data-ritmo="45">{p.nombre}</h1>
     {pagina === 'encargos' && (
-      <figure class="foto vertical anima-bloque">
-        <Image src={fotoEncargos} alt="" widths={[400, 600, 900]} sizes="100vw" loading="lazy" />
-      </figure>
-      <figure class="foto horizontal anima-bloque">
-        <Image src={fotoEncargosAncha} alt="" widths={[600, 900, 1200, 1600]} sizes="50vw" loading="lazy" />
+      <figure class="foto anima-bloque">
+        <Image src={fotoEncargosAncha} alt="" widths={[600, 900, 1200, 1600]} sizes="(min-width: 900px) 50vw, 100vw" loading="eager" fetchpriority="high" />
       </figure>
     )}
     <div class="texto-largo">
@@ -188,27 +183,16 @@ const p =
 
   .foto :global(img) {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
   }
 
-  .foto.horizontal {
-    display: none;
-  }
-
-  /* En ordenador, la apaisada (4:3, el mismo formato girado) a la
+  /* En ordenador, la foto (4:3, el formato de la web girado) a la
      derecha, y el título y el texto centrados en vertical frente a ella,
      para que los dos bloques pesen lo mismo. */
   @media (min-width: 900px) {
-    .foto.vertical {
-      display: none;
-    }
-    .foto.horizontal {
-      display: block;
+    .foto {
       margin: 0;
-    }
-    .foto.horizontal :global(img) {
-      aspect-ratio: 4 / 3;
     }
     .cabeza.con-foto {
       display: grid;
@@ -232,7 +216,7 @@ const p =
     .con-foto .texto-largo p:last-child {
       margin-bottom: 0;
     }
-    .con-foto .horizontal {
+    .con-foto .foto {
       grid-column: 2;
       grid-row: 1 / 3;
     }
