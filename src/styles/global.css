@@ -70,6 +70,14 @@ html {
 /* Excepto en la portada (la de la foto que se pinta): ver LienzoPintable. */
 html:has(.lienzo) {
   scrollbar-gutter: auto;
+  /* El margen lateral, calculado como en las demás páginas: sin el hueco de
+     la barra, la portada es más ancha y en pantallas grandes (donde el
+     margen depende del ancho) todo quedaba 7,5 px desplazado. */
+  --lateral: max(var(--margen), calc((100% - var(--barra, 0px) - var(--ancho-max)) / 2));
+  /* La portada es una sola pantalla: sin scroll, ni el rebote del móvil
+     (pedido de Guzmán). */
+  overflow: hidden;
+  overscroll-behavior: none;
   /* El gris del cielo de la foto (que empieza en blanco y negro): Safari en
      el móvil tiñe sus barras con el color de fondo de la página, así se
      funden con la foto. El body, transparente, para que no la tape. */
@@ -78,6 +86,8 @@ html:has(.lienzo) {
 
 html:has(.lienzo) body {
   background: transparent;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 html:has(.lienzo) .pie {

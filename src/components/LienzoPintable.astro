@@ -60,14 +60,18 @@ const vertical = fotoVertical
   // La portada no reserva el hueco de la barra de desplazamiento (ver
   // global.css): nunca la tiene, y el hueco quedaría como una franja vacía al
   // lado de la foto. Para que la cabecera y el pie queden igual que en las
-  // demás páginas, se mide lo que ocupa la barra en este ordenador (0 en los
-  // Mac con barras que solo aparecen al desplazar) y se les deja ese margen.
+  // demás páginas, se mide el hueco que reservan ellas (0 en los Mac con
+  // barras que solo aparecen al desplazar) y se les deja ese margen.
+  // Se mide en la propia página, reservándolo un instante: antes se medía
+  // con una caja de prueba con barra propia, y el navegador puede dibujar
+  // distinta la barra de una caja y la de la página (en Chrome salía 0
+  // frente a 15 px, y el menú saltaba al pasar de una sección a la portada).
   (function () {
-    var m = document.createElement('div');
-    m.style.cssText = 'position:absolute;top:-9999px;width:100px;height:100px;overflow:scroll';
-    document.documentElement.appendChild(m);
-    document.documentElement.style.setProperty('--barra', m.offsetWidth - m.clientWidth + 'px');
-    m.remove();
+    var html = document.documentElement;
+    html.style.scrollbarGutter = 'stable';
+    var hueco = innerWidth - html.getBoundingClientRect().width;
+    html.style.scrollbarGutter = '';
+    html.style.setProperty('--barra', Math.max(0, hueco) + 'px');
   })();
 </script>
 
