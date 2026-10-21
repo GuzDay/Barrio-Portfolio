@@ -115,8 +115,18 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
   // Esc pulsa el propio enlace "Volver", para que haga exactamente lo mismo
   // que el botón (misma navegación, misma transición, misma altura al volver).
+  // Se navega al SOLTAR la tecla: en Chrome, Esc también es "detener la
+  // carga", y si se navegaba al pulsarla, el navegador cortaba en seco la
+  // vuelta recién empezada (hacía falta darle varias veces).
+  let escPulsada = false;
   addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape' || e.defaultPrevented || e.repeat) return;
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    e.preventDefault();
+    escPulsada = true;
+  });
+  addEventListener('keyup', (e) => {
+    if (e.key !== 'Escape' || !escPulsada) return;
+    escPulsada = false;
     document.querySelector<HTMLAnchorElement>('.volver a')?.click();
   });
 
