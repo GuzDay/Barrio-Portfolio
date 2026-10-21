@@ -113,10 +113,11 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     e.viewTransition.finished.finally(() => img && (img.style.viewTransitionName = ''));
   });
 
+  // Esc pulsa el propio enlace "Volver", para que haga exactamente lo mismo
+  // que el botón (misma navegación, misma transición, misma altura al volver).
   addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape' || e.defaultPrevented) return;
-    const volver = document.querySelector<HTMLAnchorElement>('.volver a');
-    if (volver) location.href = volver.href;
+    if (e.key !== 'Escape' || e.defaultPrevented || e.repeat) return;
+    document.querySelector<HTMLAnchorElement>('.volver a')?.click();
   });
 
   // Carrusel: la pista es una fila de fotos con desplazamiento lateral y
