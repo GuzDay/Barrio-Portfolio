@@ -195,7 +195,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
   });
 
   // ---------- Volver a la misma altura ----------
-  // "Volver a pintura/escultura" es un enlace normal, así que la galería se
+  // "Cerrar" (en la página de la obra) es un enlace normal, así que la galería se
   // abría arriba del todo. Al pulsar una tarjeta se apunta por dónde iba el
   // scroll (y el filtro, que cambia la altura); al volver de esa obra se
   // deja igual antes de pintar, para que la foto vuele a su tarjeta.
@@ -216,6 +216,15 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
         scrollTo(0, antes.y);
       }
     } catch {}
+    // Si desde la obra se pasó a otra con "Anterior / Siguiente", la que se
+    // cierra puede no estar a la vista: se centra su tarjeta, para que la
+    // foto vuele a un sitio visible.
+    const desde = (globalThis as any).navigation?.activation?.from?.url ?? document.referrer;
+    const tarjeta = [...galeria.querySelectorAll<HTMLAnchorElement>('.tarjeta')].find(
+      (t) => new URL(t.href).pathname === new URL(desde).pathname,
+    );
+    const r = tarjeta?.getBoundingClientRect();
+    if (r && r.height && (r.top < 0 || r.bottom > innerHeight)) tarjeta!.scrollIntoView({ block: 'center' });
   }
 
   if (galeria) {

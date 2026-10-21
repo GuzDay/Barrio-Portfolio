@@ -1,7 +1,8 @@
 ---
 // Página de una obra, sin cabecera ni pie (pedido de Guzmán): sus fotos en
 // un carrusel vertical 3:4 que se arrastra a los lados, con flechas a media
-// altura y "volver" debajo; al lado, la ficha con el botón para preguntar
+// altura y la obra anterior / siguiente debajo; arriba a la izquierda,
+// "Cerrar", que vuelve a la sección; al lado, la ficha con el botón para preguntar
 // por WhatsApp. En ordenador ocupa justo la pantalla, sin scroll, con la
 // foto centrada en vertical.
 import { Image } from 'astro:assets';
@@ -23,6 +24,8 @@ const t = textos[idioma];
 const obras = await obrasDe(seccion);
 const pos = obras.findIndex((o) => o.id === id);
 const obra = obras[pos]!;
+const anterior = obras[pos - 1];
+const siguiente = obras[pos + 1];
 const f = ficha(obra, idioma);
 const nombreSeccion = secciones[seccion].nombre[idioma];
 const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
@@ -36,6 +39,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   activa={seccion}
   sinCabecera
 >
+  <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
   <article class="obra">
     <div class="columna-fotos">
     <div class="carrusel" data-varias={f.fotos.length > 1 ? '' : undefined}>
@@ -64,7 +68,10 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
         </>
       )}
     </div>
-      <p class="volver"><a href={urlSeccion(seccion, idioma)}>← {t.volver(nombreSeccion)}</a></p>
+      <nav class="vecinas">
+        {anterior ? <a href={urlObra(seccion, anterior.id, idioma)}>← {t.anterior}</a> : <span />}
+        {siguiente && <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a>}
+      </nav>
     </div>
     <div class="ficha">
       <h1>{f.titulo}</h1>
@@ -81,11 +88,11 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </Base>
 
 <script>
-  // Esc sale de la obra y vuelve a su sección, como el enlace "Volver"
+  // Esc sale de la obra y vuelve a su sección, como "Cerrar"
   // (pedido de Guzmán).
   // Transición con la galería (ver Galeria.astro): la foto visible es la que
   // vuela, con el nombre "foto-obra". Solo hacia o desde su propia sección.
-  const seccion = () => new URL(document.querySelector<HTMLAnchorElement>('.volver a')!.href).pathname;
+  const seccion = () => new URL(document.querySelector<HTMLAnchorElement>('.cerrar')!.href).pathname;
   const esSeccion = (url: string) => {
     try {
       return new URL(url, location.href).pathname === seccion();
@@ -113,7 +120,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     e.viewTransition.finished.finally(() => img && (img.style.viewTransitionName = ''));
   });
 
-  // Esc pulsa el propio enlace "Volver", para que haga exactamente lo mismo
+  // Esc pulsa el propio enlace "Cerrar", para que haga exactamente lo mismo
   // que el botón (misma navegación, misma transición, misma altura al volver).
   // Se navega al SOLTAR la tecla: en Chrome, Esc también es "detener la
   // carga", y si se navegaba al pulsarla, el navegador cortaba en seco la
@@ -127,7 +134,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   addEventListener('keyup', (e) => {
     if (e.key !== 'Escape' || !escPulsada) return;
     escPulsada = false;
-    document.querySelector<HTMLAnchorElement>('.volver a')?.click();
+    document.querySelector<HTMLAnchorElement>('.cerrar')?.click();
   });
 
   // Carrusel: la pista es una fila de fotos con desplazamiento lateral y
@@ -207,17 +214,29 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </script>
 
 <style>
-  .volver {
+  .vecinas {
+    display: flex;
+    justify-content: space-between;
     margin: 1rem 0 0;
     font-size: 0.9em;
   }
 
-  .volver a {
+  /* "Cerrar": arriba a la izquierda, alineado con el margen de la web. En
+     el móvil va encima de la foto; en ordenador, fijo en la esquina. */
+  .cerrar {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.9em;
+  }
+
+  .cerrar,
+  .vecinas a {
     color: var(--suave);
     text-decoration: none;
   }
 
-  .volver a:hover {
+  .cerrar:hover,
+  .vecinas a:hover {
     color: var(--texto);
   }
 
@@ -233,7 +252,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      cabe en la pantalla bajo la cabecera, manda sobre el ancho. */
   .obra {
     /* Sin cabecera: la foto puede ocupar casi todo el alto, dejando sitio
-       arriba y para el "volver" de debajo. */
+       arriba y para "Anterior / Siguiente" debajo. */
     --alto: min(calc(100svh - 150px), 860px);
   }
 
@@ -378,8 +397,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      debajo del borde de arriba de la foto (un 12 % de su alto). */
   @media (min-width: 900px) {
     /* Sin scroll: la página mide justo la pantalla y la foto va centrada en
-       vertical, con el mismo margen arriba que abajo (--hueco-v). "Volver"
-       cuelga debajo de la foto, dentro de ese margen de abajo. */
+       vertical, con el mismo margen arriba que abajo (--hueco-v). "Anterior /
+       Siguiente" cuelga debajo de la foto, dentro de ese margen de abajo. */
     :global(body:has(.obra)) {
       height: 100svh;
       overflow: hidden;
@@ -401,10 +420,18 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       grid-column: 2;
       position: relative;
     }
-    .volver {
+    .vecinas {
       position: absolute;
       top: 100%;
       left: 0;
+      right: 0;
+    }
+    .cerrar {
+      position: fixed;
+      top: 1.5rem;
+      left: var(--lateral);
+      margin: 0;
+      z-index: 1;
     }
     .ficha {
       grid-column: 3;
