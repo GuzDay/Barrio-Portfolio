@@ -1,10 +1,14 @@
-titulo: Mar y Tierra
-texto: "Proyecto Recoletos: dormitorio. Ficha de prueba con fotos de su web actual."
-medidas: 130 x 130 cm
+titulo: "Mar y tierra"
+tecnica: "Técnica mixta sobre lienzo"
+texto: "Composición abstracta que explora la transición entre lo sólido y lo líquido, delimitando el encuentro entre el mar y la tierra mediante una precisa línea de pan de oro, que aporta impacto visual y contraste táctil a la superficie."
+medidas: "130 x 130 cm"
+anio: 2023
 estado: vendido
 fotos:
   - mar-y-tierra-1.jpg
   - mar-y-tierra-2.jpg
-order: 2
+  - mar-y-tierra-3.jpg
+order: 3
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on canvas"
+  texto: "An abstract composition exploring the transition between solid and liquid, marking where sea meets land with a precise line of gold leaf that adds visual impact and tactile contrast to the surface."

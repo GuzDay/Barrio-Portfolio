@@ -1,10 +1,13 @@
-titulo: Hall de salida
-texto: "Vivienda en Ciudad Jardín, Las Palmas. Ficha de prueba con fotos de su web actual."
-medidas: 51 x 38 cm
+titulo: "Hall de salida"
+tecnica: "Técnica mixta sobre papel de grabado"
+texto: "Ilustración minimalista en tonos amarillos y negros que representa un espacio interior con mobiliario y una puerta abierta al fondo. Una obra directa y esquemática que juega con la perspectiva y el contraste cromático para sugerir un punto de transición."
+medidas: "51 x 38 cm"
+anio: 2025
 estado: vendido
 fotos:
   - hall-de-salida-1.jpg
   - hall-de-salida-2.jpg
 order: 14
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on printmaking paper"
+  texto: "A minimalist illustration in yellows and blacks depicting an interior with furniture and an open door at the back. A direct, schematic work that plays with perspective and colour contrast to suggest a point of transition."

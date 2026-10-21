@@ -1,0 +1,12 @@
+titulo: "Secuencia vertical"
+tecnica: "Chapa de acero plegada"
+texto: "Escultura conceptual en chapa metálica plegada oxidada basada en el proyecto arquitectónico de la Casa Speth de Miguel Martín Fernández de la Torre. Una pieza directa y sobria que juega con pliegues y planos verticales para reinterpretar la volumetría del edificio."
+medidas: "42 x 20 x 18 cm"
+estado: disponible
+fotos:
+  - secuencia-vertical-1.jpg
+  - secuencia-vertical-2.jpg
+order: 2
+en:
+  tecnica: "Folded steel sheet"
+  texto: "A conceptual sculpture in oxidised folded sheet metal, based on the architectural design of Casa Speth by Miguel Martín Fernández de la Torre. A direct, restrained piece that plays with folds and vertical planes to reinterpret the building’s volumes."

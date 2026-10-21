@@ -1,10 +1,13 @@
-titulo: La figura detrás del alféizar
-texto: "Encargo para MH Global, c/ Ayala, Madrid. Ficha de prueba con fotos de su web actual."
-medidas: "100 x 100, 30 x 100 y 90 x 100 cm"
-estado: vendido
+titulo: "La figura detrás del alféizar"
+tecnica: "Técnica mixta sobre lienzo"
+texto: "Un paisaje fragmentado donde materia y gesto se equilibran entre control y accidente. La línea horizontal, como alféizar, marca un umbral silencioso desde el que se intuye una figura al otro lado, suspendida entre lo construido y lo imaginado."
+medidas: "Tríptico: 110 x 100 cm | 30 x 100 cm | 90 x 100 cm"
+anio: 2026
+estado: disponible
 fotos:
   - la-figura-detras-del-alfeizar-1.jpg
   - la-figura-detras-del-alfeizar-2.jpg
-order: 8
+order: 7
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on canvas"
+  texto: "A fragmented landscape where matter and gesture balance between control and chance. The horizontal line, like a windowsill, marks a silent threshold beyond which a figure can be sensed, suspended between the built and the imagined."

@@ -1,0 +1,11 @@
+titulo: "Arias"
+tecnica: "Madera de tea"
+texto: "Escultura tallada en madera de tea sobre base de madera clara que evoca el inicio de una familia a través de dos figuras estilizadas. Una pieza sobria y directa que simboliza el nacimiento de un vínculo y la unión íntima entre dos personas."
+medidas: "20 x 5 x 50 cm"
+estado: vendido
+fotos:
+  - arias-1.jpg
+order: 5
+en:
+  tecnica: "Canary pine heartwood (tea)"
+  texto: "A sculpture carved in tea wood on a light wooden base, evoking the beginning of a family through two stylised figures. A restrained, direct piece that symbolises the birth of a bond and the intimate union between two people."

@@ -1,10 +1,13 @@
-titulo: Rojo
-texto: "Proyecto Recoletos: comedor de una vivienda en la c/ Recoletos, Madrid. Ficha de prueba con fotos de su web actual."
-medidas: 130 x 130 cm
+titulo: "Rojo"
+tecnica: "Técnica mixta sobre lienzo"
+texto: "Una obra monocromática en tonos rojos con líneas geométricas incisas que raspan la superficie, diseñada para impactar visualmente y evocar una intensa sensación de profundidad y textura."
+medidas: "130 x 130 cm"
+anio: 2023
 estado: vendido
 fotos:
   - rojo-1.jpg
   - rojo-2.jpg
-order: 1
+order: 2
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on canvas"
+  texto: "A monochrome work in red tones with incised geometric lines scratched into the surface, designed for visual impact and to evoke an intense sense of depth and texture."

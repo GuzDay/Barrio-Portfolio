@@ -20,7 +20,11 @@ consulta que hay**: ver más abajo.
   Contacto (con el texto sobre Pablo debajo), en ES (sin prefijo) y EN (`/en/...`). Las vistas están en
   `src/vistas/`, los textos fijos en `src/lib/textos.ts`. Toda la web lleva
   `noindex` mientras viva en github.io (`SIN_INDEXAR` en `src/lib/sitio.ts`).
-- Las obras de color liso son de prueba y se borran antes de publicar.
+- **Obras reales en la web** (21-10-2026): 14 cuadros y 5 esculturas, sacados
+  del archivo de GÜZDAY con `node scripts/subir-obras.mjs`. Ese programa
+  SUSTITUYE todas las obras de la web por las del archivo (lo hecho desde el
+  panel se pierde) y salta las fichas a medias (salió "Cosa de dos", sin
+  técnica ni estado). Fotos a 2400 px de lado mayor, JPEG 85.
 - **Firma de Pablo** en la cabecera (`src/assets/firma.svg`, metida en la
   página para que tome el color del texto). Sale del SVG que
   pasó Guzmán (`scripts/firma/Firma Barrio.svg`) con los trazos intactos: solo
@@ -114,7 +118,7 @@ con `index.yml` y sus fotos (lo que lee y escribe el panel).
 `~/Documents/GÜZDAY/00 Barrio/Obras/<Pintura|Escultura>/<NN Título>/`, con las
 fotos en calidad original numeradas `1.jpg, 2.jpg…` (la 1 es la portada) y un
 `ficha.txt`. El número de la carpeta es el orden. Se pasa a la web cuando
-Guzmán lo pide ("sube las obras"): reducir fotos, crear las fichas de la web.
+Guzmán lo pide ("sube las obras") con `node scripts/subir-obras.mjs`.
 
 ```
 titulo: Rojo

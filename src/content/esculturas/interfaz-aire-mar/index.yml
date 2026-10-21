@@ -1,0 +1,15 @@
+titulo: "Interfaz aire-mar"
+tecnica: "Tea, chapa y tela"
+texto: "Escultura mixta que representa el rozamiento del viento sobre el agua. La base de madera evoca el fondo marino, la chapa intermedia la superficie del mar y la tela inclinada el flujo del aire que genera las olas."
+medidas: "20 x 40 x 20 cm"
+estado: disponible
+fotos:
+  - interfaz-aire-mar-1.jpg
+  - interfaz-aire-mar-2.jpg
+  - interfaz-aire-mar-3.jpg
+  - interfaz-aire-mar-4.jpg
+  - interfaz-aire-mar-5.jpg
+order: 4
+en:
+  tecnica: "Canary pine heartwood (tea), sheet metal and fabric"
+  texto: "A mixed sculpture depicting the friction of wind on water. The wooden base evokes the seabed, the sheet metal in the middle the surface of the sea, and the tilted fabric the flow of air that creates the waves."

@@ -1,0 +1,16 @@
+titulo: "Casa Speth"
+tecnica: "Chapa de acero soldada"
+texto: "Escultura conceptual en chapa metálica oxidada que alude a la arquitectura de la Casa Speth, obra de Miguel Martín Fernández de la Torre. Una pieza directa y sobria basada estrictamente en planos horizontales y verticales."
+medidas: "46 x 17 x 7 cm"
+estado: disponible
+fotos:
+  - casa-speth-1.jpg
+  - casa-speth-2.jpg
+  - casa-speth-3.jpg
+  - casa-speth-4.jpg
+  - casa-speth-5.jpg
+  - casa-speth-6.jpg
+order: 1
+en:
+  tecnica: "Welded steel sheet"
+  texto: "A conceptual sculpture in oxidised sheet metal that alludes to the architecture of Casa Speth, by Miguel Martín Fernández de la Torre. A direct, restrained piece built strictly on horizontal and vertical planes."

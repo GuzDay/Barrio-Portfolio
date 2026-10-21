@@ -1,6 +1,8 @@
-titulo: Familia africana
-texto: "Tríptico irregular para una vivienda en Santo Domingo, Madrid. Ficha de prueba con fotos de su web actual."
-medidas: 180 x 220 cm
+titulo: "Familia africana"
+tecnica: "Técnica mixta sobre lienzo"
+texto: "Tríptico de gran formato compuesto por figuras estilizadas con vestimentas coloridas sobre un fondo blanco texturizado. Una obra directa y elegante que evoca la presencia y la estética de una familia africana a través del contraste de colores y la sencillez de las formas."
+medidas: "Tríptico: 180 x 220 cm"
+anio: 2022
 estado: vendido
 fotos:
   - familia-africana-1.jpg
@@ -8,6 +10,8 @@ fotos:
   - familia-africana-3.jpg
   - familia-africana-4.jpg
   - familia-africana-5.jpg
-order: 7
+  - familia-africana-6.jpg
+order: 8
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on canvas"
+  texto: "A large-format triptych of stylised figures in colourful clothing against a textured white background. A direct, elegant work that evokes the presence and aesthetic of an African family through contrasting colours and simple forms."

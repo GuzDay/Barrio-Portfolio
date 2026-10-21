@@ -1,9 +1,12 @@
-titulo: Tajogaite
-texto: "Vivienda en Los Llanos, La Palma. Ficha de prueba con fotos de su web actual."
-medidas: 50 x 50 cm
+titulo: "Tajogaite"
+tecnica: "Técnica mixta sobre lienzo"
+texto: "Obra en blanco y negro que representa la vivienda cubierta por la colada durante la erupción del volcán de Tajogaite en La Palma en 2021. Una pieza sobria y directa que retrata el impacto de la lava sobre el paisaje."
+medidas: "50 x 50 cm"
+anio: 2021
 estado: vendido
 fotos:
   - tajogaite-1.jpg
-order: 13
+order: 10
 en:
-  texto: Test entry with photos from his current website.
+  tecnica: "Mixed media on canvas"
+  texto: "A black-and-white work depicting a house buried by the lava flow during the 2021 eruption of the Tajogaite volcano on La Palma. A restrained, direct piece that portrays the impact of the lava on the landscape."

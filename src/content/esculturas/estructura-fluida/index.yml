@@ -1,0 +1,11 @@
+titulo: "Estructura fluida"
+tecnica: "Chapa de acero plegada sobre base de yeso y fibra de vidrio"
+texto: "Escultura mixta que combina una sólida base mineral de yeso y fibra de vidrio con una chapa metálica plegada en la parte superior. Una pieza directa que contrasta la textura rugosa de la base con las formas fluidas del metal."
+medidas: "17 x 20 x 8 cm"
+estado: vendido
+fotos:
+  - estructura-fluida-1.jpg
+order: 3
+en:
+  tecnica: "Folded steel sheet on a plaster and fibreglass base"
+  texto: "A mixed sculpture combining a solid mineral base of plaster and fibreglass with a folded metal sheet on top. A direct piece that contrasts the rough texture of the base with the fluid forms of the metal."
