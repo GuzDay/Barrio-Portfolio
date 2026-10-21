@@ -1,32 +1,10 @@
 ---
-// Contacto (rehecha a petición de Guzmán, 21-10-2026), siguiendo la lámina de
-// fotos de Vivien's Creative: mucho aire, fotos de distintos tamaños con su
-// numerito encima y el texto de Pablo partido en párrafos que las acompañan,
-// en Newsreader grande y un peso más gruesa. Al bajar, cada párrafo entra
-// letra a letra y cada foto se descubre. Al final, sus datos y el botón de
-// WhatsApp. El título "Contacto" no se ve, pero sigue ahí para buscadores y
-// lectores de pantalla.
-//
-// Maquetada con una retícula al modo de Josef Müller-Brockmann ("Sistemas de
-// retícula"), que no se ve pero lo ordena todo (pedido de Guzmán):
-//  - Una línea base (--L): todo se mide en líneas. El texto pequeño ocupa
-//    una línea; el grande, dos exactas; espacios y márgenes, líneas enteras.
-//  - Columnas (12 en ordenador, 6 en el móvil) separadas por una calle de
-//    una línea.
-//  - Campos: filas de 4 líneas separadas también por una línea (un "paso"
-//    de 5 líneas). Cada foto ocupa columnas enteras de ancho y campos
-//    enteros de alto, recortada para encajar.
-//  - Entre filas, un paso de aire; lo que baja respecto a lo de al lado,
-//    baja pasos enteros.
-import { Image } from 'astro:assets';
+// Contacto (rehecha desde cero a petición de Guzmán, 21-10-2026): el texto
+// de Pablo en el centro de la pantalla, centrado, y debajo sus enlaces, uno
+// tras otro en una lista. El título "Contacto" no se ve, pero sigue ahí para
+// buscadores y lectores de pantalla.
 import Base from '../layouts/Base.astro';
-import f01 from '../assets/contacto/01.jpg';
-import f02 from '../assets/contacto/02.jpg';
-import f03 from '../assets/contacto/03.jpg';
-import f04 from '../assets/contacto/04.jpg';
-import f05 from '../assets/contacto/05.jpg';
-import f07 from '../assets/contacto/07.jpg';
-import { ambas, secciones, urlColabora, urlContacto, urlEncargos, urlSeccion, type Idioma } from '../lib/rutas';
+import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
@@ -36,153 +14,27 @@ interface Props {
 
 const { idioma } = Astro.props;
 const t = textos[idioma];
-
-// El texto, partido en palabras y letras para que entren una tras otra al
-// llegar a cada párrafo. Cada letra lleva su número dentro del párrafo.
-const parrafos = t.biografia.map((p) => {
-  let n = 0;
-  return p.split(' ').map((palabra) => [...palabra].map((letra) => ({ letra, i: n++ })));
-});
-
-// Cada pieza en la retícula: columnas (inicio / fin) y cuántos pasos baja
-// respecto al principio de su fila; las fotos, además, cuántos campos de
-// alto. Ordenador y móvil por separado. Fotos de prueba: sesión de Julián
-// Camarillo.
-type Sitio = { col: string; baja?: number; campos?: number };
-type Pieza =
-  | { tipo: 'texto'; indice: number; o: Sitio; m: Sitio }
-  | { tipo: 'foto'; src: ImageMetadata; o: Sitio; m: Sitio };
-const texto = (indice: number, o: Sitio, m: Sitio): Pieza => ({ tipo: 'texto', indice, o, m });
-const foto = (src: ImageMetadata, o: Sitio, m: Sitio): Pieza => ({ tipo: 'foto', src, o, m });
-
-// Filas de la lámina, de arriba abajo.
-const filas: Pieza[][] = [
-  [
-    texto(0, { col: '1 / 10' }, { col: '1 / 7' }),
-    foto(f01, { col: '10 / 13', baja: 1, campos: 3 }, { col: '3 / 7', campos: 3 }),
-  ],
-  [
-    foto(f04, { col: '1 / 5', campos: 4 }, { col: '1 / 6', campos: 4 }),
-    texto(1, { col: '6 / 13', baja: 1 }, { col: '1 / 7' }),
-  ],
-  [foto(f02, { col: '4 / 10', campos: 3 }, { col: '1 / 7', campos: 2 })],
-  [texto(2, { col: '3 / 12' }, { col: '1 / 7' })],
-  [
-    foto(f05, { col: '2 / 5', campos: 3 }, { col: '1 / 4', campos: 2 }),
-    foto(f03, { col: '8 / 11', baja: 2, campos: 3 }, { col: '4 / 7', baja: 1, campos: 2 }),
-  ],
-  [texto(3, { col: '1 / 11' }, { col: '1 / 7' })],
-  [
-    texto(4, { col: '1 / 8', baja: 1 }, { col: '1 / 7' }),
-    foto(f07, { col: '9 / 13', campos: 3 }, { col: '2 / 6', campos: 3 }),
-  ],
-];
-const estilo = ({ o, m }: Pieza) =>
-  [
-    `--col: ${o.col}`,
-    `--baja: ${o.baja ?? 0}`,
-    `--campos: ${o.campos ?? 0}`,
-    `--col-m: ${m.col}`,
-    `--baja-m: ${m.baja ?? 0}`,
-    `--campos-m: ${m.campos ?? 0}`,
-  ].join('; ');
-let numero = 0;
-
-const grupos = [
-  {
-    titulo: t.contacto,
-    enlaces: [
-      { texto: sitio.telefonoVisible, url: `tel:+${sitio.whatsapp}` },
-      { texto: sitio.correo, url: `mailto:${sitio.correo}` },
-      { texto: `@${sitio.instagram}`, url: urlInstagram },
-    ],
-  },
-  {
-    titulo: t.disciplinas,
-    enlaces: [
-      { texto: secciones.cuadros.nombre[idioma], url: urlSeccion('cuadros', idioma) },
-      { texto: secciones.esculturas.nombre[idioma], url: urlSeccion('esculturas', idioma) },
-    ],
-  },
-  {
-    titulo: t.aMedida,
-    enlaces: [
-      { texto: t.encargos, url: urlEncargos(idioma) },
-      { texto: t.colabora, url: urlColabora(idioma) },
-    ],
-  },
+const enlaces = [
+  { texto: t.contactaConmigo, url: urlWhatsApp(t.mensajeContacto) },
+  { texto: sitio.telefonoVisible, url: `tel:+${sitio.whatsapp}` },
+  { texto: sitio.correo, url: `mailto:${sitio.correo}` },
+  { texto: `@${sitio.instagram}`, url: urlInstagram },
 ];
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
-  <script is:inline>
-    // Las piezas esperan escondidas a que se llegue a ellas (ver abajo). Solo
-    // si el navegador sabe avisar de eso y no se ha pedido menos movimiento;
-    // si no, se ve todo quieto desde el principio.
-    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-      document.documentElement.classList.add('contacto-anima');
-  </script>
-
   <h1 class="oculto">{t.contacto}</h1>
-  {/* Para lectores de pantalla, el texto de corrido; el animado, oculto para ellos. */}
-  <div class="oculto">{t.biografia.map((parrafo) => <p>{parrafo}</p>)}</div>
 
-  <div class="lamina">
-    {filas.map((fila) => (
-      <div class="fila">
-        {fila.map((pieza) =>
-          pieza.tipo === 'texto' ? (
-            <p class="parrafo aparece" style={estilo(pieza)} aria-hidden="true">
-              {parrafos[pieza.indice].map((letras, k) => (
-                <>
-                  <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
-                  {k < parrafos[pieza.indice].length - 1 && ' '}
-                </>
-              ))}
-            </p>
-          ) : (
-            <figure class="foto aparece" style={estilo(pieza)}>
-              <figcaption>{String(++numero).padStart(2, '0')}</figcaption>
-              <div class="marco">
-                <Image src={pieza.src} alt="" widths={[400, 700, 1000, 1400]} sizes="(min-width: 900px) 50vw, 100vw" loading="lazy" />
-              </div>
-            </figure>
-          ),
-        )}
-      </div>
-    ))}
-
-    <div class="fila datos aparece">
-      {grupos.map(({ titulo, enlaces }) => (
-        <div class="grupo">
-          <h2>{titulo}</h2>
-          <ul>
-            {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
-          </ul>
-        </div>
-      ))}
-      <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a></p>
+  <div class="contacto">
+    <div class="biografia">
+      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
     </div>
+
+    <ul class="enlaces">
+      {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+    </ul>
   </div>
 </Base>
-
-<script>
-  // Al llegar a cada pieza (un poco antes de que asome del todo), se marca
-  // como vista y hace su entrada (ver el CSS). Solo una vez.
-  if (document.documentElement.classList.contains('contacto-anima')) {
-    const ver = new IntersectionObserver(
-      (entradas) => {
-        for (const e of entradas) {
-          if (!e.isIntersecting) continue;
-          e.target.classList.add('visto');
-          ver.unobserve(e.target);
-        }
-      },
-      { rootMargin: '0px 0px -10% 0px' },
-    );
-    document.querySelectorAll('.aparece').forEach((el) => ver.observe(el));
-  }
-</script>
 
 <style>
   .oculto {
@@ -194,238 +46,43 @@ const grupos = [
     white-space: nowrap;
   }
 
-  /* ---------- La retícula ----------
-     --L: la línea base. --paso: un campo (4 líneas) más su calle (1). */
-  .lamina {
-    --L: 20px;
-    --columnas: 6;
-    --paso: calc(5 * var(--L));
-    padding: calc(2 * var(--L)) 0 var(--L);
+  /* Todo en el centro: a lo ancho y, si cabe, también a lo alto. */
+  :global(main:has(.contacto)) {
+    display: flex;
   }
 
-  /* Cada fila: las columnas de la retícula, con una calle de una línea, y
-     separada de la siguiente por un paso (un campo de aire; eran dos y
-     Guzmán vio demasiado hueco). */
-  .fila {
-    display: grid;
-    grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
-    column-gap: var(--L);
-    /* En el móvil, lo que comparte fila queda uno debajo de otro: dos
-       líneas de aire entre medias. */
-    row-gap: calc(2 * var(--L));
-    align-items: start;
+  .contacto {
+    margin: auto;
+    max-width: 40rem;
+    padding: 2rem 0;
+    text-align: center;
   }
 
-  .fila + .fila {
-    margin-top: var(--paso);
-  }
-
-  /* Cada pieza de la lámina en su sitio (los datos, aparte). */
-  .fila:not(.datos) > * {
-    grid-column: var(--col-m);
-    margin-top: calc(var(--baja-m) * var(--paso));
-  }
-
-  /* El texto de Pablo: Newsreader un peso más gruesa (500) y grande, con un
-     interlineado de exactamente dos líneas base. */
-  .parrafo {
-    margin-bottom: 0;
+  .biografia {
     font-family: var(--serif);
-    font-weight: 500;
-    font-size: calc(1.4 * var(--L));
-    line-height: calc(2 * var(--L));
-    letter-spacing: -0.01em;
+    font-size: calc(1.25em * var(--serif-escala));
+    font-weight: 400;
+    line-height: 1.35;
   }
 
-  .palabra {
-    display: inline-block;
-    white-space: nowrap;
+  .biografia p {
+    margin: 0 0 0.8em;
   }
 
-  .letra {
-    display: inline-block;
-  }
-
-  .foto {
-    margin-bottom: 0;
-  }
-
-  /* El numerito, en una línea justa encima de la foto. */
-  figcaption {
-    height: var(--L);
-    font-size: 0.7em;
-    line-height: var(--L);
-    color: var(--suave);
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* La foto mide campos enteros de alto (n campos y sus n-1 calles) y se
-     recorta para llenarlos. */
-  .marco {
-    height: calc(var(--campos-m) * var(--paso) - var(--L));
-    overflow: hidden;
-    background: var(--vacio);
-  }
-
-  .marco :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* ---------- Los datos, al final ----------
-     Texto pequeño en una línea base por renglón; cada grupo en sus columnas. */
-  .datos {
-    font-size: 0.8em;
-    line-height: var(--L);
-    row-gap: var(--L);
-  }
-
-  .grupo {
-    grid-column: span 3;
-  }
-
-  .datos .grupo:first-child {
-    grid-row: span 2;
-  }
-
-  h2 {
-    margin: 0;
-    font-family: var(--sans);
-    font-size: 1em;
-    font-weight: 500;
-    line-height: var(--L);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  .datos ul {
+  .enlaces {
     list-style: none;
-    margin: 0;
+    margin: 2.5rem 0 0;
     padding: 0;
+    display: grid;
+    gap: 0.35rem;
   }
 
-  .datos a:not(.boton) {
+  .enlaces a {
     text-decoration: none;
   }
 
-  .datos a:not(.boton):hover {
+  .enlaces a:hover {
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-
-  /* El botón mide dos líneas de alto. */
-  .llamada {
-    grid-column: 1 / -1;
-    margin: 0;
-  }
-
-  .llamada .boton {
-    height: calc(2 * var(--L));
-    padding: 0 1.1rem;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* ---------- Ordenador: 12 columnas, línea de 24 px ---------- */
-  @media (min-width: 900px) {
-    .lamina {
-      --L: 24px;
-      --columnas: 12;
-      padding-top: calc(2 * var(--L));
-    }
-    .fila:not(.datos) > * {
-      grid-column: var(--col);
-      margin-top: calc(var(--baja) * var(--paso));
-    }
-    .parrafo {
-      font-size: calc(1.75 * var(--L));
-    }
-    .marco {
-      height: calc(var(--campos) * var(--paso) - var(--L));
-    }
-    .fila.datos {
-      margin-top: calc(2 * var(--paso));
-    }
-    .datos .grupo:first-child {
-      grid-row: auto;
-    }
-    .llamada {
-      grid-column: 10 / 13;
-      justify-self: end;
-      align-self: end;
-    }
-  }
-
-  /* ---------- Entradas al hacer scroll ----------
-     Solo si el navegador puede (ver el script del principio). */
-  :global(html.contacto-anima) .aparece:not(.visto) .letra,
-  :global(html.contacto-anima) .datos.aparece:not(.visto) {
-    opacity: 0;
-  }
-
-  /* Párrafos: letra a letra, rápido (como el título de Pintura y Escultura). */
-  :global(html.contacto-anima) .parrafo.visto .letra {
-    animation: letra 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(var(--i) * 6ms);
-  }
-
-  @keyframes letra {
-    from {
-      opacity: 0;
-      transform: translateY(0.3em);
-      filter: blur(6px);
-    }
-  }
-
-  /* Fotos: se descubren de abajo arriba mientras se asienta un zoom suave;
-     el numerito, un poco antes. */
-  :global(html.contacto-anima) .foto:not(.visto) .marco {
-    clip-path: inset(100% 0 0 0);
-  }
-  :global(html.contacto-anima) .foto:not(.visto) figcaption {
-    opacity: 0;
-  }
-  :global(html.contacto-anima) .foto.visto .marco {
-    animation: descubrir 1.2s cubic-bezier(0.65, 0, 0.35, 1) backwards;
-  }
-  :global(html.contacto-anima) .foto.visto .marco :global(img) {
-    animation: asentar 2s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-  :global(html.contacto-anima) .foto.visto figcaption {
-    animation: fundir 0.6s ease backwards;
-  }
-
-  @keyframes descubrir {
-    from {
-      clip-path: inset(100% 0 0 0);
-    }
-    to {
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  @keyframes asentar {
-    from {
-      transform: scale(1.12);
-    }
-  }
-
-  @keyframes fundir {
-    from {
-      opacity: 0;
-    }
-  }
-
-  /* Los datos, subiendo apenas (como "Todas / Disponibles"). */
-  :global(html.contacto-anima) .datos.visto {
-    animation: datos 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-
-  @keyframes datos {
-    from {
-      opacity: 0;
-      translate: 0 0.6em;
-    }
   }
 </style>
