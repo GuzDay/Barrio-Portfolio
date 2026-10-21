@@ -1,11 +1,12 @@
 ---
 // Contacto (rehecha a petición de Guzmán, 21-10-2026), al estilo editorial de
 // gilhuybrecht.com/profile pero en blanco, con letra más contenida y la
-// estética de la web: secciones numeradas, cada una con su etiqueta en una
-// cajita como las del menú; el texto de Pablo en la serif, grande y cómodo de
-// leer; y al final la información en columnas con el botón de WhatsApp. Cada
-// bloque aparece suavemente al llegar a él. El título "Contacto" no se ve,
-// pero sigue ahí para buscadores y lectores de pantalla.
+// estética de la web. En ordenador cabe entera en una pantalla: el texto de
+// Pablo ocupa 3/4 del ancho, en la serif, y entra letra a letra (como el
+// título de Pintura y Escultura, pero rápido); a la derecha, abajo y en
+// pequeño, sus datos y el botón de WhatsApp. En el móvil, uno debajo de otro.
+// El título "Contacto" no se ve, pero sigue ahí para buscadores y lectores de
+// pantalla.
 import Base from '../layouts/Base.astro';
 import { ambas, secciones, urlColabora, urlContacto, urlEncargos, urlSeccion, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
@@ -41,56 +42,48 @@ const columnas = [
     ],
   },
 ];
+
+// El texto, partido en palabras y letras para que entren una tras otra. Cada
+// letra lleva su número (--i), del que sale su retraso. Las palabras van
+// enteras en una caja, para que no se corten al final de la línea.
+let n = 0;
+const parrafos = t.biografia.map((p) => p.split(' ').map((palabra) => [...palabra].map((letra) => ({ letra, i: n++ }))));
 ---
 
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
   <h1 class="oculto">{t.contacto}</h1>
 
-  <section class="bloque">
-    <h2 class="etiqueta">1. {t.sobreMi}</h2>
-    <div class="cuerpo biografia">
-      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
-    </div>
-  </section>
-
-  <section class="bloque">
-    <h2 class="etiqueta">2. {t.info}</h2>
-    <div class="cuerpo">
-      <div class="columnas">
-        {columnas.map(({ titulo, enlaces }) => (
-          <div>
-            <h3>{titulo}</h3>
-            <ul>
-              {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
-            </ul>
-          </div>
+  <div class="contacto">
+    <div class="biografia">
+      {/* Para lectores de pantalla, el texto de corrido; el animado, oculto para ellos. */}
+      <div class="oculto">{t.biografia.map((p) => <p>{p}</p>)}</div>
+      <div aria-hidden="true">
+        {parrafos.map((palabras) => (
+          <p>
+            {palabras.map((letras, k) => (
+              <>
+                <span class="palabra">{letras.map(({ letra, i }) => <span class="letra" style={`--i: ${i}`}>{letra}</span>)}</span>
+                {k < palabras.length - 1 && ' '}
+              </>
+            ))}
+          </p>
         ))}
       </div>
+    </div>
+
+    <div class="datos" style={`--despues: ${n}`}>
+      {columnas.map(({ titulo, enlaces }) => (
+        <div>
+          <h2>{titulo}</h2>
+          <ul>
+            {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+          </ul>
+        </div>
+      ))}
       <p class="llamada"><a class="boton" href={urlWhatsApp(t.mensajeContacto)}>{t.contactaConmigo}</a></p>
     </div>
-  </section>
+  </div>
 </Base>
-
-<script>
-  // Cada bloque aparece al llegar a él: sube un poco y pasa de desenfocado a
-  // nítido, como el título de Pintura y Escultura pero más suave. Los que ya
-  // se ven al entrar, a la vez que carga la página.
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const bloques = [...document.querySelectorAll<HTMLElement>('.bloque')];
-    bloques.forEach((b) => b.classList.add('por-ver'));
-    const ver = new IntersectionObserver(
-      (entradas) => {
-        for (const e of entradas) {
-          if (!e.isIntersecting) continue;
-          e.target.classList.remove('por-ver');
-          ver.unobserve(e.target);
-        }
-      },
-      { rootMargin: '0px 0px -12% 0px' },
-    );
-    bloques.forEach((b) => ver.observe(b));
-  }
-</script>
 
 <style>
   .oculto {
@@ -102,104 +95,124 @@ const columnas = [
     white-space: nowrap;
   }
 
-  /* Cada sección: la etiqueta arriba (en ordenador, a la izquierda) y el
-     contenido. Mucho aire entre secciones, como en la referencia. */
-  .bloque {
+  .contacto {
     display: grid;
-    gap: 1.25rem;
-    margin: 2rem 0 0;
-    transition:
-      opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
-      translate 1s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 1s cubic-bezier(0.22, 1, 0.36, 1);
+    gap: 3rem;
+    margin-top: 2rem;
   }
 
-  .bloque + .bloque {
-    margin-top: clamp(4rem, 10vw, 8rem);
-  }
-
-  .bloque.por-ver {
-    opacity: 0;
-    translate: 0 1.5rem;
-    filter: blur(6px);
-  }
-
-  /* La etiqueta, en una cajita como las del menú. */
-  .etiqueta {
-    justify-self: start;
-    align-self: start;
-    margin: 0;
-    padding: 7.4px 12px 4.6px;
-    border-radius: 4px;
-    background: rgb(237 237 237 / 0.5);
-    font-family: var(--serif);
-    font-size: calc(1em * var(--serif-escala));
-    font-weight: 300;
-    line-height: 1.1;
-  }
-
-  /* El texto de Pablo, en la serif, grande pero sin llegar al de la
-     referencia: se lee de corrido. */
+  /* El texto de Pablo, en la serif. */
   .biografia {
     font-family: var(--serif);
-    font-size: clamp(calc(1.3em * var(--serif-escala)), 2.1vw, calc(1.75em * var(--serif-escala)));
+    font-size: calc(1.3em * var(--serif-escala));
     font-weight: 300;
     line-height: 1.3;
-    max-width: 40rem;
   }
 
   .biografia p {
-    margin: 0 0 0.9em;
+    margin: 0 0 0.85em;
   }
 
-  .columnas {
+  .biografia p:last-child {
+    margin-bottom: 0;
+  }
+
+  .palabra {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  /* Letra a letra, como el título de Pintura y Escultura pero rápido: cada
+     una sube un poco y pasa de desenfocada a nítida, 2,5 ms después de la
+     anterior (el texto entero, en unos 3 s). */
+  .letra {
+    display: inline-block;
+    animation: letra 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.15s + var(--i) * 2.5ms);
+  }
+
+  @keyframes letra {
+    from {
+      opacity: 0;
+      transform: translateY(0.35em);
+      filter: blur(4px);
+    }
+  }
+
+  /* Los datos, en pequeño y justificados a la izquierda. Aparecen cuando el
+     texto ya va por el final, subiendo apenas (como "Todas / Disponibles"). */
+  .datos {
     display: grid;
-    gap: 2rem;
+    align-content: end;
+    gap: 1.4rem;
+    font-size: 0.9em;
+    animation: datos 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--despues) * 2.5ms - 0.6s);
   }
 
-  h3 {
-    margin: 0 0 0.6rem;
+  @keyframes datos {
+    from {
+      opacity: 0;
+      translate: 0 0.4em;
+    }
+  }
+
+  h2 {
+    margin: 0 0 0.35rem;
     font-family: var(--sans);
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: 400;
     color: var(--suave);
   }
 
-  .columnas ul {
+  .datos ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.3rem;
+    gap: 0.15rem;
   }
 
-  .columnas a {
+  .datos a:not(.boton) {
     text-decoration: none;
   }
 
-  .columnas a:hover {
+  .datos a:not(.boton):hover {
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
   .llamada {
-    margin: 3rem 0 0;
+    margin: 0.4rem 0 0;
   }
 
-  @media (min-width: 640px) {
-    .columnas {
-      grid-template-columns: repeat(3, auto);
-      justify-content: start;
-      column-gap: clamp(2.5rem, 6vw, 6rem);
+  .llamada .boton {
+    padding: 0.65rem 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .letra,
+    .datos {
+      animation: none;
     }
   }
 
-  /* En ordenador, la etiqueta en su columna a la izquierda y el contenido a
-     la derecha. */
+  /* En ordenador, todo en una pantalla: el texto a 3/4 y los datos a 1/4,
+     abajo. El tamaño del texto depende también del alto de la pantalla,
+     para que quepa siempre sin scroll. */
   @media (min-width: 900px) {
-    .bloque {
-      grid-template-columns: minmax(9rem, 1fr) 3fr;
-      gap: 2rem;
+    :global(main:has(.contacto)) {
+      display: flex;
+      padding-bottom: 1rem;
+    }
+    .contacto {
+      flex: 1;
+      grid-template-columns: 3fr 1fr;
+      gap: clamp(2.5rem, 5vw, 6rem);
+      margin-top: clamp(0.5rem, 3svh, 2.5rem);
+    }
+    .biografia {
+      font-size: clamp(15px, min(2vw, 3.3svh), 30px);
     }
   }
 </style>
