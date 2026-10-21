@@ -178,13 +178,15 @@ const vertical = fotoVertical
       mascara.width = Math.round(img.naturalWidth * red);
       mascara.height = Math.round(img.naturalHeight * red);
       medir();
-      if (!conRaton) setTimeout(invitacion, 500);
+      // Cuando el velo blanco de la entrada ya casi se ha ido, para que se vea.
+      if (!conRaton) setTimeout(invitacion, 900);
     };
     img.src = gris.currentSrc || gris.src;
   }
 
-  // Móvil: una pincelada que cruza la figura sola, de izquierda a derecha y
-  // ondulando, para enseñar que la foto se puede pintar. Si el dedo toca la
+  // Móvil: una pincelada que cruza la figura sola, de abajo arriba y
+  // ondulando (en vertical, pedido de Guzmán), para enseñar que la foto se
+  // puede pintar. Si el dedo toca la
   // pantalla mientras tanto, se para y manda el dedo.
   let invitando = false;
   function invitacion() {
@@ -197,8 +199,8 @@ const vertical = fotoVertical
       const t = Math.min((ahora - t0) / dur, 1);
       const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2; // suave al empezar y al acabar
       trazoHasta({
-        x: innerWidth * (0.12 + 0.76 * e),
-        y: innerHeight * (0.5 + 0.12 * Math.sin(e * Math.PI * 2.2)),
+        x: innerWidth * (0.5 + 0.18 * Math.sin(e * Math.PI * 2.2)),
+        y: innerHeight * (0.88 - 0.76 * e),
       });
       if (t < 1) requestAnimationFrame(paso);
       else (invitando = false), (ultimo = null);
