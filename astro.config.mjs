@@ -17,15 +17,15 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  // Para qué navegadores se preparan los estilos. Sin esto, al construir se
-  // quitaba el "-webkit-backdrop-filter" (el desenfoque de las cajitas de
-  // cristal tal como lo entiende Safari) y los iPhone con Safari anterior al
-  // 18 se quedaban sin efecto. Safari 15 cubre los iPhone de hace años.
   // Las versiones de cada foto: calidad a medida y un pelín de enfoque
   // (ver src/lib/servicio-fotos.mjs).
   image: {
     service: { entrypoint: './src/lib/servicio-fotos.mjs' },
   },
+  // Para qué navegadores se preparan los estilos. Sin esto, al construir se
+  // quitaba el "-webkit-backdrop-filter" (el desenfoque de las cajitas de
+  // cristal tal como lo entiende Safari) y los iPhone con Safari anterior al
+  // 18 se quedaban sin efecto. Safari 15 cubre los iPhone de hace años.
   vite: {
     build: {
       cssTarget: ['safari15', 'ios15', 'chrome100', 'firefox100', 'edge100'],
