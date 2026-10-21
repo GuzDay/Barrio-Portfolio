@@ -1,8 +1,8 @@
 ---
 // Página de una obra, sin cabecera ni pie (pedido de Guzmán): sus fotos en
 // un carrusel vertical 3:4 que se arrastra a los lados, con flechas a media
-// altura, "Cerrar" (vuelve a la sección) encima de su esquina derecha y la
-// obra anterior / siguiente debajo; al lado, la ficha con el botón para preguntar
+// altura y "Cerrar" (vuelve a la sección) encima de su esquina derecha; al
+// lado, la ficha con el botón para preguntar
 // por WhatsApp. En ordenador ocupa justo la pantalla, sin scroll, con la
 // foto centrada en vertical.
 import { Image } from 'astro:assets';
@@ -25,8 +25,6 @@ const t = textos[idioma];
 const obras = await obrasDe(seccion);
 const pos = obras.findIndex((o) => o.id === id);
 const obra = obras[pos]!;
-const anterior = obras[pos - 1];
-const siguiente = obras[pos + 1];
 const f = ficha(obra, idioma);
 const nombreSeccion = secciones[seccion].nombre[idioma];
 const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
@@ -69,10 +67,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
         </>
       )}
     </div>
-      <nav class="vecinas">
-        {anterior ? <a href={urlObra(seccion, anterior.id, idioma)}>← {t.anterior}</a> : <span />}
-        {siguiente ? <a href={urlObra(seccion, siguiente.id, idioma)}>{t.siguiente} →</a> : <span />}
-      </nav>
+      {/* Sin "Anterior / Siguiente" de momento (pedido de Guzmán, 21-10-2026).
+          Para volver a ponerlos, ver el commit que los quitó. */}
     </div>
     <div class="ficha">
       <h1>{f.titulo}</h1>
@@ -216,16 +212,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 </script>
 
 <style>
-  .vecinas {
-    display: flex;
-    justify-content: space-between;
-    margin: 1rem 0 0;
-    font-size: 0.9em;
-  }
-
   /* "Cerrar", encima de la foto y alineado con su borde derecho (pedido de
-     Guzmán). En ordenador cuelga en el margen de arriba, a la misma
-     distancia de la foto que "Anterior / Siguiente" por abajo. */
+     Guzmán). En ordenador cuelga en el margen de arriba. */
   .cerrar {
     display: block;
     width: fit-content;
@@ -233,14 +221,12 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     font-size: 0.9em;
   }
 
-  .cerrar,
-  .vecinas a {
+  .cerrar {
     color: var(--suave);
     text-decoration: none;
   }
 
-  .cerrar:hover,
-  .vecinas a:hover {
+  .cerrar:hover {
     color: var(--texto);
   }
 
@@ -256,7 +242,7 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      cabe en la pantalla bajo la cabecera, manda sobre el ancho. */
   .obra {
     /* Sin cabecera: la foto puede ocupar casi todo el alto, dejando sitio
-       arriba y para "Anterior / Siguiente" debajo. */
+       arriba para "Cerrar" y algo de aire debajo. */
     --alto: min(calc(100svh - 150px), 860px);
   }
 
@@ -410,8 +396,8 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
      debajo del borde de arriba de la foto (un 18 % de su alto; antes 12 %, Guzmán la quiso algo más abajo). */
   @media (min-width: 900px) {
     /* Sin scroll: la página mide justo la pantalla y la foto va centrada en
-       vertical, con el mismo margen arriba que abajo (--hueco-v). "Anterior /
-       Siguiente" cuelga debajo de la foto, dentro de ese margen de abajo. */
+       vertical, con el mismo margen arriba que abajo (--hueco-v). "Cerrar"
+       cuelga encima de la foto, dentro del margen de arriba. */
     :global(body:has(.obra)) {
       height: 100svh;
       overflow: hidden;
@@ -432,12 +418,6 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     .columna-fotos {
       grid-column: 2;
       position: relative;
-    }
-    .vecinas {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
     }
     .cerrar {
       position: absolute;
