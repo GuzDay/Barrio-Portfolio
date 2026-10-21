@@ -69,9 +69,11 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     {siguiente && <a class="vecina siguiente-obra" href={urlObra(seccion, siguiente.id, idioma)} aria-label={`${t.siguiente}: ${ficha(siguiente, idioma).titulo}`}><svg viewBox="0 0 12 22" aria-hidden="true"><path d="m1 1 10 10L1 21" /></svg></a>}
   </nav>
 
+  {/* "Cerrar", arriba a la derecha de la página (pedido de Guzmán). */}
+  <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
+
   <article class="obra">
     <div class="columna-fotos">
-      <a class="cerrar" href={urlSeccion(seccion, idioma)} title={t.volver(nombreSeccion)}>{t.cerrar}</a>
     <div class="carrusel" data-varias={f.fotos.length > 1 ? '' : undefined}>
       <ul class="pista" aria-label={t.fotos} tabindex="0">
         {f.fotos.map((foto, i) => (
@@ -98,8 +100,15 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
         </>
       )}
     </div>
-      {/* Sin "Anterior / Siguiente" de momento (pedido de Guzmán, 21-10-2026).
-          Para volver a ponerlos, ver el commit que los quitó. */}
+      {/* Puntitos bajo la foto, como en Instagram: cuántas fotos hay y en
+          cuál estás (pedido de Guzmán). Pulsar uno lleva a esa foto. */}
+      {f.fotos.length > 1 && (
+        <div class="puntos">
+          {f.fotos.map((_, i) => (
+            <button type="button" class="punto" aria-label={`${t.fotos} ${i + 1}/${f.fotos.length}`} aria-current={i === 0 ? 'true' : undefined} />
+          ))}
+        </div>
+      )}
     </div>
     <div class="ficha">
       <h1>{f.titulo}</h1>
@@ -216,10 +225,13 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     const total = pista.children.length;
     const ir = (i: number) =>
       pista.scrollTo({ left: Math.max(0, Math.min(total - 1, i)) * pista.clientWidth, behavior: 'smooth' });
+    const puntos = [...(carrusel.parentElement!.querySelectorAll<HTMLButtonElement>('.punto') ?? [])];
+    puntos.forEach((p, i) => p.addEventListener('click', () => ir(i)));
     const flechas = () => {
       const i = actual();
       ant.disabled = i <= 0;
       sig.disabled = i >= total - 1;
+      puntos.forEach((p, k) => (k === i ? p.setAttribute('aria-current', 'true') : p.removeAttribute('aria-current')));
     };
     ant.addEventListener('click', () => ir(actual() - 1));
     sig.addEventListener('click', () => ir(actual() + 1));
@@ -346,11 +358,43 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
 
   /* "Cerrar", encima de la foto y alineado con su borde derecho (pedido de
      Guzmán). En ordenador cuelga en el margen de arriba. */
+  /* "Cerrar", arriba a la derecha de la página, a la altura y con el
+     margen de la cabecera del resto de la web. */
   .cerrar {
-    display: block;
-    width: fit-content;
-    margin: 0 0 1rem auto;
+    position: absolute;
+    top: 1.4rem;
+    right: var(--lateral);
+    z-index: 5;
     font-size: 0.9em;
+  }
+
+  /* Los puntitos: grises, el de la foto que se ve, negro. */
+  .puntos {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 0.9rem;
+  }
+
+  .punto {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--linea);
+    cursor: pointer;
+    transition:
+      background-color 0.25s ease,
+      scale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .punto[aria-current] {
+    background: var(--texto);
+  }
+
+  .punto:hover {
+    scale: 1.3;
   }
 
   .cerrar {
@@ -519,6 +563,10 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
   }
 
   @media (max-width: 899px) {
+    /* Sitio arriba para "Cerrar", que va en la esquina. */
+    :global(main:has(.obra)) {
+      padding-top: 3.5rem;
+    }
     /* En el móvil la página tiene scroll, así que la foto no se limita a lo
        alto de la pantalla: ocupa todo el ancho, con el mismo margen a los
        dos lados que "Cerrar" y "Siguiente". Antes, en un iPhone (con las
@@ -603,9 +651,10 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
       grid-column: 2;
       position: relative;
     }
-    .cerrar {
+    .puntos {
       position: absolute;
-      bottom: 100%;
+      top: 100%;
+      left: 0;
       right: 0;
     }
     .ficha {
