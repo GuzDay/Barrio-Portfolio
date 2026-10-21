@@ -13,7 +13,6 @@
 // como si alguien las lanzara, y al irse salen disparadas por la derecha
 // (pedido de Guzmán, 16-10-2026).
 import { Image } from 'astro:assets';
-import EstadoObra from './EstadoObra.astro';
 import { marco34 } from '../lib/fotos';
 import { ficha, type Obra } from '../lib/obras';
 import { urlObra, type Idioma, type Seccion } from '../lib/rutas';
@@ -53,9 +52,10 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
             />
           </div>
           <div class="pie-tarjeta">
-            <p class="titulo">{f.titulo}{f.anio && <span>, {f.anio}</span>}</p>
-            <p class="datos">{[f.tecnica, f.medidas].filter(Boolean).join(' · ')}</p>
-            <EstadoObra idioma={idioma} vendida={f.vendida} class="estado-tarjeta" />
+            {/* Solo el nombre y las medidas (pedido de Guzmán); lo demás, en la
+                página de la obra. */}
+            <p class="titulo">{f.titulo}</p>
+            {f.medidas && <p class="datos" title={f.medidas}>{f.medidas}</p>}
           </div>
         </a>
       </li>
@@ -455,14 +455,14 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     font-weight: 400;
   }
 
-  .titulo span,
+  /* Las medidas, en una sola línea: si no caben (dípticos, trípticos…),
+     se cortan con puntos suspensivos. Enteras, en la página de la obra. */
   .datos {
     color: var(--suave);
-  }
-
-  .datos,
-  .pie-tarjeta :global(.estado-tarjeta) {
     font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* En dos columnas de móvil la tarjeta es estrecha: letra y relleno menores. */
@@ -473,8 +473,7 @@ const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
     .titulo {
       font-size: calc(0.9em * var(--serif-escala));
     }
-    .datos,
-    .pie-tarjeta :global(.estado-tarjeta) {
+    .datos {
       font-size: 0.8em;
     }
   }
