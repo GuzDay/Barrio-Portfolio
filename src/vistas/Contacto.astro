@@ -16,7 +16,8 @@
 //  - Campos: filas de 4 líneas separadas también por una línea (un "paso"
 //    de 5 líneas). Cada foto ocupa columnas enteras de ancho y campos
 //    enteros de alto, recortada para encajar.
-//  - Lo que baja respecto a lo de al lado, baja pasos enteros.
+//  - Entre filas, un paso de aire; lo que baja respecto a lo de al lado,
+//    baja pasos enteros.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import f01 from '../assets/contacto/01.jpg';
@@ -203,7 +204,8 @@ const grupos = [
   }
 
   /* Cada fila: las columnas de la retícula, con una calle de una línea, y
-     separada de la siguiente por dos pasos (dos campos de aire). */
+     separada de la siguiente por un paso (un campo de aire; eran dos y
+     Guzmán vio demasiado hueco). */
   .fila {
     display: grid;
     grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
@@ -215,7 +217,7 @@ const grupos = [
   }
 
   .fila + .fila {
-    margin-top: calc(2 * var(--paso));
+    margin-top: var(--paso);
   }
 
   /* Cada pieza de la lámina en su sitio (los datos, aparte). */
@@ -330,7 +332,7 @@ const grupos = [
     .lamina {
       --L: 24px;
       --columnas: 12;
-      padding-top: calc(3 * var(--L));
+      padding-top: calc(2 * var(--L));
     }
     .fila:not(.datos) > * {
       grid-column: var(--col);
@@ -343,7 +345,7 @@ const grupos = [
       height: calc(var(--campos) * var(--paso) - var(--L));
     }
     .fila.datos {
-      margin-top: calc(3 * var(--paso));
+      margin-top: calc(2 * var(--paso));
     }
     .datos .grupo:first-child {
       grid-row: auto;
