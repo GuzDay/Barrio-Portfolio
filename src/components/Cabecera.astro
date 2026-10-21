@@ -449,8 +449,14 @@ const menu = [
     .cabecera {
       height: 73px;
     }
+    /* En el móvil, la firma en el centro, el idioma en la esquina izquierda
+       y el botón del menú en la derecha (pedido de Guzmán, 21-10-2026).
+       Centrada con "transform" (no "translate"): la entrada de la portada
+       anima "translate" y no deben pisarse. */
     .marca {
       top: 17px;
+      left: 50%;
+      transform: translateX(-50%);
     }
     .marca :global(svg) {
       height: 38px;
@@ -460,7 +466,8 @@ const menu = [
     }
     .idiomas {
       top: 20px;
-      right: calc(var(--lateral) + 2.25rem + 6px);
+      left: var(--lateral);
+      right: auto;
       height: 2rem;
       align-items: center;
       /* Bajado 1,8 px para centrar las letras a la vista (ver .caja). */
