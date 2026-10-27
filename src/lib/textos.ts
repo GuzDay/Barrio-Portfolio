@@ -80,7 +80,9 @@ export const textos = {
     cerrar: 'Close',
     idioma: 'Language',
     encargos: 'Commissions',
-    colabora: 'Work with me',
+    // Traducción de "¿Proyectamos?": la invitación a colaborar con él. La
+    // dirección sigue siendo /en/work-with-me/.
+    colabora: 'Shall we collaborate?',
     acercaDe: 'About',
     contacto: 'Contact',
     todas: 'All',
