@@ -376,6 +376,16 @@ const menu = [
     text-decoration: none;
   }
 
+  /* Toda la cajita se puede pulsar, no solo las letras (pedido de Guzmán):
+     una capa invisible del enlace la cubre entera. La cajita ya va
+     posicionada (fija), así que la capa se ajusta a ella. */
+  .idiomas a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
   /* El selector enseña solo el OTRO idioma. */
   .idiomas a[aria-current] {
     display: none;

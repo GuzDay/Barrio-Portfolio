@@ -14,7 +14,9 @@ export const textos = {
     cerrar: 'Cerrar',
     idioma: 'Idioma',
     encargos: 'Encargos',
-    colabora: 'Colabora conmigo',
+    // Antes "Colabora conmigo"; Guzmán lo cambió (27-10-2026). La dirección
+    // sigue siendo /colabora/.
+    colabora: '¿Proyectamos?',
     acercaDe: 'Acerca de mí',
     contacto: 'Contacto',
     todas: 'Todas',
