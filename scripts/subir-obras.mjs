@@ -9,7 +9,7 @@
 //
 // Ojo: SUSTITUYE todas las obras de la web por las del archivo (las que no
 // están en el archivo desaparecen, y los cambios hechos desde el panel se
-// pierden). Las obras con la ficha a medias (sin técnica o sin estado) se
+// pierden). Las obras sin título o sin estado se
 // saltan y se avisa.
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -68,7 +68,9 @@ for (const [carpeta, seccion] of Object.entries(SECCIONES)) {
       continue;
     }
     const f = leerFicha(join(origen, 'ficha.txt'));
-    if (!f.titulo || !f.tecnica || !['disponible', 'vendido'].includes(f.estado)) {
+    // La técnica puede faltar (Guzmán subió así "Cosa de dos", 27-10-2026):
+    // la web enseña solo lo que haya.
+    if (!f.titulo || !['disponible', 'vendido'].includes(f.estado)) {
       saltadas.push(`${carpeta}/${obra}: ficha a medias`);
       continue;
     }
