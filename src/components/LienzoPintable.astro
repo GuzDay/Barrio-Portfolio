@@ -4,8 +4,8 @@
 // ratón fuera un pincel. Lo pintado se queda.
 //
 // En el móvil se pinta arrastrando el dedo (la portada ocupa una sola
-// pantalla, así que no hay scroll al que estorbar). Como ahí nadie sabría que
-// se puede, al entrar la foto se pinta sola una pincelada a modo de invitación.
+// pantalla, así que no hay scroll al que estorbar). Hubo una pincelada que se
+// pintaba sola al entrar, a modo de invitación; Guzmán la quitó (27-10-2026).
 //
 // Cómo funciona: debajo, la foto en gris (CSS). Encima, un <canvas> donde se
 // dibuja la foto en color, pero solo donde ha pasado el pincel. Lo pintado se
@@ -178,34 +178,8 @@ const vertical = fotoVertical
       mascara.width = Math.round(img.naturalWidth * red);
       mascara.height = Math.round(img.naturalHeight * red);
       medir();
-      // Cuando el velo blanco de la entrada ya casi se ha ido, para que se vea.
-      if (!conRaton) setTimeout(invitacion, 900);
     };
     img.src = gris.currentSrc || gris.src;
-  }
-
-  // Móvil: una pincelada que cruza la figura sola, de abajo arriba y
-  // ondulando (en vertical, pedido de Guzmán), para enseñar que la foto se
-  // puede pintar. Si el dedo toca la
-  // pantalla mientras tanto, se para y manda el dedo.
-  let invitando = false;
-  function invitacion() {
-    invitando = true;
-    ultimo = null;
-    const dur = 1500;
-    const t0 = performance.now();
-    const paso = (ahora: number) => {
-      if (!invitando) return;
-      const t = Math.min((ahora - t0) / dur, 1);
-      const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2; // suave al empezar y al acabar
-      trazoHasta({
-        x: innerWidth * (0.5 + 0.18 * Math.sin(e * Math.PI * 2.2)),
-        y: innerHeight * (0.88 - 0.76 * e),
-      });
-      if (t < 1) requestAnimationFrame(paso);
-      else (invitando = false), (ultimo = null);
-    };
-    requestAnimationFrame(paso);
   }
 
   // Al llegar, la foto aparece con un poco de zoom y vuelve despacio a su
@@ -294,7 +268,6 @@ const vertical = fotoVertical
     // pellizcar para ampliar). Solo en esta página.
     document.documentElement.classList.add('pintando-con-dedo');
     addEventListener('pointerdown', (e) => {
-      invitando = false;
       ultimo = null;
       pintar(e);
     });
