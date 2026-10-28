@@ -90,8 +90,11 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   pantalla completa que se pasa sola cada 5 s (la siguiente aparece encima,
   de desenfocada a nítida; las de `00 Barrio/Web/Contacto/`, copiadas a
   `src/assets/contacto/` como 01.jpg…) y que, al pulsarla, se da la vuelta
-  como una tarjeta: detrás, en blanco, el texto de Pablo centrado y debajo
-  teléfono, correo e Instagram. Pulsar el dorso o Esc la devuelve. Sin
+  como una tarjeta: detrás, en blanco, el texto de Pablo centrado. Encima
+  de la foto, en el centro y con fusión "diferencia", el teléfono (abre
+  WhatsApp) y el correo; van fuera de la tarjeta 3D porque dentro la fusión
+  no se aplica. Con la vuelta dada, pulsar en cualquier sitio o Esc la
+  devuelve. Sin
   scroll ni pie. Probados y descartados
   por Guzmán: carrusel 3D, etiquetas numeradas, "B … RIO" en letra enorme y
   una lámina de fotos con retícula (están en el historial);
