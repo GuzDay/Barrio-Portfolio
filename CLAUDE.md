@@ -86,13 +86,13 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   texto que mandó Pablo; las dos páginas salen de `src/vistas/Encargos.astro`.
   Sus pasos y la traducción son provisionales. "Acerca de mí" va
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
-  Contacto (28-10-2026): sin título visible; fotos con su proporción original (sin recortar, a diferencia del 3:4 del resto) que se pasan solas
-  (la siguiente aparece encima, de desenfocada a nítida; las de
-  `00 Barrio/Web/Contacto/`, copiadas a `src/assets/contacto/` como
-  01.jpg…; el nombre marca el orden) a la izquierda en ordenador y arriba en el móvil,
-  y el texto de Pablo alineado a la izquierda con, debajo y centrados,
-  teléfono, correo e Instagram (sin "Contacta conmigo"). En ordenador cabe
-  en una pantalla y el hueco entre foto y texto cae en el centro. Probados y descartados
+  Contacto (28-10-2026, pedido de Pablo): sin título visible; una foto a
+  pantalla completa que se pasa sola cada 5 s (la siguiente aparece encima,
+  de desenfocada a nítida; las de `00 Barrio/Web/Contacto/`, copiadas a
+  `src/assets/contacto/` como 01.jpg…) y que, al pulsarla, se da la vuelta
+  como una tarjeta: detrás, en blanco, el texto de Pablo centrado y debajo
+  teléfono, correo e Instagram. Pulsar el dorso o Esc la devuelve. Sin
+  scroll ni pie. Probados y descartados
   por Guzmán: carrusel 3D, etiquetas numeradas, "B … RIO" en letra enorme y
   una lámina de fotos con retícula (están en el historial);
   /acerca-de-mi/ redirige a /contacto/.

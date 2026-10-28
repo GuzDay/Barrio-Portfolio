@@ -1,18 +1,19 @@
 ---
-// Contacto (28-10-2026, pedido de Guzmán): fotos de Pablo que se pasan solas
-// y, al lado, su texto y sus enlaces, alineados a la izquierda. En ordenador,
-// las fotos a la izquierda y el texto a la derecha; en el móvil, las fotos
-// arriba y el texto debajo. El título "Contacto" no se ve, pero sigue ahí
-// para buscadores y lectores de pantalla.
+// Contacto (28-10-2026, pedido de Pablo a través de Guzmán): una foto a
+// pantalla completa, que se va pasando sola, como una tarjeta. Al pulsarla se
+// da la vuelta y por detrás aparecen, centrados, el texto de Pablo y debajo
+// sus datos de contacto. Pulsando otra vez (o con Esc) vuelve a la foto. El
+// título "Contacto" no se ve, pero sigue ahí para buscadores y lectores de
+// pantalla, que leen el texto sin tener que dar la vuelta a nada.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
-// Las fotos (las que pasó Guzmán el 28-10-2026, de
-// 00 Barrio/Web/Contacto), en el orden en que se pasan: el nombre del
-// archivo manda (01.jpg, 02.jpg…).
+// Las fotos (las que pasó Guzmán el 28-10-2026, de 00 Barrio/Web/Contacto),
+// en el orden en que se pasan: el nombre del archivo manda (01.jpg, 02.jpg…).
+// A pantalla completa se recortan para llenarla (como la portada).
 const fotos = Object.entries(import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }))
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
@@ -22,10 +23,6 @@ interface Props {
 }
 
 const { idioma } = Astro.props;
-// Estas fotos van con su proporción original, sin recortar (pedido de
-// Guzmán: a diferencia del 3:4 del resto de la web, aquí se cortaban). Las
-// cuatro miden lo mismo (2000x2866); el marco toma la de la primera.
-const proporcion = fotos.length ? fotos[0].width / fotos[0].height : 0.75;
 const t = textos[idioma];
 const enlaces = [
   { texto: sitio.telefonoVisible, url: `tel:+${sitio.whatsapp}` },
@@ -37,60 +34,78 @@ const enlaces = [
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
   <h1 class="oculto">{t.contacto}</h1>
 
-  <div class="contacto" style={`--proporcion: ${proporcion.toFixed(4)}`}>
-    <div class="fotos" aria-hidden="true">
-      {fotos.map((foto, i) => (
-        <Image
-          class:list={['foto', { activa: i === 0 }]}
-          src={foto}
-          alt=""
-          widths={[400, 700, 1000, 1400, 2000]}
-          sizes="(min-width: 900px) 34vw, 100vw"
-          loading={i === 0 ? 'eager' : 'lazy'}
-          fetchpriority={i === 0 ? 'high' : undefined}
-        />
-      ))}
-    </div>
+  <div class="escena">
+    <div class="tarjeta">
+      {/* Delante: las fotos. Todo el frente es un botón para dar la vuelta. */}
+      <button class="cara frente" type="button" aria-label={t.acercaDe} aria-expanded="false">
+        {fotos.map((foto, i) => (
+          <Image
+            class:list={['foto', { activa: i === 0 }]}
+            src={foto}
+            alt=""
+            widths={[600, 900, 1200, 1600, 2000]}
+            sizes="100vw"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : undefined}
+          />
+        ))}
+      </button>
 
-    <div class="texto">
-      <div class="biografia">
-        {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+      {/* Detrás: el texto y los datos, centrados. */}
+      <div class="cara dorso">
+        <div class="contenido">
+          <div class="biografia">
+            {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+          </div>
+          <ul class="enlaces">
+            {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+          </ul>
+        </div>
       </div>
-
-      <ul class="enlaces">
-        {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
-      </ul>
     </div>
   </div>
 </Base>
 
 <script>
-  // Las fotos se pasan solas: cada pocos segundos la siguiente aparece
-  // encima de la anterior, pasando de desenfocada y transparente a nítida
-  // (el efecto del título de Pintura y Escultura, sin moverse ni girar).
-  // Solo se anima una foto a la vez. Se para si la pestaña no se ve o se ha
-  // pedido menos movimiento.
-  const fotos = [...document.querySelectorAll<HTMLImageElement>('.contacto .foto')];
+  const tarjeta = document.querySelector<HTMLElement>('.escena .tarjeta')!;
+  const frente = tarjeta.querySelector<HTMLButtonElement>('.frente')!;
+  const dorso = tarjeta.querySelector<HTMLElement>('.dorso')!;
+  const girar = (si: boolean) => {
+    tarjeta.classList.toggle('girada', si);
+    frente.setAttribute('aria-expanded', String(si));
+  };
+  // Pulsar la foto le da la vuelta; pulsar el dorso (fuera de un enlace),
+  // la devuelve. Esc también la devuelve.
+  frente.addEventListener('click', () => girar(true));
+  dorso.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('a')) girar(false);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && tarjeta.classList.contains('girada')) girar(false);
+  });
+
+  // Las fotos se pasan solas, algo más despacio que antes (pedido de Pablo):
+  // cada 5 s la siguiente aparece encima de la anterior, pasando de
+  // desenfocada y transparente a nítida, sin moverse. Solo se anima una a la
+  // vez. Se para con la tarjeta dada la vuelta, con la pestaña oculta o si se
+  // ha pedido menos movimiento.
+  const fotos = [...frente.querySelectorAll<HTMLImageElement>('.foto')];
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (fotos.length > 1 && !quieto) {
-    // Que las siguientes ya estén descargadas cuando les toque.
     fotos.forEach((f) => (f.loading = 'eager'));
     let i = 0;
     let capa = 1;
-    const pasar = () => {
-      if (document.hidden) return;
+    setInterval(() => {
+      if (document.hidden || tarjeta.classList.contains('girada')) return;
       const siguiente = fotos[(i + 1) % fotos.length];
-      if (!siguiente.complete) return; // aún no ha llegado: se espera a la próxima
-      fotos[i].classList.remove('entrando');
+      if (!siguiente.complete) return;
+      const anterior = fotos[i];
+      anterior.classList.remove('entrando');
       siguiente.style.zIndex = String(++capa);
       siguiente.classList.add('activa', 'entrando');
-      const anterior = fotos[i];
-      setTimeout(() => {
-        if (anterior !== siguiente) anterior.classList.remove('activa');
-      }, 900);
+      setTimeout(() => anterior.classList.remove('activa'), 1400);
       i = (i + 1) % fotos.length;
-    };
-    setInterval(pasar, 3200);
+    }, 5000);
   }
 </script>
 
@@ -104,33 +119,57 @@ const enlaces = [
     white-space: nowrap;
   }
 
-  .contacto {
-    display: grid;
-    gap: 2rem;
-    padding: 0.5rem 0 1rem;
-  }
-
-  /* En el móvil, menos aire entre la cabecera y la foto (pedido de
-     Guzmán): 16 px en vez de 32. */
-  @media (max-width: 899px) {
-    :global(main:has(.contacto)) {
-      padding-top: 1rem;
-    }
-    .contacto {
-      padding-top: 0;
-    }
-  }
-
-  /* Las fotos, apiladas en un marco con su propia proporción; solo se ve
-     la activa (y la que está entrando encima). */
-  .fotos {
-    position: relative;
-    aspect-ratio: var(--proporcion);
+  /* La página es la pantalla entera, sin scroll; sin pie (el copyright
+     quedaría encima de la foto). La cabecera, que va fija, queda encima. */
+  :global(html:has(.escena)),
+  :global(body:has(.escena)) {
     overflow: hidden;
-    background: var(--vacio);
   }
 
-  .fotos :global(.foto) {
+  :global(body:has(.escena) .pie) {
+    display: none;
+  }
+
+  .escena {
+    position: fixed;
+    inset: 0;
+    height: 100lvh;
+    perspective: 2200px;
+  }
+
+  /* La tarjeta: las dos caras, una de espaldas a la otra. Al girar, da
+     media vuelta sobre su eje vertical. */
+  .tarjeta {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .tarjeta.girada {
+    transform: rotateY(180deg);
+  }
+
+  .cara {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Delante: las fotos, llenando la pantalla. */
+  .frente {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--vacio);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .frente :global(.foto) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -139,12 +178,12 @@ const enlaces = [
     opacity: 0;
   }
 
-  .fotos :global(.foto.activa) {
+  .frente :global(.foto.activa) {
     opacity: 1;
   }
 
-  .fotos :global(.foto.entrando) {
-    animation: foto-entra 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .frente :global(.foto.entrando) {
+    animation: foto-entra 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   @keyframes foto-entra {
@@ -158,32 +197,42 @@ const enlaces = [
     }
   }
 
-  /* El texto, alineado a la izquierda. */
+  /* Detrás: blanco, con el texto centrado en mitad de la pantalla y, si no
+     cabe (móvil pequeño), con scroll propio. */
+  .dorso {
+    transform: rotateY(180deg);
+    display: flex;
+    overflow-y: auto;
+    background: var(--fondo);
+    cursor: pointer;
+  }
+
+  .contenido {
+    margin: auto;
+    width: min(100% - 2 * var(--margen), 36rem);
+    padding: 6.5rem 0 3rem;
+    text-align: center;
+    cursor: auto;
+  }
+
   .biografia {
     font-family: var(--serif);
-    /* En el móvil, unos 17 px (antes 20; pedido de Guzmán). En ordenador
-       se ajusta abajo. */
-    font-size: calc(1.05em * var(--serif-escala));
-    /* Un peso más fina que el resto de títulos (pedido de Guzmán). */
+    font-size: clamp(16px, 1.15vw, 18px);
     font-weight: 300;
-    line-height: 1.35;
+    line-height: 1.45;
   }
 
   .biografia p {
     margin: 0 0 0.8em;
   }
 
-  /* Teléfono, correo e Instagram, centrados bajo el texto y un peso más
-     gruesos que el texto normal, para que se vean (pedido de Guzmán; el
-     "Contacta conmigo" se quitó: el teléfono ya lleva a llamar). */
   .enlaces {
     list-style: none;
     margin: 2rem 0 0;
     padding: 0;
-    text-align: center;
-    font-weight: 300;
     display: grid;
     gap: 0.35rem;
+    font-weight: 300;
   }
 
   .enlaces a {
@@ -195,38 +244,9 @@ const enlaces = [
     text-underline-offset: 3px;
   }
 
-  /* En ordenador, las fotos a la izquierda, a todo el alto que cabe en la
-     pantalla, y el texto a la derecha, centrado en vertical frente a ellas. */
-  @media (min-width: 900px) {
-    :global(main:has(.contacto)) {
-      padding-bottom: 0.5rem;
-    }
-    .contacto {
-      /* Dos mitades iguales, con la foto arrimada a la derecha de la suya y
-         el texto a la izquierda de la suya: el hueco entre foto y texto
-         queda justo en el centro de la página (pedido de Guzmán). */
-      --foto: min(34vw, calc((100svh - 15rem) * var(--proporcion)));
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      column-gap: clamp(2.5rem, 6vw, 6rem);
-      align-items: center;
-      padding: 0.5rem 0 0;
-    }
-    /* El texto, bastante más pequeño (pedido de Guzmán, 28-10-2026: antes
-       llegaba a 22 px): de 14 a 17 px según la pantalla. */
-    .fotos {
-      width: var(--foto);
-      justify-self: end;
-    }
-    .texto {
-      max-width: 33rem;
-    }
-    .biografia {
-      font-size: clamp(14px, 1.1vw, 17px);
-      line-height: 1.45;
-      max-width: 34rem;
-    }
-    .enlaces {
-      margin-top: 1.5rem;
+  @media (prefers-reduced-motion: reduce) {
+    .tarjeta {
+      transition: none;
     }
   }
 </style>
