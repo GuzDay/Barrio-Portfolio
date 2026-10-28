@@ -198,9 +198,12 @@ const enlaces = [
       padding-bottom: 0.5rem;
     }
     .contacto {
-      grid-template-columns: min(34vw, calc((100svh - 15rem) * var(--proporcion))) minmax(0, 38rem);
+      grid-template-columns: min(34vw, calc((100svh - 15rem) * var(--proporcion))) minmax(0, 33rem);
       column-gap: clamp(2.5rem, 6vw, 6rem);
       align-items: center;
+      /* El conjunto (foto + texto) centrado en la página: pegado a la
+         izquierda pesaba todo hacia ese lado (Guzmán). */
+      justify-content: center;
       padding: 0.5rem 0 0;
     }
     /* El texto, bastante más pequeño (pedido de Guzmán, 28-10-2026: antes
