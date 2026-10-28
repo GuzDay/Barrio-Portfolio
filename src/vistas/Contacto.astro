@@ -186,10 +186,12 @@ const enlaces = [
       align-items: center;
       padding: 0.5rem 0 0;
     }
-    /* El texto crece con la pantalla pero sin pasar de lo que cabe a lo
-       alto, para que todo entre en una pantalla. */
+    /* El texto, bastante más pequeño (pedido de Guzmán, 28-10-2026: antes
+       llegaba a 22 px): de 14 a 17 px según la pantalla. */
     .biografia {
-      font-size: clamp(15px, min(1.45vw, 2.5svh), 22px);
+      font-size: clamp(14px, 1.1vw, 17px);
+      line-height: 1.45;
+      max-width: 34rem;
     }
     .enlaces {
       margin-top: 1.5rem;
