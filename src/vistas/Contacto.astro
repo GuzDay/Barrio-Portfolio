@@ -111,6 +111,17 @@ const enlaces = [
     padding: 0.5rem 0 1rem;
   }
 
+  /* En el móvil, menos aire entre la cabecera y la foto (pedido de
+     Guzmán): 16 px en vez de 32. */
+  @media (max-width: 899px) {
+    :global(main:has(.contacto)) {
+      padding-top: 1rem;
+    }
+    .contacto {
+      padding-top: 0;
+    }
+  }
+
   /* Las fotos, apiladas en un marco con su propia proporción; solo se ve
      la activa (y la que está entrando encima). */
   .fotos {
