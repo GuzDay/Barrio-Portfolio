@@ -17,6 +17,11 @@ import { textos } from '../lib/textos';
 const fotos = Object.entries(import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }))
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
+// Qué punto de cada foto debe quedar en el centro de la pantalla en
+// ordenador (en tantos por uno del ancho y del alto de la foto). En la 01,
+// las dos personas del espigón (pedido de Guzmán). La 01 se ha recortado ya
+// sin el marco negro de película (de 2000x2866 a 1856x2754).
+const focos: Record<number, [number, number]> = { 0: [0.53, 0.63] };
 
 interface Props {
   idioma: Idioma;
@@ -48,6 +53,7 @@ const enlaces = [
             sizes="100vw"
             loading={i === 0 ? 'eager' : 'lazy'}
             fetchpriority={i === 0 ? 'high' : undefined}
+            data-foco={focos[i]?.join(' ')}
           />
         ))}
       </button>
@@ -107,6 +113,30 @@ const enlaces = [
   // vez. Se para con la tarjeta dada la vuelta, con la pestaña oculta o si se
   // ha pedido menos movimiento.
   const fotos = [...frente.querySelectorAll<HTMLImageElement>('.foto')];
+
+  // En ordenador, las fotos con un punto marcado (data-foco) se encuadran
+  // para que ese punto quede en el centro de la pantalla, en lo posible
+  // (sin dejar huecos). En el móvil, el encuadre centrado de siempre.
+  const encuadrar = () => {
+    const ordenador = matchMedia('(min-width: 900px)').matches;
+    for (const f of fotos) {
+      const foco = f.dataset.foco?.split(' ').map(Number);
+      if (!foco || !ordenador || !f.naturalWidth) {
+        f.style.objectPosition = '';
+        continue;
+      }
+      const W = f.clientWidth;
+      const H = f.clientHeight;
+      const escala = Math.max(W / f.naturalWidth, H / f.naturalHeight);
+      const w = f.naturalWidth * escala;
+      const h = f.naturalHeight * escala;
+      const pos = (sobra: number, punto: number, ver: number) =>
+        sobra > 0 ? Math.min(100, Math.max(0, ((punto - ver / 2) / sobra) * 100)) : 50;
+      f.style.objectPosition = `${pos(w - W, foco[0] * w, W)}% ${pos(h - H, foco[1] * h, H)}%`;
+    }
+  };
+  fotos.forEach((f) => (f.complete ? encuadrar() : f.addEventListener('load', encuadrar, { once: true })));
+  addEventListener('resize', encuadrar);
   const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (fotos.length > 1 && !quieto) {
     fotos.forEach((f) => (f.loading = 'eager'));
