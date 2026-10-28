@@ -6,7 +6,6 @@
 // para buscadores y lectores de pantalla.
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { marco34 } from '../lib/fotos';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
@@ -23,6 +22,10 @@ interface Props {
 }
 
 const { idioma } = Astro.props;
+// Estas fotos van con su proporción original, sin recortar (pedido de
+// Guzmán: a diferencia del 3:4 del resto de la web, aquí se cortaban). Las
+// cuatro miden lo mismo (2000x2866); el marco toma la de la primera.
+const proporcion = fotos.length ? fotos[0].width / fotos[0].height : 0.75;
 const t = textos[idioma];
 const enlaces = [
   { texto: t.contactaConmigo, url: urlWhatsApp(t.mensajeContacto) },
@@ -35,14 +38,14 @@ const enlaces = [
 <Base idioma={idioma} alternativas={ambas(urlContacto)} titulo={t.contacto} descripcion={t.contactoIntro} activa="contacto">
   <h1 class="oculto">{t.contacto}</h1>
 
-  <div class="contacto">
+  <div class="contacto" style={`--proporcion: ${proporcion.toFixed(4)}`}>
     <div class="fotos" aria-hidden="true">
       {fotos.map((foto, i) => (
         <Image
           class:list={['foto', { activa: i === 0 }]}
           src={foto}
           alt=""
-          {...marco34(foto, [400, 700, 1000, 1400])}
+          widths={[400, 700, 1000, 1400, 2000]}
           sizes="(min-width: 900px) 34vw, 100vw"
           loading={i === 0 ? 'eager' : 'lazy'}
           fetchpriority={i === 0 ? 'high' : undefined}
@@ -108,11 +111,11 @@ const enlaces = [
     padding: 0.5rem 0 1rem;
   }
 
-  /* Las fotos, apiladas en un marco 3:4; solo se ve la activa (y la que
-     está entrando encima). */
+  /* Las fotos, apiladas en un marco con su propia proporción; solo se ve
+     la activa (y la que está entrando encima). */
   .fotos {
     position: relative;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: var(--proporcion);
     overflow: hidden;
     background: var(--vacio);
   }
@@ -181,7 +184,7 @@ const enlaces = [
       padding-bottom: 0.5rem;
     }
     .contacto {
-      grid-template-columns: min(34vw, calc((100svh - 15rem) * 0.75)) minmax(0, 38rem);
+      grid-template-columns: min(34vw, calc((100svh - 15rem) * var(--proporcion))) minmax(0, 38rem);
       column-gap: clamp(2.5rem, 6vw, 6rem);
       align-items: center;
       padding: 0.5rem 0 0;
