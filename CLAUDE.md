@@ -90,9 +90,9 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   (la siguiente aparece encima, de desenfocada a nítida; las de
   `00 Barrio/Web/Contacto/`, copiadas a `src/assets/contacto/` como
   01.jpg…; el nombre marca el orden) a la izquierda en ordenador y arriba en el móvil,
-  y el texto de Pablo alineado a la izquierda con, debajo, Contacta conmigo
-  (WhatsApp), teléfono, correo e Instagram. En ordenador cabe en una
-  pantalla. Probados y descartados
+  y el texto de Pablo alineado a la izquierda con, debajo y centrados,
+  teléfono, correo e Instagram (sin "Contacta conmigo"). En ordenador cabe
+  en una pantalla y el hueco entre foto y texto cae en el centro. Probados y descartados
   por Guzmán: carrusel 3D, etiquetas numeradas, "B … RIO" en letra enorme y
   una lámina de fotos con retícula (están en el historial);
   /acerca-de-mi/ redirige a /contacto/.

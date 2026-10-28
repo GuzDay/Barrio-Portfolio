@@ -7,7 +7,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
-import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
+import { sitio, urlInstagram } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
 // Las fotos (las que pasó Guzmán el 28-10-2026, de
@@ -28,7 +28,6 @@ const { idioma } = Astro.props;
 const proporcion = fotos.length ? fotos[0].width / fotos[0].height : 0.75;
 const t = textos[idioma];
 const enlaces = [
-  { texto: t.contactaConmigo, url: urlWhatsApp(t.mensajeContacto) },
   { texto: sitio.telefonoVisible, url: `tel:+${sitio.whatsapp}` },
   { texto: sitio.correo, url: `mailto:${sitio.correo}` },
   { texto: `@${sitio.instagram}`, url: urlInstagram },
@@ -174,10 +173,15 @@ const enlaces = [
     margin: 0 0 0.8em;
   }
 
+  /* Teléfono, correo e Instagram, centrados bajo el texto y un peso más
+     gruesos que el texto normal, para que se vean (pedido de Guzmán; el
+     "Contacta conmigo" se quitó: el teléfono ya lleva a llamar). */
   .enlaces {
     list-style: none;
     margin: 2rem 0 0;
     padding: 0;
+    text-align: center;
+    font-weight: 300;
     display: grid;
     gap: 0.35rem;
   }
@@ -198,16 +202,24 @@ const enlaces = [
       padding-bottom: 0.5rem;
     }
     .contacto {
-      grid-template-columns: min(34vw, calc((100svh - 15rem) * var(--proporcion))) minmax(0, 33rem);
+      /* Dos mitades iguales, con la foto arrimada a la derecha de la suya y
+         el texto a la izquierda de la suya: el hueco entre foto y texto
+         queda justo en el centro de la página (pedido de Guzmán). */
+      --foto: min(34vw, calc((100svh - 15rem) * var(--proporcion)));
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       column-gap: clamp(2.5rem, 6vw, 6rem);
       align-items: center;
-      /* El conjunto (foto + texto) centrado en la página: pegado a la
-         izquierda pesaba todo hacia ese lado (Guzmán). */
-      justify-content: center;
       padding: 0.5rem 0 0;
     }
     /* El texto, bastante más pequeño (pedido de Guzmán, 28-10-2026: antes
        llegaba a 22 px): de 14 a 17 px según la pantalla. */
+    .fotos {
+      width: var(--foto);
+      justify-self: end;
+    }
+    .texto {
+      max-width: 33rem;
+    }
     .biografia {
       font-size: clamp(14px, 1.1vw, 17px);
       line-height: 1.45;
