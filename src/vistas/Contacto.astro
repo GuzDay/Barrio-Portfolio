@@ -257,11 +257,13 @@ const enlaces = [
      con fusión "diferencia" (pedido de Guzmán): sobre lo claro se ven
      oscuros y sobre lo oscuro, claros, así se leen sobre cualquier foto.
      Van por encima de todas las fotos (que se apilan con z-index). */
+  /* Abajo, centrados (pedido de Guzmán; antes en el medio). En el móvil,
+     por encima de la barra de Safari. */
   .enlaces {
     position: fixed;
-    top: 50%;
+    bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px));
     left: 50%;
-    translate: -50% -50%;
+    translate: -50% 0;
     z-index: 3;
     transition: opacity 0.35s ease;
     list-style: none;
