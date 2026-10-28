@@ -151,7 +151,9 @@ const enlaces = [
   /* El texto, alineado a la izquierda. */
   .biografia {
     font-family: var(--serif);
-    font-size: calc(1.25em * var(--serif-escala));
+    /* En el móvil, unos 17 px (antes 20; pedido de Guzmán). En ordenador
+       se ajusta abajo. */
+    font-size: calc(1.05em * var(--serif-escala));
     /* Un peso más fina que el resto de títulos (pedido de Guzmán). */
     font-weight: 300;
     line-height: 1.35;
