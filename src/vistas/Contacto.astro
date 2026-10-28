@@ -1,12 +1,21 @@
 ---
-// Contacto (rehecha desde cero a petición de Guzmán, 21-10-2026): el texto
-// de Pablo en el centro de la pantalla, centrado, y debajo sus enlaces, uno
-// tras otro en una lista. El título "Contacto" no se ve, pero sigue ahí para
-// buscadores y lectores de pantalla.
+// Contacto (28-10-2026, pedido de Guzmán): fotos de Pablo que se pasan solas
+// y, al lado, su texto y sus enlaces, alineados a la izquierda. En ordenador,
+// las fotos a la izquierda y el texto a la derecha; en el móvil, las fotos
+// arriba y el texto debajo. El título "Contacto" no se ve, pero sigue ahí
+// para buscadores y lectores de pantalla.
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import { marco34 } from '../lib/fotos';
 import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
+
+// Fotos provisionales (sesión de Julián Camarillo), en el orden en que se
+// pasan: el nombre del archivo manda.
+const fotos = Object.entries(import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, m]) => m.default);
 
 interface Props {
   idioma: Idioma;
@@ -26,15 +35,61 @@ const enlaces = [
   <h1 class="oculto">{t.contacto}</h1>
 
   <div class="contacto">
-    <div class="biografia">
-      {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+    <div class="fotos" aria-hidden="true">
+      {fotos.map((foto, i) => (
+        <Image
+          class:list={['foto', { activa: i === 0 }]}
+          src={foto}
+          alt=""
+          {...marco34(foto, [400, 700, 1000, 1400])}
+          sizes="(min-width: 900px) 34vw, 100vw"
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : undefined}
+        />
+      ))}
     </div>
 
-    <ul class="enlaces">
-      {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
-    </ul>
+    <div class="texto">
+      <div class="biografia">
+        {t.biografia.map((parrafo) => <p>{parrafo}</p>)}
+      </div>
+
+      <ul class="enlaces">
+        {enlaces.map(({ texto, url }) => <li><a href={url}>{texto}</a></li>)}
+      </ul>
+    </div>
   </div>
 </Base>
+
+<script>
+  // Las fotos se pasan solas: cada pocos segundos la siguiente aparece
+  // encima de la anterior, pasando de desenfocada y transparente a nítida
+  // (el efecto del título de Pintura y Escultura, sin moverse ni girar).
+  // Solo se anima una foto a la vez. Se para si la pestaña no se ve o se ha
+  // pedido menos movimiento.
+  const fotos = [...document.querySelectorAll<HTMLImageElement>('.contacto .foto')];
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (fotos.length > 1 && !quieto) {
+    // Que las siguientes ya estén descargadas cuando les toque.
+    fotos.forEach((f) => (f.loading = 'eager'));
+    let i = 0;
+    let capa = 1;
+    const pasar = () => {
+      if (document.hidden) return;
+      const siguiente = fotos[(i + 1) % fotos.length];
+      if (!siguiente.complete) return; // aún no ha llegado: se espera a la próxima
+      fotos[i].classList.remove('entrando');
+      siguiente.style.zIndex = String(++capa);
+      siguiente.classList.add('activa', 'entrando');
+      const anterior = fotos[i];
+      setTimeout(() => {
+        if (anterior !== siguiente) anterior.classList.remove('activa');
+      }, 900);
+      i = (i + 1) % fotos.length;
+    };
+    setInterval(pasar, 3200);
+  }
+</script>
 
 <style>
   .oculto {
@@ -46,18 +101,50 @@ const enlaces = [
     white-space: nowrap;
   }
 
-  /* Todo en el centro: a lo ancho y, si cabe, también a lo alto. */
-  :global(main:has(.contacto)) {
-    display: flex;
-  }
-
   .contacto {
-    margin: auto;
-    max-width: 40rem;
-    padding: 2rem 0;
-    text-align: center;
+    display: grid;
+    gap: 2rem;
+    padding: 0.5rem 0 1rem;
   }
 
+  /* Las fotos, apiladas en un marco 3:4; solo se ve la activa (y la que
+     está entrando encima). */
+  .fotos {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--vacio);
+  }
+
+  .fotos :global(.foto) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+  }
+
+  .fotos :global(.foto.activa) {
+    opacity: 1;
+  }
+
+  .fotos :global(.foto.entrando) {
+    animation: foto-entra 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes foto-entra {
+    from {
+      opacity: 0;
+      filter: blur(14px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  /* El texto, alineado a la izquierda. */
   .biografia {
     font-family: var(--serif);
     font-size: calc(1.25em * var(--serif-escala));
@@ -71,7 +158,7 @@ const enlaces = [
 
   .enlaces {
     list-style: none;
-    margin: 2.5rem 0 0;
+    margin: 2rem 0 0;
     padding: 0;
     display: grid;
     gap: 0.35rem;
@@ -84,5 +171,27 @@ const enlaces = [
   .enlaces a:hover {
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  /* En ordenador, las fotos a la izquierda, a todo el alto que cabe en la
+     pantalla, y el texto a la derecha, centrado en vertical frente a ellas. */
+  @media (min-width: 900px) {
+    :global(main:has(.contacto)) {
+      padding-bottom: 0.5rem;
+    }
+    .contacto {
+      grid-template-columns: min(34vw, calc((100svh - 15rem) * 0.75)) minmax(0, 38rem);
+      column-gap: clamp(2.5rem, 6vw, 6rem);
+      align-items: center;
+      padding: 0.5rem 0 0;
+    }
+    /* El texto crece con la pantalla pero sin pasar de lo que cabe a lo
+       alto, para que todo entre en una pantalla. */
+    .biografia {
+      font-size: clamp(15px, min(1.45vw, 2.5svh), 22px);
+    }
+    .enlaces {
+      margin-top: 1.5rem;
+    }
   }
 </style>
