@@ -11,8 +11,9 @@ import { ambas, urlContacto, type Idioma } from '../lib/rutas';
 import { sitio, urlInstagram, urlWhatsApp } from '../lib/sitio';
 import { textos } from '../lib/textos';
 
-// Fotos provisionales (sesión de Julián Camarillo), en el orden en que se
-// pasan: el nombre del archivo manda.
+// Las fotos (las que pasó Guzmán el 28-10-2026, de
+// 00 Barrio/Web/Contacto), en el orden en que se pasan: el nombre del
+// archivo manda (01.jpg, 02.jpg…).
 const fotos = Object.entries(import.meta.glob<{ default: ImageMetadata }>('../assets/contacto/*.jpg', { eager: true }))
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, m]) => m.default);
