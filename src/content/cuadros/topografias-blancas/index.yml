@@ -1,13 +1,17 @@
-titulo: "Topografías blancas"
-tecnica: "Bajorrelieve en madera"
-texto: "Díptico en relieve de tonos neutros que simula el cauce sinuoso de un barranco o un río esculpido en la tierra. Una obra minimalista y elegante que juega con las formas orgánicas y las sombras sutiles para aportar profundidad y calma al espacio."
-medidas: "2 x (85 x 65) cm"
+lang:
+  - es
+  - en
+order: 7
+titulo: Topografías blancas
+tecnica: Bajorrelieve en madera
+texto: Díptico en relieve de tonos neutros que simula el cauce sinuoso de un barranco o un río esculpido en la tierra. Una obra minimalista y elegante que juega con las formas orgánicas y las sombras sutiles para aportar profundidad y calma al espacio.
+medidas: 2 x (85 x 65) cm
 anio: 2023
 estado: vendido
 fotos:
   - topografias-blancas-1.jpg
   - topografias-blancas-2.jpg
-order: 6
 en:
-  tecnica: "Wood bas-relief"
-  texto: "A relief diptych in neutral tones that evokes the winding course of a ravine or a river carved into the earth. A minimal, elegant work that plays with organic forms and subtle shadows to bring depth and calm to a space."
+  order: 7
+  tecnica: Wood bas-relief
+  texto: A relief diptych in neutral tones that evokes the winding course of a ravine or a river carved into the earth. A minimal, elegant work that plays with organic forms and subtle shadows to bring depth and calm to a space.

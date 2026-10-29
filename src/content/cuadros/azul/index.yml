@@ -1,14 +1,18 @@
-titulo: "Azul"
-tecnica: "Técnica mixta sobre lienzo"
-texto: "Inmersión abstracta en tonos azules profundos que simula el fondo marino, cruzada por una línea horizontal y un haz vertical de luz naranja que rompen la oscuridad con un potente contraste. Una obra directa y contundente que transmite la sensación de inmensidad y profundidad."
-medidas: "90 x 180 cm"
+lang:
+  - es
+  - en
+order: 3
+titulo: Azul
+tecnica: Técnica mixta sobre lienzo
+texto: Inmersión abstracta en tonos azules profundos que simula el fondo marino, cruzada por una línea horizontal y un haz vertical de luz naranja que rompen la oscuridad con un potente contraste. Una obra directa y contundente que transmite la sensación de inmensidad y profundidad.
+medidas: 90 x 180 cm
 anio: 2023
 estado: vendido
 fotos:
   - azul-1.jpg
   - azul-2.jpg
   - azul-3.jpg
-order: 4
 en:
-  tecnica: "Mixed media on canvas"
-  texto: "An abstract immersion in deep blues that evokes the seabed, crossed by a horizontal line and a vertical beam of orange light that break the darkness with a powerful contrast. A direct, forceful work that conveys a sense of vastness and depth."
+  order: 3
+  tecnica: Mixed media on canvas
+  texto: An abstract immersion in deep blues that evokes the seabed, crossed by a horizontal line and a vertical beam of orange light that break the darkness with a powerful contrast. A direct, forceful work that conveys a sense of vastness and depth.

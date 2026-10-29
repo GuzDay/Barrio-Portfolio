@@ -1,13 +1,17 @@
-titulo: "Costero"
-tecnica: "Técnica mixta sobre papel de grabado"
-texto: "Obra abstracta en tonos azules y ocres que representa la línea de costa y el encuentro entre el mar y la tierra. Una pieza directa y sobria que utiliza el contraste de texturas y superficies para evocar el paisaje litoral."
-medidas: "80 x 110 cm"
+lang:
+  - es
+  - en
+order: 8
+titulo: Costero
+tecnica: Técnica mixta sobre papel de grabado
+texto: Obra abstracta en tonos azules y ocres que representa la línea de costa y el encuentro entre el mar y la tierra. Una pieza directa y sobria que utiliza el contraste de texturas y superficies para evocar el paisaje litoral.
+medidas: 80 x 110 cm
 anio: 2025
 estado: vendido
 fotos:
   - costero-1.jpg
   - costero-2.jpg
-order: 11
 en:
-  tecnica: "Mixed media on printmaking paper"
-  texto: "An abstract work in blues and ochres depicting the coastline and the meeting of sea and land. A direct, restrained piece that uses contrasting textures and surfaces to evoke the coastal landscape."
+  order: 8
+  tecnica: Mixed media on printmaking paper
+  texto: An abstract work in blues and ochres depicting the coastline and the meeting of sea and land. A direct, restrained piece that uses contrasting textures and surfaces to evoke the coastal landscape.

@@ -1,13 +1,17 @@
-titulo: "Hall de salida"
-tecnica: "Técnica mixta sobre papel de grabado"
-texto: "Ilustración minimalista en tonos amarillos y negros que representa un espacio interior con mobiliario y una puerta abierta al fondo. Una obra directa y esquemática que juega con la perspectiva y el contraste cromático para sugerir un punto de transición."
-medidas: "51 x 38 cm"
+lang:
+  - es
+  - en
+order: 9
+titulo: Hall de salida
+tecnica: Técnica mixta sobre papel de grabado
+texto: Ilustración minimalista en tonos amarillos y negros que representa un espacio interior con mobiliario y una puerta abierta al fondo. Una obra directa y esquemática que juega con la perspectiva y el contraste cromático para sugerir un punto de transición.
+medidas: 51 x 38 cm
 anio: 2025
 estado: vendido
 fotos:
   - hall-de-salida-1.jpg
   - hall-de-salida-2.jpg
-order: 14
 en:
-  tecnica: "Mixed media on printmaking paper"
-  texto: "A minimalist illustration in yellows and blacks depicting an interior with furniture and an open door at the back. A direct, schematic work that plays with perspective and colour contrast to suggest a point of transition."
+  order: 9
+  tecnica: Mixed media on printmaking paper
+  texto: A minimalist illustration in yellows and blacks depicting an interior with furniture and an open door at the back. A direct, schematic work that plays with perspective and colour contrast to suggest a point of transition.

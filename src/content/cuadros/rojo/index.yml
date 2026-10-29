@@ -1,13 +1,17 @@
-titulo: "Rojo"
-tecnica: "Técnica mixta sobre lienzo"
-texto: "Una obra monocromática en tonos rojos con líneas geométricas incisas que raspan la superficie, diseñada para impactar visualmente y evocar una intensa sensación de profundidad y textura."
-medidas: "130 x 130 cm"
+lang:
+  - es
+  - en
+order: 1
+titulo: Rojo
+tecnica: Técnica mixta sobre lienzo
+texto: Una obra monocromática en tonos rojos con líneas geométricas incisas que raspan la superficie, diseñada para impactar visualmente y evocar una intensa sensación de profundidad y textura.
+medidas: 130 x 130 cm
 anio: 2023
 estado: vendido
 fotos:
   - rojo-1.jpg
   - rojo-2.jpg
-order: 2
 en:
-  tecnica: "Mixed media on canvas"
-  texto: "A monochrome work in red tones with incised geometric lines scratched into the surface, designed for visual impact and to evoke an intense sense of depth and texture."
+  order: 1
+  tecnica: Mixed media on canvas
+  texto: A monochrome work in red tones with incised geometric lines scratched into the surface, designed for visual impact and to evoke an intense sense of depth and texture.

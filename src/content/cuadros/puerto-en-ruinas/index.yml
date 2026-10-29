@@ -1,7 +1,11 @@
-titulo: "Puerto en ruinas"
-tecnica: "Técnica mixta sobre lienzo"
-texto: "Obra abstracta de texturas marcadas y tonos tierra que evoca un paisaje portuario desgastado por el tiempo y el abandono."
-medidas: "70 x 170 cm"
+lang:
+  - es
+  - en
+order: 5
+titulo: Puerto en ruinas
+tecnica: Técnica mixta sobre lienzo
+texto: Obra abstracta de texturas marcadas y tonos tierra que evoca un paisaje portuario desgastado por el tiempo y el abandono.
+medidas: 70 x 170 cm
 anio: 2024
 estado: vendido
 fotos:
@@ -17,7 +21,7 @@ fotos:
   - puerto-en-ruinas-10.jpg
   - puerto-en-ruinas-11.jpg
   - puerto-en-ruinas-12.jpg
-order: 9
 en:
-  tecnica: "Mixed media on canvas"
-  texto: "An abstract work of strong textures and earth tones that evokes a harbour landscape worn down by time and neglect."
+  order: 5
+  tecnica: Mixed media on canvas
+  texto: An abstract work of strong textures and earth tones that evokes a harbour landscape worn down by time and neglect.
