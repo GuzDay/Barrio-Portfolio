@@ -90,7 +90,7 @@ apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gesti
   dentro de Contacto (lo decidió Guzmán, 16-10-2026). Desde el 21-10-2026
   Contacto (28-10-2026, pedido de Pablo): sin título visible; una foto a
   pantalla completa que se pasa sola cada 5 s (la siguiente aparece encima,
-  de desenfocada a nítida; las de `00 Barrio/Web/Contacto/`, copiadas a
+  de desenfocada a nítida; las de `00 Barrio/Web/Fotos de la web/Contacto/`, copiadas a
   `src/assets/contacto/` como 01.jpg…) y que, al pulsarla, se da la vuelta
   como una tarjeta: detrás, en blanco, el texto de Pablo centrado. Encima
   de la foto, en el centro y con fusión "diferencia", el teléfono (abre
@@ -159,10 +159,17 @@ tecnica_en: Mixed media on canvas
 texto_en: One or two sentences.
 ```
 
-Lo que manda Pablo se guarda tal cual en `00 Barrio/Web/Recibido de Pablo
-<fecha>/`. Resto de `00 Barrio`: `Fotos obras/` (Cuadros PRO, Esculturas PRO:
-el flujo de edición de Guzmán, con `Brutos` y `Done`), `Sesiones/`,
-`Materia viva/`, `Cat Lightroom/`.
+Ordenado el 29-10-2026. `00 Barrio/Web/` reúne lo de la web: `Accesos/`
+(enlaces a la web, el panel, el proyecto de GitHub y Cloudflare, y los dos
+`.command` para abrirla en local), `Fotos de la web/` (Portada, Encargos,
+Contacto: los originales de cada página), `Recibido de Pablo/<fecha>/` (lo
+que manda Pablo, tal cual), `Documentos/` y la copia de seguridad.
+`00 Barrio/Firma - Logo/` tiene la firma: `Firma Barrio (web).svg` es
+idéntica a `scripts/firma/Firma Barrio.svg`, la de la cabecera. Resto, sin
+tocar por Lightroom: `Fotos obras/` (Cuadros PRO, Esculturas PRO, con
+`Brutos` y `Done`), `Sesiones/` (la foto de la portada es
+`Sesiones/2025-12 Venezolano/Final/Barrio Julián Camarillo-12.jpg`),
+`Cat Lightroom/`; y `Obras/`, `Dossier Obras/`, `Materia viva/`.
 
 ## La web de Blanca: qué mirar y qué no
 
@@ -212,7 +219,7 @@ porque costó semanas de tropiezos:
   pudo seleccionar un directorio raíz". Pasa si VS Code tiene activado
   `workbench.browser.openLocalhostLinks` (abre los enlaces a localhost
   dentro de VS Code). Abrir el panel en Chrome (el acceso del Escritorio,
-  carpeta "Web Barrio", lo hace siempre).
+  carpeta `00 Barrio/Web/Accesos`, lo hace siempre).
 - **El build quitaba el `-webkit-backdrop-filter`** (el desenfoque tal como
   lo entiende Safari anterior al 18). Se arregla fijando `vite.build.cssTarget`
   en `astro.config.mjs`. Ojo: el motor de Safari de Playwright no pinta los
