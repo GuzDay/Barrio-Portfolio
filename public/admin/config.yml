@@ -8,7 +8,9 @@ backend:
   name: github
   repo: pablobarrioarauz/Barrio-Portfolio
   branch: main
-  # base_url: (la dirección del servicio de inicio de sesión, cuando exista)
+  # Servicio de inicio de sesión (Cloudflare Workers, cuenta de Pablo; el
+  # código es una copia de sveltia-cms-auth en github.com/pablobarrioarauz).
+  base_url: https://sveltia-cms-auth.pablobarrioke.workers.dev
   commit_messages:
     create: 'Panel: nueva obra en {{collection}}, «{{slug}}»'
     update: 'Panel: cambios en «{{slug}}» ({{collection}})'
