@@ -71,7 +71,8 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
     <link rel="alternate" hreflang="x-default" href={absoluta(alternativas.es)} />
     {SIN_INDEXAR && <meta name="robots" content="noindex" />}
     {/* El icono de la pestaña: la "B" de la firma de Pablo (recortada de su
-        firma real, sin redibujar), en blanco sobre un cuadrado negro. El .ico
+        firma real, sin redibujar), en negro sobre un cuadrado blanco (de prueba;
+        antes, al revés). El .ico
         para navegadores viejos y el PNG para el acceso directo del móvil. */}
     <link rel="icon" href={conBase('/favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={conBase('/favicon.ico')} sizes="48x48" />
