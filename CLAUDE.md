@@ -162,8 +162,9 @@ texto_en: One or two sentences.
 Ordenado el 29-10-2026. `00 Barrio/Web/` reúne lo de la web: `Accesos/`
 (enlaces a la web, el panel, el proyecto de GitHub y Cloudflare, y los dos
 `.command` para abrirla en local), `Fotos de la web/` (Portada, Encargos,
-Contacto: los originales de cada página), `Recibido de Pablo/<fecha>/` (lo
-que manda Pablo, tal cual), `Documentos/` y la copia de seguridad.
+Contacto: los originales de cada página), `Recibido de Pablo <fecha>/` (lo
+que manda Pablo, tal cual; hoy solo la entrega del 21-10, la del 20 estaba
+repetida y más vieja), `Documentos/` y la copia de seguridad.
 `00 Barrio/Firma - Logo/` tiene la firma: `Firma Barrio (web).svg` es
 idéntica a `scripts/firma/Firma Barrio.svg`, la de la cabecera. Resto, sin
 tocar por Lightroom: `Fotos obras/` (Cuadros PRO, Esculturas PRO, con
