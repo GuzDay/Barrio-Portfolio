@@ -4,12 +4,12 @@
 
 | | |
 |---|---|
-| **Web publicada** | https://guzday.github.io/Barrio-Portfolio/ |
-| **Panel de edición (CMS), publicado** | https://guzday.github.io/Barrio-Portfolio/admin/ (aún sin inicio de sesión) |
+| **Web publicada** | https://pablobarrioarauz.github.io/Barrio-Portfolio/ |
+| **Panel de edición (CMS), publicado** | https://pablobarrioarauz.github.io/Barrio-Portfolio/admin/ (aún sin inicio de sesión) |
 | **Web en tu ordenador** | http://localhost:4322/Barrio-Portfolio/ |
 | **Panel en tu ordenador** | http://localhost:4322/Barrio-Portfolio/admin/index.html |
-| Repositorio | https://github.com/GuzDay/Barrio-Portfolio |
-| Publicaciones (si una falla) | https://github.com/GuzDay/Barrio-Portfolio/actions |
+| Repositorio | https://github.com/pablobarrioarauz/Barrio-Portfolio |
+| Publicaciones (si una falla) | https://github.com/pablobarrioarauz/Barrio-Portfolio/actions |
 
 ## Usar el panel en tu ordenador
 

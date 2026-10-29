@@ -10,8 +10,10 @@ consulta que hay**: ver más abajo.
 
 ## Qué está hecho
 
-- Repositorio `GuzDay/Barrio-Portfolio`, público, con GitHub Pages activado
-  (Source: GitHub Actions).
+- Repositorio `pablobarrioarauz/Barrio-Portfolio` (de Pablo desde el
+  29-10-2026; antes `GuzDay/…`, Guzmán sigue como colaborador), público,
+  con GitHub Pages activado (Source: GitHub Actions). Copia de seguridad
+  previa al traspaso en `00 Barrio/Web/Copia de seguridad web 2026-10-29/`.
 - Proyecto Astro creado de cero, `.github/workflows/publicar.yml` publicando
   con cada push a `main`. Primer despliegue verificado: 80 s.
 - **Esqueleto completo de la web** (16-10-2026), sin diseño todavía: Inicio,
@@ -66,7 +68,7 @@ consulta que hay**: ver más abajo.
 |---|---|
 | Código | `~/Documents/GitHub/Barrio Portfolio` (esta carpeta) |
 | Archivo de obras (fotos y fichas) | `~/Documents/GÜZDAY/00 Barrio/Obras` |
-| Web provisional | https://guzday.github.io/Barrio-Portfolio/ |
+| Web provisional | https://pablobarrioarauz.github.io/Barrio-Portfolio/ |
 | Dominio | `pablobarrioarauz.com`, **apuntando todavía a su web actual: WordPress alojado en Piensa Solutions** (comprobado el 16-10-2026; antes se creía Squarespace) |
 
 **El dominio no se toca hasta que la web esté lista**, para que la web actual

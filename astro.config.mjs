@@ -7,7 +7,7 @@ import { defineConfig } from 'astro/config';
 // pablobarrioarauz.com deje de apuntar a su web actual (WordPress en Piensa Solutions) y apunte aquí, hay que:
 //   1. poner SITIO = 'https://pablobarrioarauz.com' y RUTA_BASE = '/'
 //   2. crear el archivo public/CNAME con una línea: pablobarrioarauz.com
-const SITIO = 'https://guzday.github.io';
+const SITIO = 'https://pablobarrioarauz.github.io';
 const RUTA_BASE = '/Barrio-Portfolio';
 
 // https://docs.astro.build/en/reference/configuration-reference/

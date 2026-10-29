@@ -9,7 +9,7 @@ export const sitio = {
   telefonoVisible: '609 301 845',
 };
 
-// Mientras la web vive en guzday.github.io se pide a los buscadores que no la
+// Mientras la web vive en pablobarrioarauz.github.io se pide a los buscadores que no la
 // indexen, para que no compita con la web actual de Pablo. El día que
 // pablobarrioarauz.com apunte aquí, poner false (ver astro.config.mjs).
 export const SIN_INDEXAR = true;
