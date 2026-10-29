@@ -103,8 +103,9 @@ const direccion = new URL(urlObra(seccion, id, idioma), Astro.site).href;
     <div class="ficha">
       <h1>{f.titulo}</h1>
       <ul class="datos">
-        {/* Medidas, año y técnica, en ese orden (pedido de Guzmán). */}
-        {[f.medidas, f.anio, f.tecnica].filter(Boolean).map((dato, i) => <li style={`--n: ${i}`}>{dato}</li>)}
+        {/* Medidas y técnica. El año ya no se enseña (pedido de Pablo,
+            29-10-2026), aunque sigue en las fichas y en el panel. */}
+        {[f.medidas, f.tecnica].filter(Boolean).map((dato, i) => <li style={`--n: ${i}`}>{dato}</li>)}
       </ul>
       {f.texto && <p class="texto">{f.texto}</p>}
       <EstadoObra idioma={idioma} vendida={f.vendida} class="estado-ficha" />
