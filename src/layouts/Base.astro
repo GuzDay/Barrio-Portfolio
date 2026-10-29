@@ -71,6 +71,22 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
     <link rel="alternate" hreflang="x-default" href={absoluta(alternativas.es)} />
     {SIN_INDEXAR && <meta name="robots" content="noindex" />}
     <link rel="icon" href={conBase('/favicon.svg')} type="image/svg+xml" />
+    {/* La vista previa al compartir un enlace (WhatsApp, Telegram, redes):
+        título, frase e imagen. La imagen la hizo Guzmán (1200x630, el
+        tamaño que piden todas); el original está en
+        00 Barrio/Web/Fotos de la web/Imagen para compartir (1200x630).jpg.
+        Para cambiarla, sustituir public/compartir.jpg. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={sitio.nombre} />
+    <meta property="og:locale" content={idioma === 'en' ? 'en_GB' : 'es_ES'} />
+    <meta property="og:url" content={absoluta(alternativas[idioma])} />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion ?? `${sitio.nombre}. ${t.profesion}.`} />
+    <meta property="og:image" content={absoluta(conBase('/compartir.jpg'))} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${sitio.nombre} — ${t.profesion}`} />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <a class="saltar" href="#contenido">{t.saltar}</a>
