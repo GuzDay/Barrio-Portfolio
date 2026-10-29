@@ -42,7 +42,9 @@ export const textos = {
     correo: 'Correo',
     telefono: 'Teléfono',
     instagram: 'Instagram',
-    inicioIntro: 'Pintura y escultura.',
+    // La frase de la vista previa al compartir la web (WhatsApp, redes) y
+    // para los buscadores. Antes repetía el título.
+    inicioIntro: 'Pintura y escultura abstracta. Obra original, encargos y proyectos de arte para espacios.',
     encargosIntro: [
       'Realizo encargos personalizados en los que busco, por encima de todo, plasmar los anhelos particulares del cliente a través de la expresión artística de una abstracción cargada de intenciones.',
       'A ti, lector, dedico mi alegría y mi esfuerzo… espero que lo disfrutes…',
@@ -108,7 +110,7 @@ export const textos = {
     correo: 'Email',
     telefono: 'Phone',
     instagram: 'Instagram',
-    inicioIntro: 'Painting and sculpture.',
+    inicioIntro: 'Abstract painting and sculpture. Original works, commissions and art projects for spaces.',
     encargosIntro: [
       "I take on personal commissions in which, above all, I seek to capture each client's own longings through the artistic expression of an abstraction charged with intention.",
       'To you, reader, I dedicate my joy and my effort… I hope you enjoy it…',

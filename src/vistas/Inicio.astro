@@ -16,7 +16,7 @@ const { idioma } = Astro.props;
 const t = textos[idioma];
 ---
 
-<Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={`${sitio.nombre}. ${t.inicioIntro}`} portada>
+<Base idioma={idioma} alternativas={ambas(urlInicio)} descripcion={t.inicioIntro} portada>
   {/* Foto vertical («Barrio Julián Camarillo-12», 21-10-2026):
       la misma en ordenador y en móvil (pedido de Guzmán). */}
   <LienzoPintable foto={foto} />

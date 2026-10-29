@@ -86,7 +86,8 @@ const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
     <meta property="og:locale" content={idioma === 'en' ? 'en_GB' : 'es_ES'} />
     <meta property="og:url" content={absoluta(alternativas[idioma])} />
     <meta property="og:title" content={tituloCompleto} />
-    <meta property="og:description" content={descripcion ?? `${sitio.nombre}. ${t.profesion}.`} />
+    {/* Sin frase propia, ninguna: mejor solo el título que repetirlo. */}
+    {descripcion && <meta property="og:description" content={descripcion} />}
     <meta property="og:image" content={absoluta(conBase('/compartir.jpg'))} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
