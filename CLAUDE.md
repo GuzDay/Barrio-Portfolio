@@ -68,12 +68,14 @@ consulta que hay**: ver más abajo.
 |---|---|
 | Código | `~/Documents/GitHub/Barrio Portfolio` (esta carpeta) |
 | Archivo de obras (fotos y fichas) | `~/Documents/GÜZDAY/00 Barrio/Obras` |
-| Web provisional | https://pablobarrioarauz.github.io/Barrio-Portfolio/ |
-| Dominio | `pablobarrioarauz.com`, **apuntando todavía a su web actual: WordPress alojado en Piensa Solutions** (comprobado el 16-10-2026; antes se creía Squarespace) |
+| Web | https://pablobarrioarauz.com/ (desde el 29-10-2026; antes pablobarrioarauz.github.io/Barrio-Portfolio) |
+| Dominio | `pablobarrioarauz.com`, registrado en Piensa Solutions (renueva el 06-09-2027). Desde el 29-10-2026 apunta a GitHub Pages: 4 registros A (185.199.108-111.153) y `www` CNAME → `pablobarrioarauz.github.io`. Correo (MX, SPF, DKIM) sin tocar; Pablo no tiene buzones en Piensa. El hosting WordPress de Piensa (y su backup) se puede cancelar pasados unos días; el dominio no |
 
-**El dominio no se toca hasta que la web esté lista**, para que la web actual
-de Pablo siga funcionando sin un minuto de corte. Qué cambiar ese día está
-apuntado en `astro.config.mjs`; el cambio se hace en Piensa Solutions, que gestiona el dominio. Avisar de no cancelar ese alojamiento antes de tiempo.
+**Panel de Pablo**: https://pablobarrioarauz.com/admin/, inicio de sesión con
+GitHub a través de `sveltia-cms-auth.pablobarrioke.workers.dev` (Cloudflare
+de Pablo; OAuth App "panel web Barrio" en su GitHub). Desde el 29-10-2026 el
+contenido lo lleva Pablo desde el panel: no usar `scripts/subir-obras.mjs`
+tal cual (sustituiría lo que haga él); antes de tocar nada, `git pull`.
 
 ## Decisiones ya tomadas (son de Pablo, no se cambian sin preguntarle)
 

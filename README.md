@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Web publicada** | https://pablobarrioarauz.github.io/Barrio-Portfolio/ |
-| **Panel de edición (CMS), publicado** | https://pablobarrioarauz.github.io/Barrio-Portfolio/admin/ (aún sin inicio de sesión) |
-| **Web en tu ordenador** | http://localhost:4322/Barrio-Portfolio/ |
-| **Panel en tu ordenador** | http://localhost:4322/Barrio-Portfolio/admin/index.html |
+| **Web publicada** | https://pablobarrioarauz.com/ |
+| **Panel de edición (CMS), publicado** | https://pablobarrioarauz.com/admin/ |
+| **Web en tu ordenador** | http://localhost:4322/ |
+| **Panel en tu ordenador** | http://localhost:4322/admin/index.html |
 | Repositorio | https://github.com/pablobarrioarauz/Barrio-Portfolio |
 | Publicaciones (si una falla) | https://github.com/pablobarrioarauz/Barrio-Portfolio/actions |
 
@@ -15,7 +15,7 @@
 
 1. Encender la web en local, desde esta carpeta en la terminal:
    `npx astro dev --port 4322`
-2. Abrir en **Chrome** (no Safari) http://localhost:4322/Barrio-Portfolio/admin/index.html
+2. Abrir en **Chrome** (no Safari) http://localhost:4322/admin/index.html
 3. Pulsar **"Trabajar con un repositorio local"** y elegir la carpeta `Barrio Portfolio`.
 4. Lo que se cambie se guarda solo en el ordenador: para que llegue a la web
    publicada hay que subirlo (GitHub Desktop → Commit → Push).

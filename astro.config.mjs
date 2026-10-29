@@ -3,12 +3,11 @@ import { defineConfig } from 'astro/config';
 
 // Dirección de la web.
 //
-// De momento se publica en la dirección gratuita de GitHub. Cuando el dominio
-// pablobarrioarauz.com deje de apuntar a su web actual (WordPress en Piensa Solutions) y apunte aquí, hay que:
-//   1. poner SITIO = 'https://pablobarrioarauz.com' y RUTA_BASE = '/'
-//   2. crear el archivo public/CNAME con una línea: pablobarrioarauz.com
-const SITIO = 'https://pablobarrioarauz.github.io';
-const RUTA_BASE = '/Barrio-Portfolio';
+// Desde el 29-10-2026, en su dominio: pablobarrioarauz.com (en Piensa
+// Solutions apunta a GitHub Pages; el archivo public/CNAME se lo dice a
+// GitHub). Antes vivía en pablobarrioarauz.github.io/Barrio-Portfolio.
+const SITIO = 'https://pablobarrioarauz.com';
+const RUTA_BASE = '';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({

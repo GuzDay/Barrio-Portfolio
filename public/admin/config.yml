@@ -18,7 +18,7 @@ backend:
     uploadMedia: 'Panel: foto nueva {{path}}'
     deleteMedia: 'Panel: foto borrada {{path}}'
 
-site_url: https://pablobarrioarauz.github.io/Barrio-Portfolio/
+site_url: https://pablobarrioarauz.com/
 
 # Las fotos de cada obra van dentro de su carpeta (ver cada sección), pero el
 # panel exige una carpeta general por si se sube algo suelto.

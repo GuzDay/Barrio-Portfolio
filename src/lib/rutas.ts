@@ -16,8 +16,8 @@ export const secciones: Record<Seccion, { slug: Record<Idioma, string>; nombre: 
   esculturas: { slug: { es: 'esculturas', en: 'sculptures' }, nombre: { es: 'Escultura', en: 'Sculpture' } },
 };
 
-// Inicio de todas las direcciones: "" en pablobarrioarauz.com,
-// "/Barrio-Portfolio" en GitHub Pages.
+// Inicio de todas las direcciones: "" en pablobarrioarauz.com (antes
+// "/Barrio-Portfolio", en github.io).
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 export const conBase = (ruta: string) => `${BASE}${ruta}`;
 const prefijo = (idioma: Idioma) => conBase(idioma === 'en' ? '/en' : '');

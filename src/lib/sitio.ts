@@ -9,10 +9,10 @@ export const sitio = {
   telefonoVisible: '609 301 845',
 };
 
-// Mientras la web vive en pablobarrioarauz.github.io se pide a los buscadores que no la
-// indexen, para que no compita con la web actual de Pablo. El día que
-// pablobarrioarauz.com apunte aquí, poner false (ver astro.config.mjs).
-export const SIN_INDEXAR = true;
+// Mientras la web vivió en github.io se pedía a los buscadores que no la
+// indexaran (true), para no competir con la web antigua de Pablo. Desde que
+// está en pablobarrioarauz.com, false: que la encuentren.
+export const SIN_INDEXAR = false;
 
 export const urlWhatsApp = (mensaje?: string) =>
   `https://wa.me/${sitio.whatsapp}${mensaje ? `?text=${encodeURIComponent(mensaje)}` : ''}`;
