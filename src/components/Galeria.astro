@@ -27,21 +27,14 @@ interface Props {
 const { idioma, seccion, obras } = Astro.props;
 const t = textos[idioma];
 const hayVendidas = obras.some((o) => o.data.estado === 'vendido');
-const hayAnios = obras.some((o) => o.data.anio);
-// Con "Año", las obras van de la más reciente a la más antigua; las que no
-// tienen año, al final y en su orden de siempre. Cada tarjeta lleva su puesto
-// en ese orden (--orden-anio) y el CSS las recoloca sin tocar la página.
-const porAnio = obras
-  .map((o, i) => ({ id: o.id, anio: o.data.anio ?? -Infinity, i }))
-  .sort((a, b) => b.anio - a.anio || a.i - b.i)
-  .map((o) => o.id);
+// Hubo un tercer botón, "Año", que ordenaba por año; se quitó al dejar de
+// enseñarse el año (pedido de Pablo, 30-10-2026).
 ---
 
-{(hayVendidas || hayAnios) && (
+{hayVendidas && (
   <div class="filtro" role="group" aria-label={t.filtrar}>
     <button type="button" data-filtro="todas" aria-pressed="true">{t.todas}</button>
-    {hayVendidas && <button type="button" data-filtro="disponibles" aria-pressed="false">{t.disponibles}</button>}
-    {hayAnios && <button type="button" data-filtro="anio" aria-pressed="false">{t.anio}</button>}
+    <button type="button" data-filtro="disponibles" aria-pressed="false">{t.disponibles}</button>
   </div>
 )}
 
@@ -49,7 +42,7 @@ const porAnio = obras
   {obras.map((obra, i) => {
     const f = ficha(obra, idioma);
     return (
-      <li data-vendida={f.vendida ? '' : undefined} style={`--orden-anio: ${porAnio.indexOf(obra.id)}`}>
+      <li data-vendida={f.vendida ? '' : undefined}>
         <a class="tarjeta" href={urlObra(seccion, obra.id, idioma)}>
           <div class="foto">
             <Image
@@ -389,10 +382,6 @@ const porAnio = obras
   /* "Todas" y "Disponibles" también esperan escondidos a entrar. */
   :global(main:has(.galeria.por-llegar)) .filtro button {
     opacity: 0;
-  }
-
-  .galeria[data-mostrando='anio'] li {
-    order: var(--orden-anio);
   }
 
   .galeria[data-mostrando='disponibles'] li[data-vendida] {
